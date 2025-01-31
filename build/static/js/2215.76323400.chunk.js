@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkadminto_react=self.webpackChunkadminto_react||[]).push([[2215],{72215:function(t,a,e){e.r(a);var r=e(51649),s=e(80184);a.default=function(){return(0,r.Tt)({title:"Starter",breadCrumbItems:[{path:"/pages/starter",label:"Extra Pages"},{path:"/pages/starter",label:"Starter",active:!0}]}),(0,s.jsx)(s.Fragment,{})}}}]);
+//# sourceMappingURL=2215.76323400.chunk.js.map

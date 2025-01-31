@@ -1,0 +1,168 @@
+.menu-container {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background-color: #fff7f5;
+    border-radius: 8px;
+}
+
+.menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* .back-button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+} */
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 0 10px;
+}
+
+.header h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+.add-item-button {
+    background-color: #ff6464;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.category-tabs {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto; /* Enables horizontal scrolling if items exceed the container width */
+    margin-bottom: 20px;
+    padding: 10px 0;
+}
+
+.category-tab {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    text-align: center;
+    padding: 10px;
+    flex: 0 0 auto; /* Prevents items from shrinking and ensures they're displayed in a row */
+    width: 100px; /* Set a fixed width for each tab */
+    cursor: pointer;
+    transition: border-color 0.3s ease-in-out;
+}
+
+.category-tab.active {
+    border: 2px solid red; /* Red border when active */
+    background-color: rgba(255, 0, 0, 0.1); /* Light red background */
+}
+
+.category-tab img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 5px;
+}
+
+.category-tab span {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.category-tab:hover {
+    border-color: #ff6464;
+}
+
+.items-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Styles for the item cards */
+.item-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    margin-bottom: 15px; /* Add space between item cards */
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Remove extra margin for the last item */
+.item-card:last-child {
+    margin-bottom: 0;
+}
+
+/* For consistent spacing between items within the same category */
+.item-list {
+    margin-top: 20px; /* Optional, adds spacing above the list */
+}
+
+.item-card:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.item-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.item-details {
+    flex: 1;
+}
+
+.item-details h4 {
+    margin: 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.item-details p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.item-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.edit-button,
+.delete-button {
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    color: white;
+}
+
+.edit-button {
+    background-color: #4caf50;
+}
+
+.delete-button {
+    background-color: #f44336;
+}
