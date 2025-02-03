@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { Button, Alert, Container, Card } from 'react-bootstrap';
 import { useMultistepForm } from '../../../hooks/useMultistepForm';
 import { registerItem } from '../../../redux/menuManagementItem/actions';
 import './RegisterNewItem.css';
@@ -16,6 +17,7 @@ interface Outlet {
 
 interface SelectedBusiness {
     id: string;
+    business_id: string;
     name: string;
     outlets: Outlet[]; // Add other required properties
 }
@@ -46,7 +48,7 @@ const RegisterNewItem: React.FC = () => {
     const [swiggyPreview, setSwiggyPreview] = useState<string | null>(null);
     const [bannerPreview, setBannerPreview] = useState<string | null>(null);
     const [selectedBusiness, setSelectedBusiness] = useState<SelectedBusiness | null>(null);
-
+    const [selectedOutlets, setSelectedOutlets] = useState<string[]>([]);
     const { business_id, selectedCategoryId } = useParams<{ business_id: string; selectedCategoryId: string }>();
 
     const [errorMsg, setError] = useState<string>('');
@@ -215,12 +217,10 @@ const RegisterNewItem: React.FC = () => {
         />,
         selectedBusiness ? (
             <RegisterItemStep2
-                errorMsg={errorMsg}
-                successMsg={successMsg}
-                handleChange={handleChange}
-                selectedBusiness={selectedBusiness}
-                handleFileChange={handleFileChange}
-                handleSubmit={handleSubmit}
+                business_id={selectedBusiness.business_id}
+
+
+                setSelectedOutlets={setSelectedOutlets}
             />
         ) : (
             <></>
@@ -229,123 +229,167 @@ const RegisterNewItem: React.FC = () => {
     ]);
 
     return (
-        <div className="register-new-item-container">
-            <h2>Register New Item</h2>
+        <Container className="register-business-container">
+            <Card className="shadow-sm">
+                <Card.Body>
+                    <form onSubmit={handleSubmit}>
+                        {' '}
+                        {/* Single Form here */}
+                        <div>
+                            Step {currentStepIndex + 1} of {steps.length}
+                        </div>
+                        {step}
+                        <div className="d-flex justify-content-center mt-4 gap-3">
+                            {!isFirstStep && (
+                                <Button variant="secondary" type="button" onClick={back} className="px-4 py-2">
+                                    Back
+                                </Button>
+                            )}
+                            <Button
+                                variant="primary"
+                                onClick={(e) => {
+                                    if (isLastStep) {
+                                        handleSubmit(e);
+                                    } else {
+                                        next();
+                                    }
+                                }}
+                                className="px-4 py-2">
+                                {isLastStep ? 'Finish' : 'Next'}
+                            </Button>
+                        </div>
+                    </form>
 
-            {errorMsg && <p className="error-message">{errorMsg}</p>}
-            {successMsg && <p className="success-message">{successMsg}</p>}
+                    {errorMsg && (
+                        <Alert variant="danger" className="mt-3">
+                            {errorMsg}
+                        </Alert>
+                    )}
+                    {successMsg && (
+                        <Alert variant="success" className="mt-3">
+                            {successMsg}
+                        </Alert>
+                    )}
+                </Card.Body>
+            </Card>
+        </Container>
+        // <div className="register-new-item-container">
+        //     <h2>Register New Item</h2>
 
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label>Item Name (Hindi)</label>
-                    <input
-                        type="text"
-                        name="item_name.hindi"
-                        value={formData.item_name.hindi}
-                        onChange={handleInputChange}
-                    />
-                </div>
+        //     {errorMsg && <p className="error-message">{errorMsg}</p>}
+        //     {successMsg && <p className="success-message">{successMsg}</p>}
 
-                <div className="form-group">
-                    <label>Item Name (English)</label>
-                    <input
-                        type="text"
-                        name="item_name.english"
-                        value={formData.item_name.english}
-                        onChange={handleInputChange}
-                    />
-                </div>
+        //     <form onSubmit={handleSubmit}>
+        //         <div className="form-group">
+        //             <label>Item Name (Hindi)</label>
+        //             <input
+        //                 type="text"
+        //                 name="item_name.hindi"
+        //                 value={formData.item_name.hindi}
+        //                 onChange={handleInputChange}
+        //             />
+        //         </div>
 
-                <div className="form-group">
-                    <label>Item Name (Gujarati)</label>
-                    <input
-                        type="text"
-                        name="item_name.gujarati"
-                        value={formData.item_name.gujarati}
-                        onChange={handleInputChange}
-                    />
-                </div>
+        //         <div className="form-group">
+        //             <label>Item Name (English)</label>
+        //             <input
+        //                 type="text"
+        //                 name="item_name.english"
+        //                 value={formData.item_name.english}
+        //                 onChange={handleInputChange}
+        //             />
+        //         </div>
 
-                <div className="form-group">
-                    <label>Online Display Name</label>
-                    <input
-                        type="text"
-                        name="online_display_name"
-                        value={formData.online_display_name}
-                        onChange={handleInputChange}
-                        required
-                    />
-                </div>
+        //         <div className="form-group">
+        //             <label>Item Name (Gujarati)</label>
+        //             <input
+        //                 type="text"
+        //                 name="item_name.gujarati"
+        //                 value={formData.item_name.gujarati}
+        //                 onChange={handleInputChange}
+        //             />
+        //         </div>
 
-                <div className="form-group">
-                    <label>Price</label>
-                    <input type="number" name="price" value={formData.price} onChange={handleInputChange} required />
-                </div>
+        //         <div className="form-group">
+        //             <label>Online Display Name</label>
+        //             <input
+        //                 type="text"
+        //                 name="online_display_name"
+        //                 value={formData.online_display_name}
+        //                 onChange={handleInputChange}
+        //                 required
+        //             />
+        //         </div>
 
-                <div className="form-group">
-                    <label>Description</label>
-                    <textarea name="description" value={formData.description} onChange={handleInputChange} />
-                </div>
+        //         <div className="form-group">
+        //             <label>Price</label>
+        //             <input type="number" name="price" value={formData.price} onChange={handleInputChange} required />
+        //         </div>
 
-                <div className="form-group">
-                    <label>Dietary</label>
-                    <textarea name="dietary" value={formData.dietary} onChange={handleInputChange} />
-                </div>
+        //         <div className="form-group">
+        //             <label>Description</label>
+        //             <textarea name="description" value={formData.description} onChange={handleInputChange} />
+        //         </div>
 
-                <div className="form-group">
-                    <label>Available Order Type</label>
-                    <select
-                        name="available_order_type"
-                        multiple
-                        value={formData.available_order_type} // Keep the state value synced
-                        onChange={handleInputChange}>
-                        <option value="delivery">Delivery</option>
-                        <option value="pick-up">Pick-up</option>
-                        <option value="dine_in">Dine-in</option>
-                        <option value="online">Online</option>
-                    </select>
-                </div>
+        //         <div className="form-group">
+        //             <label>Dietary</label>
+        //             <textarea name="dietary" value={formData.dietary} onChange={handleInputChange} />
+        //         </div>
 
-                <div className="form-group">
-                    <label>GST Type</label>
-                    <select name="gst_type" value={formData.gst_type} onChange={handleInputChange}>
-                        <option value="">Select GST Type</option>
-                        <option value="goods">Goods</option>
-                        <option value="services">Services</option>
-                    </select>
-                </div>
+        //         <div className="form-group">
+        //             <label>Available Order Type</label>
+        //             <select
+        //                 name="available_order_type"
+        //                 multiple
+        //                 value={formData.available_order_type} // Keep the state value synced
+        //                 onChange={handleInputChange}>
+        //                 <option value="delivery">Delivery</option>
+        //                 <option value="pick-up">Pick-up</option>
+        //                 <option value="dine_in">Dine-in</option>
+        //                 <option value="online">Online</option>
+        //             </select>
+        //         </div>
 
-                <div className="form-group">
-                    <label>Logo Image</label>
-                    <input type="file" name="logo_image" onChange={handleFileChange} accept="image/*" />
-                    {logoPreview && <img src={logoPreview} alt="Logo Preview" className="image-preview" />}
-                </div>
+        //         <div className="form-group">
+        //             <label>GST Type</label>
+        //             <select name="gst_type" value={formData.gst_type} onChange={handleInputChange}>
+        //                 <option value="">Select GST Type</option>
+        //                 <option value="goods">Goods</option>
+        //                 <option value="services">Services</option>
+        //             </select>
+        //         </div>
 
-                <div className="form-group">
-                    <label>Swiggy Image</label>
-                    <input type="file" name="swiggy_image" onChange={handleFileChange} accept="image/*" />
-                    {swiggyPreview && <img src={swiggyPreview} alt="Swiggy Preview" className="image-preview" />}
-                </div>
+        //         <div className="form-group">
+        //             <label>Logo Image</label>
+        //             <input type="file" name="logo_image" onChange={handleFileChange} accept="image/*" />
+        //             {logoPreview && <img src={logoPreview} alt="Logo Preview" className="image-preview" />}
+        //         </div>
 
-                <div className="form-group">
-                    <label>Banner Image</label>
-                    <input type="file" name="banner_image" onChange={handleFileChange} accept="image/*" />
-                    {bannerPreview && <img src={bannerPreview} alt="Banner Preview" className="image-preview" />}
-                </div>
+        //         <div className="form-group">
+        //             <label>Swiggy Image</label>
+        //             <input type="file" name="swiggy_image" onChange={handleFileChange} accept="image/*" />
+        //             {swiggyPreview && <img src={swiggyPreview} alt="Swiggy Preview" className="image-preview" />}
+        //         </div>
 
-                <div className="form-group">
-                    <label>Outlet Price</label>
-                    <input
-                        type="number"
-                        name="outlet_prices"
-                        value={formData.outlet_prices[0]}
-                        onChange={(e) => setFormData({ ...formData, outlet_prices: [e.target.value] })}
-                    />
-                </div>
+        //         <div className="form-group">
+        //             <label>Banner Image</label>
+        //             <input type="file" name="banner_image" onChange={handleFileChange} accept="image/*" />
+        //             {bannerPreview && <img src={bannerPreview} alt="Banner Preview" className="image-preview" />}
+        //         </div>
 
-                <button type="submit">Register Item</button>
-            </form>
-        </div>
+        //         <div className="form-group">
+        //             <label>Outlet Price</label>
+        //             <input
+        //                 type="number"
+        //                 name="outlet_prices"
+        //                 value={formData.outlet_prices[0]}
+        //                 onChange={(e) => setFormData({ ...formData, outlet_prices: [e.target.value] })}
+        //             />
+        //         </div>
+
+        //         <button type="submit">Register Item</button>
+        //     </form>
+        // </div>
     );
 };
 

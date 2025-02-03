@@ -49,18 +49,49 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
                 </Card.Header>
                 <Card.Body>
                     <Row className="mb-3">
-                        <Col md={12} className="text-center">
+                        {/* Menu Image */}
+                        <Col md={4}>
                             <Form.Group>
-                                <Form.Label>Item Name (Hindi)</Form.Label>
+                                <Form.Label>Menu Image</Form.Label>
                                 <Form.Control
-                                    type="text"
-                                    name="item_name.hindi"
-                                    value={formData.item_name.hindi}
-                                    onChange={handleChange}
-                                    placeholder="Enter Item Name in Hindi"
+                                    type="file"
+                                    name="logo_image"
+                                    onChange={handleFileChange}
                                 />
+                                {logoPreview && <img src={logoPreview} alt="Menu Preview" width="100" />}
                             </Form.Group>
+                        </Col>
 
+                        {/* Swiggy Image */}
+                        <Col md={4}>
+                            <Form.Group>
+                                <Form.Label>Swiggy Image</Form.Label>
+                                <Form.Control
+                                    type="file"
+                                    name="swiggy_image"
+                                    onChange={handleFileChange}
+                                />
+                                {swiggyPreview && <img src={swiggyPreview} alt="Swiggy Preview" width="100" />}
+                            </Form.Group>
+                        </Col>
+
+                        {/* Banner Image */}
+                        <Col md={4}>
+                            <Form.Group>
+                                <Form.Label>Banner Image</Form.Label>
+                                <Form.Control
+                                    type="file"
+                                    name="banner_image"
+                                    onChange={handleFileChange}
+                                />
+                                {bannerPreview && <img src={bannerPreview} alt="Banner Preview" width="100" />}
+                            </Form.Group>
+                        </Col>
+                    </Row>
+
+
+                    <Row className="mb-3">
+                        <Col md={12} className="text-center">
                             <Form.Group>
                                 <Form.Label>Item Name (English)</Form.Label>
                                 <Form.Control
@@ -72,7 +103,22 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
                                     placeholder="Enter Item Name in English"
                                 />
                             </Form.Group>
+                        </Col>
+                        <Col>
+                            <Form.Group>
+                                <Form.Label>Item Name (Hindi)</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="item_name.hindi"
+                                    value={formData.item_name.hindi}
+                                    onChange={handleChange}
+                                    placeholder="Enter Item Name in Hindi"
+                                />
+                            </Form.Group>
+                        </Col>
 
+
+                        <Col>
                             <Form.Group>
                                 <Form.Label>Item Name (Gujarati)</Form.Label>
                                 <Form.Control
@@ -117,8 +163,8 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
                                 onChange={handleChange}
                                 required>
                                 <option value="">Select Dietary Type</option>
-                                <option value="goods">veg</option>
-                                <option value="goods">non-veg</option>
+                                <option value="veg">veg</option>
+                                <option value="non-veg">non-veg</option>
                             </Form.Control>
                         </Col>
                         <Col md={6}>
@@ -157,7 +203,7 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
                     </Row>
                 </Card.Body>
             </Card>
-        </Container>
+        </Container >
     );
 };
 
