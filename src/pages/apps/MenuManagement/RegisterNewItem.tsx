@@ -40,6 +40,10 @@ const RegisterNewItem: React.FC = () => {
         swiggy_image: null as File | null,
         banner_image: null as File | null,
         outlet_prices: ['20000'],
+        is_loose: false,
+        quantity_type: 'none' as 'none' | 'piece' | 'weight' | 'volume',
+        quantity_params: 'none' as 'none' | 'gm' | 'kg' | 'ml' | 'l',
+        quantity_value: '',
     });
 
     const gstTypes = ['goods', 'services'];
@@ -91,10 +95,11 @@ const RegisterNewItem: React.FC = () => {
         }
     };
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
+        const { name, type, checked, value } = e.target;
+
+        setFormData((prevState) => ({
+            ...prevState,
+            [name]: type === 'checkbox' ? checked : value, // ✅ Properly updates boolean values
         }));
     };
 
@@ -105,6 +110,10 @@ const RegisterNewItem: React.FC = () => {
         }
         return true;
     };
+
+    useEffect(() => {
+        console.log('Selected Business:', selectedBusiness); // Debugging
+    }, [selectedBusiness]);
 
     useEffect(() => {
         console.log('business_id:', business_id); // Debugging
@@ -167,6 +176,10 @@ const RegisterNewItem: React.FC = () => {
         formData.outlet_prices.forEach((price, index) => {
             formDataToSend.append(`outlet_prices[${index}]`, price);
         });
+        formDataToSend.append('is_loose', formData.is_loose.toString());
+        formDataToSend.append('quantity_type', formData.quantity_type);
+        formDataToSend.append('quantity_params', formData.quantity_params);
+        formDataToSend.append('quantity_value', formData.quantity_value);
 
         formDataToSend.forEach((value, key) => {
             console.log(`${key}:`, value);
@@ -193,6 +206,10 @@ const RegisterNewItem: React.FC = () => {
                 swiggy_image: null,
                 banner_image: null,
                 outlet_prices: [''],
+                is_loose: false,
+                quantity_type: 'none',
+                quantity_params: 'none',
+                quantity_value: '',
             });
             setLogoPreview(null);
             setSwiggyPreview(null);
@@ -215,17 +232,13 @@ const RegisterNewItem: React.FC = () => {
             swiggyPreview={swiggyPreview}
             bannerPreview={bannerPreview}
         />,
-        selectedBusiness ? (
-            <RegisterItemStep2
-                business_id={selectedBusiness.business_id}
-
-
-                setSelectedOutlets={setSelectedOutlets}
-            />
-        ) : (
-            <></>
-        ),
-        <RegisterItemStep3 />,
+        <RegisterItemStep2 />,
+        // selectedBusiness ? (
+        //     <RegisterItemStep2 business_id={selectedBusiness.business_id} setSelectedOutlets={setSelectedOutlets} />
+        // ) : (
+        //     <></>
+        // ),
+        <RegisterItemStep3 selectedOutlets={selectedOutlets} />,
     ]);
 
     return (

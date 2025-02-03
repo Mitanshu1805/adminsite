@@ -1,7 +1,24 @@
 import React from 'react';
 
-const RegisterItemStepThree = () => {
-    return <div>Yoo Done</div>;
+interface RegisterItemStepThreeProps {
+    selectedOutlets: string[];
+}
+
+const RegisterItemStepThree: React.FC<RegisterItemStepThreeProps> = ({ selectedOutlets }) => {
+    return (
+        <div>
+            <h2>Selected Outlets</h2>
+            {selectedOutlets.length > 0 ? (
+                <ul>
+                    {selectedOutlets.map((outletId) => (
+                        <li key={outletId}>{outletId}</li>
+                    ))}
+                </ul>
+            ) : (
+                <p>No outlets selected</p>
+            )}
+        </div>
+    );
 };
 
 export default RegisterItemStepThree;
