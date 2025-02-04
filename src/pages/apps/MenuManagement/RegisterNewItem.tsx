@@ -19,6 +19,7 @@ interface SelectedBusiness {
     id: string;
     business_id: string;
     name: string;
+    business_name: string;
     outlets: Outlet[]; // Add other required properties
 }
 
@@ -26,7 +27,7 @@ const RegisterNewItem: React.FC = () => {
     const dispatch = useDispatch();
 
     const [formData, setFormData] = useState({
-        item_name: { hindi: '', english: '', gujarati: '' },
+        item_name: { hindi: 'Hindi', english: 'Eng', gujarati: 'Guj' },
         online_display_name: '',
         price: '80',
         description: '',
@@ -39,10 +40,10 @@ const RegisterNewItem: React.FC = () => {
         logo_image: null as File | null,
         swiggy_image: null as File | null,
         banner_image: null as File | null,
-        outlet_prices: ['20000'],
+        outlet_prices: [{ outlet_id: '', price: '' }],
         is_loose: false,
         quantity_type: 'none' as 'none' | 'piece' | 'weight' | 'volume',
-        quantity_params: 'none' as 'none' | 'gm' | 'kg' | 'ml' | 'l',
+        quantity_params: 'none' as 'none' | 'gm' | 'kg' | 'ml' | 'lt',
         quantity_value: '',
     });
 
@@ -52,7 +53,7 @@ const RegisterNewItem: React.FC = () => {
     const [swiggyPreview, setSwiggyPreview] = useState<string | null>(null);
     const [bannerPreview, setBannerPreview] = useState<string | null>(null);
     const [selectedBusiness, setSelectedBusiness] = useState<SelectedBusiness | null>(null);
-    const [selectedOutlets, setSelectedOutlets] = useState<string[]>([]);
+    const [selectedOutlets, setSelectedOutlets] = useState<Outlet[]>([]);
     const { business_id, selectedCategoryId } = useParams<{ business_id: string; selectedCategoryId: string }>();
 
     const [errorMsg, setError] = useState<string>('');
@@ -145,9 +146,21 @@ const RegisterNewItem: React.FC = () => {
         }
     };
 
+    const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>, outlet_id: string) => {
+        const newPrice = e.target.value;
+
+        setFormData((prevFormData) => {
+            const updatedPrices = prevFormData.outlet_prices.map((priceEntry) =>
+                priceEntry.outlet_id === outlet_id ? { ...priceEntry, price: newPrice } : priceEntry
+            );
+            return { ...prevFormData, outlet_prices: updatedPrices };
+        });
+    };
+
     // Handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        console.log('Final Payload Before Dispatch:', JSON.stringify(formData, null, 2));
         console.log('Final Payload:', formData);
         if (!validateForm()) {
             console.log('Form validation failed');
@@ -173,9 +186,10 @@ const RegisterNewItem: React.FC = () => {
         if (formData.banner_image) {
             formDataToSend.append('banner_image', formData.banner_image);
         }
-        formData.outlet_prices.forEach((price, index) => {
-            formDataToSend.append(`outlet_prices[${index}]`, price);
+        formData.outlet_prices.forEach((price: { outlet_id: string; price: string }, index: number) => {
+            formDataToSend.append(`outlet_prices[${index}]`, JSON.stringify(price));
         });
+
         formDataToSend.append('is_loose', formData.is_loose.toString());
         formDataToSend.append('quantity_type', formData.quantity_type);
         formDataToSend.append('quantity_params', formData.quantity_params);
@@ -205,7 +219,7 @@ const RegisterNewItem: React.FC = () => {
                 logo_image: null,
                 swiggy_image: null,
                 banner_image: null,
-                outlet_prices: [''],
+                outlet_prices: [{ outlet_id: '', price: '' }],
                 is_loose: false,
                 quantity_type: 'none',
                 quantity_params: 'none',
@@ -232,13 +246,18 @@ const RegisterNewItem: React.FC = () => {
             swiggyPreview={swiggyPreview}
             bannerPreview={bannerPreview}
         />,
-        <RegisterItemStep2 />,
+        <RegisterItemStep2 selectedOutlets={selectedOutlets} setSelectedOutlets={setSelectedOutlets} />,
         // selectedBusiness ? (
         //     <RegisterItemStep2 business_id={selectedBusiness.business_id} setSelectedOutlets={setSelectedOutlets} />
         // ) : (
         //     <></>
         // ),
-        <RegisterItemStep3 selectedOutlets={selectedOutlets} />,
+        <RegisterItemStep3
+            formData={formData}
+            handlePriceChange={handlePriceChange}
+            selectedOutlets={selectedOutlets}
+            business={selectedBusiness}
+        />,
     ]);
 
     return (

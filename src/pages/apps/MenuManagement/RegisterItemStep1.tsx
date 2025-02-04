@@ -28,6 +28,7 @@ export interface RegisterItemOneProps {
     errorMsg: string;
     successMsg: string;
     handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+
     handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     handleSubmit: (e: React.FormEvent) => void;
     logoPreview: string | null;
@@ -45,25 +46,42 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
     swiggyPreview,
     bannerPreview,
 }) => {
-    const [quantityType, setQuantityType] = useState(formData.quantity_type || ''); // State for Quantity Type
-    const [quantityParams, setQuantityParams] = useState(formData.quantity_params || ''); // State for Quantity Params
+    // const [quantityType, setQuantityType] = useState(formData.quantity_type || ''); // State for Quantity Type
+    // const [quantityParams, setQuantityParams] = useState(formData.quantity_params || ''); // State for Quantity Params
 
     const handleLooseQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, checked } = e.target;
+        const { checked } = e.target;
         handleChange({
-            target: {
-                name,
-                value: checked ? true : false,
-            },
-        } as any); // Use `any` to bypass type check
+            target: { name: 'is_loose', value: checked.toString() },
+        } as any); // Convert boolean to string for input handling
+
+        // Reset quantity fields when 'is_loose' is unchecked
         if (!checked) {
-            setQuantityType(''); // Reset quantity type if not loose
+            handleChange({
+                target: { name: 'quantity_type', value: '' },
+            } as any);
+            handleChange({
+                target: { name: 'quantity_params', value: '' },
+            } as any);
+            handleChange({
+                target: { name: 'quantity_value', value: '' },
+            } as any);
         }
     };
-
-    const handleQuantityTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setQuantityType(e.target.value); // Update the selected quantity type
+    const handleQuantityValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        handleChange({
+            target: { name, value },
+        } as any); // Adjust to match the input change format
     };
+
+    const handleQuantityParamsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        handleChange({
+            target: { name, value },
+        } as any);
+    };
+
     return (
         <Container className="register-item-container">
             <Card className="shadow-sm">
@@ -151,7 +169,7 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
                                 name="is_loose"
                                 label="Is Loose Quantity"
                                 checked={formData.is_loose}
-                                onChange={handleChange}
+                                onChange={handleLooseQuantityChange}
                             />
                         </Col>
                     </Row>
@@ -164,8 +182,8 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
                                 <Form.Control
                                     as="select"
                                     name="quantity_type"
-                                    value={quantityType}
-                                    onChange={handleQuantityTypeChange}>
+                                    value={formData.quantity_type}
+                                    onChange={handleChange}>
                                     <option value="">Select Quantity Type</option>
                                     <option value="piece">Piece</option>
                                     <option value="weight">Weight</option>
@@ -174,7 +192,7 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
                             </Col>
 
                             {/* Depending on Quantity Type, show options for Piece, Weight, or Volume */}
-                            {quantityType === 'weight' && (
+                            {formData.quantity_type === 'weight' && (
                                 <>
                                     <Col md={6}>
                                         <Form.Label>Quantity Value</Form.Label>
@@ -191,8 +209,8 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
                                             <Col md={5}>
                                                 <Form.Select
                                                     name="quantity_params"
-                                                    value={quantityParams}
-                                                    onChange={(e) => setQuantityParams(e.target.value)}>
+                                                    value={formData.quantity_params}
+                                                    onChange={handleQuantityParamsChange}>
                                                     <option value="">Select Unit</option>
                                                     <option value="gm">gm</option>
                                                     <option value="kg">kg</option>
@@ -203,7 +221,7 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
                                 </>
                             )}
 
-                            {quantityType === 'piece' && (
+                            {formData.quantity_type === 'piece' && (
                                 <>
                                     <Col md={6}>
                                         <Form.Label>Quantity Value</Form.Label>
@@ -222,7 +240,7 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
                                 </>
                             )}
 
-                            {quantityType === 'volume' && (
+                            {formData.quantity_type === 'volume' && (
                                 <>
                                     <Col md={6}>
                                         <Form.Label>Quantity Value</Form.Label>
@@ -239,8 +257,8 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
                                             <Col md={5}>
                                                 <Form.Select
                                                     name="quantity_params"
-                                                    value={quantityParams}
-                                                    onChange={(e) => setQuantityParams(e.target.value)}>
+                                                    value={formData.quantity_params}
+                                                    onChange={handleQuantityParamsChange}>
                                                     <option value="">Select Unit</option>
                                                     <option value="m">ml</option>
                                                     <option value="lt">lt</option>

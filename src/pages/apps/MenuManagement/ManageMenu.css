@@ -166,3 +166,124 @@
 .delete-button {
     background-color: #f44336;
 }
+
+/* General container styles */
+.step2-container {
+    background-color: #ff6464;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 500px;
+    margin: auto;
+}
+
+/* Header section */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.title {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    color: #000;
+}
+
+/* Active All Button */
+.active-all-btn {
+    background-color: #f75d59;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 15px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+}
+
+.active-all-btn:hover {
+    background-color: #e04a45;
+}
+
+/* Outlet list */
+.outlet-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Outlet item */
+.outlet-item {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 10px 15px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+/* Checkbox */
+.checkbox {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+
+/* Outlet Name */
+.outlet-name {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    color: #000;
+}
+
+/* No outlets message */
+.no-outlets {
+    font-style: italic;
+    color: gray;
+    text-align: center;
+}
+
+/* RegisterItemStep3.css */
+.step3-container {
+    background-color: #ff6464;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+/* .title {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    color: #000;
+} */
+
+.outlet-card {
+    margin-top: 15px;
+}
+
+/* .outlet-name {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    color: #000;
+} */
+
+.price-input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+/* .no-outlets {
+    font-style: italic;
+    color: gray;
+} */

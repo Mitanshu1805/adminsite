@@ -79,6 +79,7 @@ import { useRedux } from '../../../hooks';
 import { useParams } from 'react-router-dom';
 import { RootState } from '../../../redux/store';
 import { businessList } from '../../../redux/business/actions';
+import './ManageMenu'; // Importing CSS
 
 interface Outlet {
     outlet_id: string;
@@ -91,109 +92,66 @@ interface Business {
 }
 
 interface RegisterItemStep2Props {
-    // business_id: string;
-    // setSelectedOutlets: (outlets: string[]) => void;
+    selectedOutlets: Outlet[];
+    setSelectedOutlets: React.Dispatch<React.SetStateAction<Outlet[]>>;
 }
 
-const RegisterItemStep2: React.FC<RegisterItemStep2Props> = () => {
+const RegisterItemStep2: React.FC<RegisterItemStep2Props> = ({ selectedOutlets, setSelectedOutlets }) => {
     const { business_id } = useParams<{ business_id: string }>();
-    const [outlets, setOutlets] = useState<Outlet[]>([]);
     const { dispatch, appSelector } = useRedux();
     const businesses = appSelector((state: RootState) => state.business.businesses || []);
-    const [selectedOutlets, setSelectedOutlets] = useState<string[]>([]);
 
     useEffect(() => {
-        console.log('Calling businessList API...');
         dispatch(businessList());
     }, [dispatch]);
 
     const business = businesses.find((biz: Business) => biz.business_id === business_id);
-    console.log('This is Business', business);
 
-    const toggleOutletSelection = (outletId: string) => {
-        setSelectedOutlets((prev) =>
-            prev.includes(outletId) ? prev.filter((id) => id !== outletId) : [...prev, outletId]
-        );
+    const toggleOutletSelection = (outlet: Outlet) => {
+        setSelectedOutlets((prev: Outlet[]) => {
+            const isSelected = prev.some((o) => o.outlet_id === outlet.outlet_id);
+            return isSelected ? prev.filter((o) => o.outlet_id !== outlet.outlet_id) : [...prev, outlet];
+        });
     };
 
     const selectAllOutlets = () => {
         if (business) {
-            setSelectedOutlets(business.outlets.map((outlet: Outlet) => outlet.outlet_id));
+            setSelectedOutlets(business.outlets);
         }
     };
-    // if (business_id) {
-    //     const business = businesses.find((business: Business) => business.business_id === business_id);
-
-    //     if (business) {
-    //         console.log('Business Found: ', business);
-    //         console.log('Outlets: ', business.outlets);
-    //     }
-    // }
-
-    // const businesses: Business[] = appSelector((state) => state.Business.businessList);
-    // console.log('Businesses from Redux:', businesses);
-
-    // useEffect(() => {
-    //     console.log('Received business_id:', business_id);
-    //     if (businesses.length > 0) {
-    //         console.log('Filtering business for ID:', business_id);
-    //         const selectedBusiness = businesses.find((b) => b.business_id === business_id);
-
-    //         if (selectedBusiness) {
-    //             console.log('Found matching business:', selectedBusiness);
-    //             setOutlets(selectedBusiness.outlets);
-    //         } else {
-    //             console.log('No matching business found.');
-    //             setOutlets([]);
-    //         }
-    //     }
-    // }, [business_id, businesses]);
-
-    // const handleOutletChange = (outletId: string) => {
-    //     setLocalSelectedOutlets((prevSelected) => {
-    //         const updatedSelection = prevSelected.includes(outletId)
-    //             ? prevSelected.filter((id) => id !== outletId)
-    //             : [...prevSelected, outletId];
-
-    //         setSelectedOutlets(updatedSelection);
-    //         return updatedSelection;
-    //     });
-    // };
 
     return (
-        <div className="bg-cream p-6 rounded-lg shadow-md">
-            <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-semibold text-black">Outlet Name</h3>
-                <button
-                    onClick={selectAllOutlets}
-                    className="bg-red-400 text-white px-4 py-2 rounded-lg font-semibold shadow-md">
-                    Active All
+        <div className="step2-container">
+            <div className="header">
+                <h3 className="title">Outlet Name</h3>
+                <button onClick={selectAllOutlets} className="active-all-btn">
+                    Select All
                 </button>
             </div>
 
             {business ? (
                 business.outlets.length > 0 ? (
-                    <div className="space-y-4">
+                    <div className="outlet-list">
                         {business.outlets.map((outlet: Outlet) => (
                             <div
                                 key={outlet.outlet_id}
-                                className="flex items-center bg-white p-4 rounded-lg shadow-sm cursor-pointer"
-                                onClick={() => toggleOutletSelection(outlet.outlet_id)}>
+                                className="outlet-item"
+                                onClick={() => toggleOutletSelection(outlet)}>
                                 <input
                                     type="checkbox"
-                                    checked={selectedOutlets.includes(outlet.outlet_id)}
+                                    checked={selectedOutlets.some((o) => o.outlet_id === outlet.outlet_id)}
                                     readOnly
-                                    className="w-6 h-6 mr-4"
+                                    className="checkbox"
                                 />
-                                <span className="text-lg text-black font-medium">{outlet.outlet_name}</span>
+                                <span className="outlet-name">{outlet.outlet_name}</span>
                             </div>
                         ))}
                     </div>
                 ) : (
-                    <p className="text-gray-500">No outlets available for this business.</p>
+                    <p className="no-outlets">No outlets available for this business.</p>
                 )
             ) : (
-                <p className="text-gray-500">Business not found.</p>
+                <p className="no-outlets">Business not found.</p>
             )}
         </div>
     );

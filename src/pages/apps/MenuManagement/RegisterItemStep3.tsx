@@ -1,24 +1,54 @@
+// RegisterItemStep3.tsx
 import React from 'react';
+import './ManageMenu';
 
-interface RegisterItemStepThreeProps {
-    selectedOutlets: string[];
+interface Outlet {
+    outlet_id: string;
+    outlet_name: string;
 }
 
-const RegisterItemStepThree: React.FC<RegisterItemStepThreeProps> = ({ selectedOutlets }) => {
+interface Business {
+    business_id: string;
+    business_name: string;
+    outlets: Outlet[];
+}
+
+interface RegisterItemStep3Props {
+    formData: {
+        outlet_prices: { outlet_id: string; price: string }[]; // Array of objects with outlet_id and price
+    };
+    selectedOutlets: Outlet[]; // Outlets that the user has selected
+    business: Business | null;
+    handlePriceChange: (e: React.ChangeEvent<HTMLInputElement>, outlet_id: string) => void; // Update price based on outlet_id
+}
+
+const RegisterItemStep3: React.FC<RegisterItemStep3Props> = ({ selectedOutlets, formData, handlePriceChange }) => {
     return (
-        <div>
-            <h2>Selected Outlets</h2>
+        <div className="step3-container">
+            <h2 className="title">Outlet List</h2>
             {selectedOutlets.length > 0 ? (
-                <ul>
-                    {selectedOutlets.map((outletId) => (
-                        <li key={outletId}>{outletId}</li>
-                    ))}
-                </ul>
+                selectedOutlets.map((outlet) => {
+                    const price =
+                        formData.outlet_prices.find((priceEntry) => priceEntry.outlet_id === outlet.outlet_id)?.price ||
+                        ''; // Get price by outlet_id or default to an empty string
+                    return (
+                        <div key={outlet.outlet_id} className="outlet-card">
+                            <h3 className="outlet-name">{outlet.outlet_name}</h3>
+                            <input
+                                type="text"
+                                value={price}
+                                onChange={(e) => handlePriceChange(e, outlet.outlet_id)} // Update price for this outlet
+                                placeholder="Enter Item Price"
+                                className="price-input"
+                            />
+                        </div>
+                    );
+                })
             ) : (
-                <p>No outlets selected</p>
+                <p className="no-outlets">No outlets selected.</p>
             )}
         </div>
     );
 };
 
-export default RegisterItemStepThree;
+export default RegisterItemStep3;
