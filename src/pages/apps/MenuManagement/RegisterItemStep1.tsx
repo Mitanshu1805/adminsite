@@ -334,7 +334,7 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
                                     onChange={handleChange}
                                     required>
                                     <option value="delivery">Delivery</option>
-                                    <option value="pick-up">Pick-up</option>
+                                    <option value="pick_up">Pick-up</option>
                                     <option value="dine_in">Dine-in</option>
                                     <option value="online">Online</option>
                                 </Form.Control>

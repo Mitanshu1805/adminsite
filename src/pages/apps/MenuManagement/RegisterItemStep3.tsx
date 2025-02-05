@@ -15,7 +15,7 @@ interface Business {
 
 interface RegisterItemStep3Props {
     formData: {
-        outlet_prices: { outlet_id: string; price: string }[]; // Array of objects with outlet_id and price
+        outlet_prices: { outlet_id: string; price: number }[]; // Array of objects with outlet_id and price
     };
     selectedOutlets: Outlet[]; // Outlets that the user has selected
     business: Business | null;
@@ -28,16 +28,16 @@ const RegisterItemStep3: React.FC<RegisterItemStep3Props> = ({ selectedOutlets, 
             <h2 className="title">Outlet List</h2>
             {selectedOutlets.length > 0 ? (
                 selectedOutlets.map((outlet) => {
-                    const price =
-                        formData.outlet_prices.find((priceEntry) => priceEntry.outlet_id === outlet.outlet_id)?.price ||
-                        ''; // Get price by outlet_id or default to an empty string
+                    const price = formData.outlet_prices.find(
+                        (priceEntry) => priceEntry.outlet_id === outlet.outlet_id
+                    )?.price;
                     return (
                         <div key={outlet.outlet_id} className="outlet-card">
                             <h3 className="outlet-name">{outlet.outlet_name}</h3>
                             <input
-                                type="text"
+                                type="number"
                                 value={price}
-                                onChange={(e) => handlePriceChange(e, outlet.outlet_id)} // Update price for this outlet
+                                onChange={(e) => handlePriceChange(e, outlet.outlet_id)}
                                 placeholder="Enter Item Price"
                                 className="price-input"
                             />

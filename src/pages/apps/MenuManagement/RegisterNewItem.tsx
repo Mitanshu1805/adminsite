@@ -8,11 +8,14 @@ import './RegisterNewItem.css';
 import RegisterItemStep1 from './RegisterItemStep1';
 import RegisterItemStep2 from './RegisterItemStep2';
 import RegisterItemStep3 from './RegisterItemStep3';
-import { on } from 'events';
 
 interface Outlet {
     outlet_id: string;
     outlet_name: string;
+}
+interface OutletPrice {
+    outlet_id: string;
+    price: number;
 }
 
 interface SelectedBusiness {
@@ -27,12 +30,12 @@ const RegisterNewItem: React.FC = () => {
     const dispatch = useDispatch();
 
     const [formData, setFormData] = useState({
-        item_name: { hindi: 'Hindi', english: 'Eng', gujarati: 'Guj' },
+        item_name: { hindi: '', english: '', gujarati: '' },
         online_display_name: '',
         price: '80',
         description: '',
         dietary: 'veg',
-        available_order_type: ['dine_in'],
+        available_order_type: [''],
         // Ok so now in available_order_type we have to implement a multiselect option where a user can select one or more options from the above given and it should be in array.
         gst_type: 'none',
         category_id: '',
@@ -40,11 +43,11 @@ const RegisterNewItem: React.FC = () => {
         logo_image: null as File | null,
         swiggy_image: null as File | null,
         banner_image: null as File | null,
-        outlet_prices: [{ outlet_id: '', price: '' }],
+        outlet_prices: [{ outlet_id: '', price: 0 }],
         is_loose: false,
         quantity_type: 'none' as 'none' | 'piece' | 'weight' | 'volume',
         quantity_params: 'none' as 'none' | 'gm' | 'kg' | 'ml' | 'lt',
-        quantity_value: '',
+        quantity_value: 'none',
     });
 
     const gstTypes = ['goods', 'services'];
@@ -95,13 +98,66 @@ const RegisterNewItem: React.FC = () => {
             }));
         }
     };
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, type, checked, value } = e.target;
+    // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const { name, type, checked, value } = e.target;
+    //     const newValue = type === 'checkbox' ? checked : value;
 
-        setFormData((prevState) => ({
-            ...prevState,
-            [name]: type === 'checkbox' ? checked : value, // ✅ Properly updates boolean values
-        }));
+    //     setFormData((prevState) => {
+    //         const updatedState = { ...prevState, [name]: newValue };
+    //         console.log('Updated State:', updatedState); // ✅ Debugging
+    //         return updatedState;
+    //     });
+
+    //     console.log('Name and Value', e.target.name, e.target.value);
+    // };
+
+    // const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    //     const { name, value, type, multiple } = e.target;
+
+    //     if (type === 'select' && multiple) {
+    //         const selectElement = e.target as HTMLSelectElement;
+    //         const selectedValues = Array.from(selectElement.selectedOptions, (option) => option.value);
+
+    //         // Log the selected values to debug
+    //         console.log(selectedValues);
+
+    //         setFormData((prevState) => ({
+    //             ...prevState,
+    //             [name]: selectedValues, // Update the array of selected values
+    //         }));
+    //         return;
+    //     }
+
+    //     // Handle other changes (input, text, etc.)
+    //     setFormData((prevState) => ({
+    //         ...prevState,
+    //         [name]: value,
+    //     }));
+    // };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value, type, multiple } = e.target;
+
+        // Handling nested state updates properly
+        setFormData((prevState) => {
+            // Check if the field is inside `item_name`
+            if (name.startsWith('item_name.')) {
+                const field = name.split('.')[1]; // Extract 'hindi', 'english', or 'gujarati'
+                return {
+                    ...prevState,
+                    item_name: {
+                        ...prevState.item_name,
+                        [field]: value, // Update only the specific field
+                    },
+                };
+            }
+
+            // Handle normal fields
+            return {
+                ...prevState,
+                [name]: value,
+            };
+        });
     };
 
     const validateForm = () => {
@@ -146,16 +202,32 @@ const RegisterNewItem: React.FC = () => {
         }
     };
 
-    const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>, outlet_id: string) => {
-        const newPrice = e.target.value;
+    // Assuming you have a handlePriceChange function like this:
 
-        setFormData((prevFormData) => {
-            const updatedPrices = prevFormData.outlet_prices.map((priceEntry) =>
-                priceEntry.outlet_id === outlet_id ? { ...priceEntry, price: newPrice } : priceEntry
-            );
-            return { ...prevFormData, outlet_prices: updatedPrices };
+    const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>, outlet_id: string) => {
+        const updatedPrice = parseFloat(e.target.value); // Convert to number
+
+        if (isNaN(updatedPrice)) {
+            return; // Prevent invalid input
+        }
+
+        const updatedOutletPrices = [...formData.outlet_prices];
+        const outletIndex = updatedOutletPrices.findIndex((priceEntry) => priceEntry.outlet_id === outlet_id);
+
+        if (outletIndex !== -1) {
+            updatedOutletPrices[outletIndex].price = updatedPrice; // Update price
+        } else {
+            updatedOutletPrices.push({ outlet_id, price: updatedPrice }); // If outlet is new, add it
+        }
+
+        // Update the form data with the new prices
+        setFormData({
+            ...formData,
+            outlet_prices: updatedOutletPrices,
         });
     };
+
+    const validOutletPrices = formData.outlet_prices.filter((price) => price.outlet_id !== '' && price.price !== 0);
 
     // Handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
@@ -173,7 +245,8 @@ const RegisterNewItem: React.FC = () => {
         formDataToSend.append('price', formData.price);
         formDataToSend.append('description', formData.description);
         formDataToSend.append('dietary', formData.dietary);
-        formDataToSend.append('available_order_type', JSON.stringify(formData.available_order_type));
+        formDataToSend.append('available_order_type', JSON.stringify([formData.available_order_type]));
+
         formDataToSend.append('gst_type', formData.gst_type);
         formDataToSend.append('category_id', formData.category_id);
         formDataToSend.append('business_id', formData.business_id);
@@ -186,9 +259,13 @@ const RegisterNewItem: React.FC = () => {
         if (formData.banner_image) {
             formDataToSend.append('banner_image', formData.banner_image);
         }
-        formData.outlet_prices.forEach((price: { outlet_id: string; price: string }, index: number) => {
-            formDataToSend.append(`outlet_prices[${index}]`, JSON.stringify(price));
-        });
+        if (validOutletPrices.length > 0) {
+            formDataToSend.append('outlet_prices', JSON.stringify(validOutletPrices));
+        }
+
+        // formData.outlet_prices.forEach((price: OutletPrice, index: number) => {
+        //     formDataToSend.append(`outlet_prices[${index}]`, JSON.stringify(price));
+        // });
 
         formDataToSend.append('is_loose', formData.is_loose.toString());
         formDataToSend.append('quantity_type', formData.quantity_type);
@@ -219,7 +296,7 @@ const RegisterNewItem: React.FC = () => {
                 logo_image: null,
                 swiggy_image: null,
                 banner_image: null,
-                outlet_prices: [{ outlet_id: '', price: '' }],
+                outlet_prices: [{ outlet_id: '', price: 0 }],
                 is_loose: false,
                 quantity_type: 'none',
                 quantity_params: 'none',
