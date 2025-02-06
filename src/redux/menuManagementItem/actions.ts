@@ -51,8 +51,6 @@ export type MenuManagementItemAction =
           type: typeof MenuManagementItemActionTypes.DELETE_ITEM;
           payload: {
               item_id: string;
-              category_id: string;
-              business_id: string;
           };
       }
     | { type: typeof MenuManagementItemActionTypes.DELETE_ITEM_SUCCESS; payload: { message: string } }
@@ -123,12 +121,10 @@ export const updateItemError = (error: string): MenuManagementItemAction => ({
     payload: { error },
 });
 
-export const deleteItem = (item_id: string, category_id: string, business_id: string): MenuManagementItemAction => ({
+export const deleteItem = (item_id: string): MenuManagementItemAction => ({
     type: MenuManagementItemActionTypes.DELETE_ITEM,
     payload: {
         item_id,
-        category_id,
-        business_id,
     },
 });
 

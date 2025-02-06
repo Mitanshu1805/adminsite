@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ErrorBoundary from '../../../components/ErrorBoundary';
 import { categoryItemList } from '../../../redux/menuManagementCategory/actions';
+import { deleteItem, updateItem } from '../../../redux/menuManagementItem/actions';
 import { useRedux } from '../../../hooks';
 import { RootState } from '../../../redux/store';
 import './ManageMenu.css';
@@ -25,6 +26,9 @@ interface CategoryItem {
 const ManageMenu: React.FC = () => {
     const { business_id } = useParams<{ business_id: string }>();
     const { dispatch, appSelector } = useRedux();
+    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [editItem, setEditItem] = useState<CategoryItem['items'][number] | null>(null);
+    const [message, setMessage] = useState<string>('');
     const categories = appSelector((state: RootState) => state.category.categories || []);
     const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
 
@@ -39,6 +43,39 @@ const ManageMenu: React.FC = () => {
     const handleCategoryClick = (category_id: string) => {
         console.log('Category Clicked:', category_id); // Debugging log
         setSelectedCategoryId(category_id === selectedCategoryId ? null : category_id);
+    };
+
+    const handleDeleteItem = (item_id: string) => {
+        const confirmDeleteitem = window.confirm('Are you sure you want to delete this Item?');
+        if (confirmDeleteitem) {
+            dispatch(deleteItem(item_id));
+            setMessage('Item deleted successfully');
+        }
+    };
+
+    const handleEditItem = (item_id: string) => {
+        navigate(`/apps/edit-item/${item_id}`);
+    };
+
+    const handleSaveChanges = () => {
+        if (editItem) {
+            // Create a FormData object
+            const formData = new FormData();
+
+            // Append each field of the editItem to the FormData
+            formData.append('item_id', editItem.item_id);
+            formData.append('item_name', editItem.item_name);
+            formData.append('price', editItem.price.toString()); // Ensure the price is a string
+            formData.append('dietary', editItem.dietary);
+            formData.append('available_order_type', JSON.stringify(editItem.available_order_type)); // Serialize array
+
+            console.log('Dispatching update with FormData payload', formData);
+
+            // Dispatch the updateItem action with the FormData
+            dispatch(updateItem(formData));
+        } else {
+            setMessage('No item to save.');
+        }
     };
 
     const filteredItems = categories
@@ -81,8 +118,12 @@ const ManageMenu: React.FC = () => {
                                 <p>Total Amount: 0</p>
                             </div>
                             <div className="item-actions">
-                                <button className="edit-button">Edit</button>
-                                <button className="delete-button">Delete</button>
+                                <button className="edit-button" onClick={() => handleEditItem(item.item_id)}>
+                                    Edit
+                                </button>
+                                <button className="delete-button" onClick={() => handleDeleteItem(item.item_id)}>
+                                    Delete
+                                </button>
                             </div>
                         </div>
                     ))
