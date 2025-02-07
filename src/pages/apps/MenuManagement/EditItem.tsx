@@ -6,8 +6,9 @@ import './ManageMenu.css';
 import { updateItem } from '../../../redux/menuManagementItem/actions';
 
 interface CategoryItem {
+    selectedCategoryId: string;
     item_id: string;
-    item_name: {
+    item_names: {
         hindi: string;
         english: string;
         gujarati: string;
@@ -27,7 +28,16 @@ interface CategoryItem {
     quantity_type: string;
     quantity_params: string;
     quantity_value: number;
-    outlet_prices: { outlet_id: string; price: number }[]; // Example structure for outlet prices
+    outlets: Outlet[];
+    outlet_prices: { outlet_id: string; price: number }[];
+}
+
+interface Outlet {
+    outlet_id: string;
+    outlet_name: string;
+    price: number;
+    sequence_no: number;
+    disable_until: string | null;
 }
 
 interface Category {
@@ -37,32 +47,62 @@ interface Category {
 }
 
 const EditItemPage: React.FC = () => {
-    const { item_id } = useParams<{ item_id: string }>(); // Get item_id from URL
+    const { item_id, category_id, selectedCategoryId } =
+        useParams<{ item_id: string; category_id: string; selectedCategoryId: string }>(); // Get item_id from URL
     const { dispatch, appSelector } = useRedux();
     const [editItem, setEditItem] = useState<CategoryItem | null>(null);
     const [message, setMessage] = useState<string>('');
     const categories = appSelector((state: RootState) => state.category.categories || []);
     const navigate = useNavigate();
 
+    // useEffect(() => {
+    //     if (item_id) {
+    //         const itemToEdit = categories
+    //             .flatMap((category: Category) => category.items)
+    //             .find((item: CategoryItem) => item.item_id === item_id);
+    //         console.log(categories);
+    //         // console.log(category);
+    //         if (itemToEdit) {
+    //             console.log('Item to Edit:', itemToEdit);
+
+    //             const category = categories.find((cat: Category) => cat.category_id === category_id);
+
+    //             if (category) {
+    //                 console.log('Category for the item: ', category.category_id);
+    //             }
+
+    //             setEditItem(itemToEdit);
+    //         } else {
+    //             setMessage('Item not found.');
+    //         }
+    //     }
+    // }, [item_id, categories]);
+
     useEffect(() => {
         if (item_id) {
             const itemToEdit = categories
-                .flatMap((category: Category) => category.items)
+                .flatMap((category: Category) =>
+                    category.items.map((item: CategoryItem) => ({
+                        ...item,
+                        category_id: category.category_id,
+                    }))
+                )
                 .find((item: CategoryItem) => item.item_id === item_id);
 
             if (itemToEdit) {
-                setEditItem(itemToEdit);
+                console.log('Item to Edit:', itemToEdit);
+                setEditItem(itemToEdit); // Set the found item to the state
             } else {
                 setMessage('Item not found.');
             }
         }
-    }, [item_id, categories]);
+    }, [item_id, categories]); // Trigger effect when item_id or categories change
 
     const handleSaveChanges = () => {
         if (editItem) {
             // Create a FormData object and append the item data
             const formData = new FormData();
-            formData.append('item_name', JSON.stringify(editItem.item_name));
+            formData.append('item_name', JSON.stringify(editItem.item_names));
             formData.append('online_display_name', editItem.online_display_name);
             formData.append('price', editItem.price.toString());
             formData.append('description', editItem.description);
@@ -70,7 +110,7 @@ const EditItemPage: React.FC = () => {
             formData.append('available_order_type', JSON.stringify(editItem.available_order_type));
             formData.append('gst_type', editItem.gst_type);
             formData.append('category_id', editItem.category_id);
-            formData.append('business_id', editItem.business_id);
+            formData.append('item_id', editItem.item_id);
 
             // Handle optional files
             if (editItem.logo_image) {
@@ -83,12 +123,16 @@ const EditItemPage: React.FC = () => {
                 formData.append('banner_image', editItem.banner_image);
             }
 
-            // Example: filter outlet prices
-            const validOutletPrices = editItem.outlet_prices.filter(
-                (price) => price.outlet_id !== '' && price.price !== 0
+            const outletPrices = editItem.outlets.map((outlet) => ({
+                outlet_id: outlet.outlet_id,
+                price: outlet.price,
+            }));
+
+            const validOutletPrices = outletPrices.filter(
+                (outletPrice) => outletPrice.outlet_id !== '' && outletPrice.price !== 0
             );
 
-            if (validOutletPrices.length > 0) {
+            if (validOutletPrices?.length > 0) {
                 formData.append('outlet_prices', JSON.stringify(validOutletPrices));
             }
 
@@ -100,7 +144,7 @@ const EditItemPage: React.FC = () => {
 
             // Dispatch the update action
             dispatch(updateItem(formData));
-            navigate('/manage-menu'); // Navigate back to the menu list after saving
+            // navigate('/apps/manage-menu/:business_id'); // Navigate back to the menu list after saving
         } else {
             setMessage('No item to save.');
         }
@@ -116,11 +160,11 @@ const EditItemPage: React.FC = () => {
                         <label>Item Name (English)</label>
                         <input
                             type="text"
-                            value={editItem.item_name.english}
+                            value={editItem.item_names.english}
                             onChange={(e) =>
                                 setEditItem({
                                     ...editItem,
-                                    item_name: { ...editItem.item_name, english: e.target.value },
+                                    item_names: { ...editItem.item_names, english: e.target.value },
                                 })
                             }
                         />
@@ -129,11 +173,11 @@ const EditItemPage: React.FC = () => {
                         <label>Item Name (Hindi):</label>
                         <input
                             type="text"
-                            value={editItem.item_name.hindi}
+                            value={editItem.item_names.hindi}
                             onChange={(e) =>
                                 setEditItem({
                                     ...editItem,
-                                    item_name: { ...editItem.item_name, hindi: e.target.value },
+                                    item_names: { ...editItem.item_names, hindi: e.target.value },
                                 })
                             }
                         />
@@ -142,11 +186,11 @@ const EditItemPage: React.FC = () => {
                         <label>Item Name (Gujarati):</label>
                         <input
                             type="text"
-                            value={editItem.item_name.gujarati}
+                            value={editItem.item_names.gujarati}
                             onChange={(e) =>
                                 setEditItem({
                                     ...editItem,
-                                    item_name: { ...editItem.item_name, gujarati: e.target.value },
+                                    item_names: { ...editItem.item_names, gujarati: e.target.value },
                                 })
                             }
                         />
@@ -176,29 +220,44 @@ const EditItemPage: React.FC = () => {
                     </div>
                     <div>
                         <label>Dietary:</label>
-                        <input
-                            type="text"
+                        <select
                             value={editItem.dietary}
-                            onChange={(e) => setEditItem({ ...editItem, dietary: e.target.value })}
-                        />
+                            onChange={(e) => setEditItem({ ...editItem, dietary: e.target.value })}>
+                            <option value="veg">Veg</option>
+                            <option value="non-veg">Non-Veg</option>
+                        </select>
                     </div>
+
                     <div>
                         <label>Available Order Types:</label>
-                        <input
-                            type="text"
-                            value={editItem.available_order_type.join(', ')}
-                            onChange={(e) =>
-                                setEditItem({ ...editItem, available_order_type: e.target.value.split(', ') })
-                            }
-                        />
+                        <select
+                            multiple
+                            value={editItem.available_order_type}
+                            onChange={(e) => {
+                                const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
+                                setEditItem({ ...editItem, available_order_type: selectedOptions });
+                            }}>
+                            <option value="dine_in">Dine In</option>
+                            <option value="take_away">Take Away</option>
+                            <option value="delivery">Delivery</option>
+                            <option value="pickup">Pickup</option>
+                        </select>
                     </div>
+
                     <div>
                         <label>GST Type:</label>
-                        <input
+                        {/* <input
                             type="text"
                             value={editItem.gst_type}
                             onChange={(e) => setEditItem({ ...editItem, gst_type: e.target.value })}
-                        />
+                        /> */}
+                        <select
+                            value={editItem.gst_type}
+                            onChange={(e) => setEditItem({ ...editItem, gst_type: e.target.value })}>
+                            {' '}
+                            <option value="goods">Goods</option>
+                            <option value="services">Services</option>
+                        </select>
                     </div>
 
                     <div>
@@ -209,30 +268,72 @@ const EditItemPage: React.FC = () => {
                             onChange={(e) => setEditItem({ ...editItem, is_loose: e.target.checked })}
                         />
                     </div>
-                    <div>
-                        <label>Quantity Type:</label>
-                        <input
-                            type="text"
-                            value={editItem.quantity_type}
-                            onChange={(e) => setEditItem({ ...editItem, quantity_type: e.target.value })}
-                        />
-                    </div>
-                    <div>
-                        <label>Quantity Params:</label>
-                        <input
-                            type="text"
-                            value={editItem.quantity_params}
-                            onChange={(e) => setEditItem({ ...editItem, quantity_params: e.target.value })}
-                        />
-                    </div>
-                    <div>
-                        <label>Quantity Value:</label>
-                        <input
-                            type="number"
-                            value={editItem.quantity_value}
-                            onChange={(e) => setEditItem({ ...editItem, quantity_value: parseFloat(e.target.value) })}
-                        />
-                    </div>
+
+                    {editItem.is_loose && (
+                        <div>
+                            <div>
+                                <label>Quantity Type:</label>
+                                <select
+                                    value={editItem.quantity_type}
+                                    onChange={(e) => setEditItem({ ...editItem, quantity_type: e.target.value })}>
+                                    <option value="piece">Piece</option>
+                                    <option value="weight">Weight</option>
+                                    <option value="volume">Volume</option>
+                                </select>
+                            </div>
+
+                            {editItem.quantity_type === 'piece' && (
+                                <div>
+                                    <label>Quantity (Piece):</label>
+                                    <input
+                                        type="number"
+                                        value={editItem.quantity_value}
+                                        onChange={(e) =>
+                                            setEditItem({ ...editItem, quantity_value: parseFloat(e.target.value) })
+                                        }
+                                    />
+                                </div>
+                            )}
+
+                            {(editItem.quantity_type === 'weight' || editItem.quantity_type === 'volume') && (
+                                <>
+                                    <div>
+                                        <label>Quantity Params:</label>
+                                        <select
+                                            value={editItem.quantity_params}
+                                            onChange={(e) =>
+                                                setEditItem({ ...editItem, quantity_params: e.target.value })
+                                            }>
+                                            {editItem.quantity_type === 'weight' && (
+                                                <>
+                                                    <option value="gm">GM</option>
+                                                    <option value="kg">KG</option>
+                                                </>
+                                            )}
+                                            {editItem.quantity_type === 'volume' && (
+                                                <>
+                                                    <option value="m">M</option>
+                                                    <option value="lt">LT</option>
+                                                </>
+                                            )}
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label>Quantity Value:</label>
+                                        <input
+                                            type="number"
+                                            value={editItem.quantity_value}
+                                            onChange={(e) =>
+                                                setEditItem({ ...editItem, quantity_value: parseFloat(e.target.value) })
+                                            }
+                                        />
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    )}
+
                     <button onClick={handleSaveChanges}>Save Changes</button>
                 </div>
             ) : (

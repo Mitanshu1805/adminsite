@@ -44,6 +44,16 @@
     cursor: pointer;
 }
 
+.add-category-button {
+    background-color: #ff6464;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
 .category-tabs {
     display: flex;
     gap: 15px;
