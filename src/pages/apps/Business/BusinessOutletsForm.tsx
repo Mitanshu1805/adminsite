@@ -44,6 +44,7 @@ const BusinessOutletsForm: React.FC<BusinessOutletsFormProps> = ({
     const outletTypes = ['coco', 'cofo', 'fofo', 'foco'];
 
     const [outlets, setOutlets] = useState<Outlet[]>(formData.outlets);
+    const [validationErrors, setValidationErrors] = useState<Outlet[]>([]);
 
     useEffect(() => {
         // Fetch languages if not already loaded
@@ -67,9 +68,34 @@ const BusinessOutletsForm: React.FC<BusinessOutletsFormProps> = ({
     };
 
     const removeOutlet = (index: number) => {
+        if (outlets.length === 1) {
+            alert("At least one outlet should be there!");
+            return;
+        }
         const updatedOutlets = outlets.filter((_, i) => i !== index);
         setOutlets(updatedOutlets);
         onOutletsChange(updatedOutlets);
+    };
+
+    const validateOutlet = (outlet: Outlet) => {
+        const errors: any = {};
+
+        // Validate outlet_name
+        if (!outlet.outlet_name) errors.outlet_name = 'Outlet name is required';
+
+        // Validate outlet_type
+        if (!outlet.outlet_type) errors.outlet_type = 'Outlet type is required';
+
+        // Validate outlet_address
+        if (!outlet.outlet_address) errors.outlet_address = 'Outlet address is required';
+
+        // Validate outlet_gst_no
+        if (!outlet.outlet_gst_no) errors.outlet_gst_no = 'Outlet GST number is required';
+
+        // Validate language_id
+        if (!outlet.language_id) errors.language_id = 'Language is required';
+
+        return errors;
     };
 
     const handleInputChange = (
@@ -87,6 +113,20 @@ const BusinessOutletsForm: React.FC<BusinessOutletsFormProps> = ({
 
         setOutlets(updatedOutlets);
         onOutletsChange(updatedOutlets);
+        setValidationErrors([]);
+    };
+
+    const handleFormSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        const errors = outlets.map(validateOutlet);
+        const hasErrors = errors.some((error) => Object.keys(error).length > 0);
+
+        if (hasErrors) {
+            setValidationErrors(errors);
+            return;
+        }
+
+        handleSubmit(e);
     };
 
     return (
@@ -96,7 +136,7 @@ const BusinessOutletsForm: React.FC<BusinessOutletsFormProps> = ({
                     Register Outlets
                 </Card.Header>
                 <Card.Body>
-                    <Form onSubmit={handleSubmit}>
+                    <Form onSubmit={handleFormSubmit}>
                         {outlets.map((outlet, index) => (
                             <div key={index}>
                                 <Row className="mb-3">
@@ -110,6 +150,9 @@ const BusinessOutletsForm: React.FC<BusinessOutletsFormProps> = ({
                                             required
                                             placeholder="Enter outlet name"
                                         />
+                                        {validationErrors[index]?.outlet_name && (
+                                            <Alert variant="danger">{validationErrors[index]?.outlet_name}</Alert>
+                                        )}
                                     </Col>
                                     <Col>
                                         <Form.Group controlId={`outlet-type-${index}`}>
@@ -126,7 +169,11 @@ const BusinessOutletsForm: React.FC<BusinessOutletsFormProps> = ({
                                                         {type}
                                                     </option>
                                                 ))}
+
                                             </Form.Control>
+                                            {validationErrors[index]?.outlet_type && (
+                                                <Alert variant="danger">{validationErrors[index]?.outlet_type}</Alert>
+                                            )}
                                         </Form.Group>
                                     </Col>
                                 </Row>
@@ -140,6 +187,7 @@ const BusinessOutletsForm: React.FC<BusinessOutletsFormProps> = ({
                                             checked={outlet.is_primary_outlet}
                                             onChange={(e) => handleInputChange(e, index)}
                                         />
+
                                     </Col>
                                     <Col>
                                         <Form.Label>Outlet Address</Form.Label>
@@ -151,6 +199,9 @@ const BusinessOutletsForm: React.FC<BusinessOutletsFormProps> = ({
                                             required
                                             placeholder="Enter outlet address"
                                         />
+                                        {validationErrors[index]?.outlet_address && (
+                                            <Alert variant="danger">{validationErrors[index]?.outlet_address}</Alert>
+                                        )}
                                     </Col>
                                 </Row>
                                 <Row className="mb-3">
@@ -164,6 +215,9 @@ const BusinessOutletsForm: React.FC<BusinessOutletsFormProps> = ({
                                             required
                                             placeholder="Enter GST number"
                                         />
+                                        {validationErrors[index]?.outlet_gst_no && (
+                                            <Alert variant="danger">{validationErrors[index]?.outlet_gst_no}</Alert>
+                                        )}
                                     </Col>
                                     <Col>
                                         <Form.Label>Language</Form.Label>
@@ -186,6 +240,9 @@ const BusinessOutletsForm: React.FC<BusinessOutletsFormProps> = ({
                                                 ))
                                             )}
                                         </Form.Control>
+                                        {validationErrors[index]?.language_id && (
+                                            <Alert variant="danger">{validationErrors[index]?.language_id}</Alert>
+                                        )}
                                     </Col>
                                 </Row>
                                 <Row className="mb-3">

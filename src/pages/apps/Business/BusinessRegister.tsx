@@ -57,6 +57,8 @@ const RegisterBusiness: React.FC = () => {
     const [errorMsg, setError] = useState<string>('');
     const [successMsg, setSuccess] = useState<string>('');
     const [formSubmitted, setFormSubmitted] = useState<boolean>(false);
+    const [errors, setErrors] = useState<Record<string, string>>({});
+
     const [languages, setLanguages] = useState<{ id: string; name: string }[]>([]);
 
     // Load form data from localStorage when the component mounts
@@ -85,6 +87,35 @@ const RegisterBusiness: React.FC = () => {
             business_users: updatedUsers,
         }));
     };
+
+    const validateCurrentStep = (): boolean => {
+        let newErrors: Record<string, string> = {};
+
+        if (currentStepIndex === 0) {
+            // Validate Business Info Step
+            if (!formData.business_name.trim()) newErrors.business_name = "Business name is required.";
+            if (!formData.business_contact.trim()) newErrors.business_contact = "Business contact is required.";
+            if (!formData.business_address.trim()) newErrors.business_address = "Business address is required.";
+            if (!formData.gst_no.trim()) newErrors.gst_no = "GST number is required.";
+            if (!formData.cuisine.trim()) newErrors.cuisine = "Cuisine is required.";
+            if (!formData.currency.trim()) newErrors.currency = "Currency is required.";
+            if (!formData.business_logo) newErrors.business_logo = "Business logo is required.";
+        } else if (currentStepIndex === 1) {
+            // Validate Business Outlets Step
+            if (formData.outlets.length === 0 || formData.outlets[0].outlet_name.trim() === "") {
+                newErrors.outlets = "At least one outlet is required.";
+            }
+        } else if (currentStepIndex === 2) {
+            // Validate Business Users Step
+            if (formData.business_users.length === 0 || formData.business_users[0].first_name.trim() === "") {
+                newErrors.business_users = "At least one user is required.";
+            }
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -196,6 +227,7 @@ const RegisterBusiness: React.FC = () => {
             handleFileChange={handleFileChange}
             handleSubmit={handleSubmit}
             logoPreview={logoPreview}
+            errors={errors}
         />,
         <BusinessOutletsForm
             formData={formData}
@@ -238,15 +270,18 @@ const RegisterBusiness: React.FC = () => {
                             <Button
                                 variant="primary"
                                 onClick={(e) => {
+                                    if (!validateCurrentStep()) return; // Stop if validation fails
                                     if (isLastStep) {
                                         handleSubmit(e);
                                     } else {
                                         next();
                                     }
                                 }}
-                                className="px-4 py-2">
+                                className="px-4 py-2"
+                            >
                                 {isLastStep ? 'Finish' : 'Next'}
                             </Button>
+
                         </div>
                     </form>
 

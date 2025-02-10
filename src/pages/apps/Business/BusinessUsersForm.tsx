@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent } from 'react';
 import { Form, Button, Container, Row, Col, Alert, Card } from 'react-bootstrap';
+import Users from '../../dashboards/DashBoard1/Users';
 
 // Define the types for the form data (users)
 interface UserDataType {
@@ -47,6 +48,10 @@ const BusinessUsersForm: React.FC<BusinessUsersFormProps> = ({
 
     // Remove a user from the array
     const removeUser = (index: number) => {
+        if (formData.business_users.length === 1) {
+            alert("At least one Business User should be there!");
+            return;
+        }
         const updatedUsers = formData.business_users.filter((_, i) => i !== index);
         onUsersChange(updatedUsers); // Update at parent level
     };

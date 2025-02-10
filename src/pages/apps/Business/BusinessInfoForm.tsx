@@ -19,6 +19,7 @@ export interface BusinessInfoFormProps {
     handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     handleSubmit: (e: React.FormEvent) => void;
     logoPreview: string | null; // New prop for preview URL
+    errors: Record<string, string>;
 }
 
 const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
@@ -29,6 +30,7 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
     handleFileChange,
     handleSubmit,
     logoPreview,
+    errors,
 }) => {
     // Handle changes for form fields, with phone number validation
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,6 +81,7 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
                                     required
                                 />
                             </Col>
+                            {errors.business_logo && <small className="text-danger">{errors.business_logo}</small>}
                         </Row>
                         <Row className="mb-3">
                             <Col md={6}>
@@ -91,6 +94,7 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
                                     required
                                     placeholder="Enter business name"
                                 />
+                                {errors.business_name && <small className="text-danger">{errors.business_name}</small>}
                             </Col>
                             <Col md={6}>
                                 <Form.Label>Business Contact</Form.Label>
@@ -102,6 +106,7 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
                                     required
                                     placeholder="Enter business contact number"
                                 />
+                                {errors.business_contact && <small className="text-danger">{errors.business_contact}</small>}
                             </Col>
                         </Row>
                         <Row className="mb-3">
@@ -115,6 +120,7 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
                                     required
                                     placeholder="Enter business address"
                                 />
+                                {errors.business_address && <small className="text-danger">{errors.business_address}</small>}
                             </Col>
                             <Col md={6}>
                                 <Form.Label>GST Number</Form.Label>
@@ -126,6 +132,7 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
                                     required
                                     placeholder="Enter GST number"
                                 />
+                                {errors.gst_no && <small className="text-danger">{errors.gst_no}</small>}
                             </Col>
                         </Row>
                         <Row className="mb-3">
@@ -139,6 +146,7 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
                                     required
                                     placeholder="Enter cuisine"
                                 />
+                                {errors.cuisine && <small className="text-danger">{errors.cuisine}</small>}
                             </Col>
                             <Col md={6}>
                                 <Form.Label>Currency</Form.Label>
@@ -150,6 +158,7 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
                                     required
                                     placeholder="Enter currency"
                                 />
+                                {errors.currency && <small className="text-danger">{errors.currency}</small>}
                             </Col>
                         </Row>
                     </Form>
