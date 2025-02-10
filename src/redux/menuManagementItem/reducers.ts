@@ -38,8 +38,6 @@ type MenuManagementItemActions =
           type: typeof MenuManagementItemActionTypes.DELETE_ITEM;
           payload: {
               item_id: string;
-              category_id: string;
-              business_id: string;
           };
       }
     | { type: typeof MenuManagementItemActionTypes.DELETE_ITEM_SUCCESS; payload: { message: string } }

@@ -33,6 +33,7 @@ const BusinessList = React.lazy(() => import('../pages/apps/Business/Business'))
 const BusinessDetails = React.lazy(() => import('../pages/apps/Business/BusinessDetails'));
 const BusinessRegister = React.lazy(() => import('../pages/apps/Business/BusinessRegister'));
 const ManageMenu = React.lazy(() => import('../pages/apps/MenuManagement/ManageMenu'));
+const EditItem = React.lazy(() => import('../pages/apps/MenuManagement/EditItem'));
 const ItemRegister = React.lazy(() => import('../pages/apps/MenuManagement/RegisterNewItem'));
 
 const CalendarApp = React.lazy(() => import('../pages/apps/Calendar'));
@@ -219,7 +220,11 @@ const AllRoutes = () => {
                             element: <LoadComponent component={ManageMenu} />,
                         },
                         {
-                            path: 'item-register/:business_id/:selectedCategoryId?',
+                            path: 'edit-item/:item_id/:category_id',
+                            element: <LoadComponent component={EditItem} />,
+                        },
+                        {
+                            path: 'item-register/:business_id/:selectedCategoryId?/:item_id?',
                             element: <LoadComponent component={ItemRegister} />,
                         },
                         {

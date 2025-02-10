@@ -44,6 +44,16 @@
     cursor: pointer;
 }
 
+.add-category-button {
+    background-color: #ff6464;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
 .category-tabs {
     display: flex;
     gap: 15px;
@@ -287,3 +297,85 @@
     font-style: italic;
     color: gray;
 } */
+
+/* Basic layout for the Edit Item Page */
+.edit-item-page {
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.edit-item-page h2 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.edit-item-page p {
+    color: #d9534f;
+    text-align: center;
+    font-size: 14px;
+}
+
+.edit-item-page div {
+    margin-bottom: 15px;
+}
+
+.edit-item-page label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.edit-item-page input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.edit-item-page input[type='text'],
+.edit-item-page input[type='number'] {
+    background-color: #fff;
+}
+
+.edit-item-page input[type='text']:focus,
+.edit-item-page input[type='number']:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.edit-item-page button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.edit-item-page button:hover {
+    background-color: #0056b3;
+}
+
+.edit-item-page button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.edit-item-page input[type='text']:disabled,
+.edit-item-page input[type='number']:disabled {
+    background-color: #e9ecef;
+}
