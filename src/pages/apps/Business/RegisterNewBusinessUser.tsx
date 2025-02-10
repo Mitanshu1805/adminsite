@@ -21,6 +21,17 @@ const RegisterBusinessUserModal: React.FC<RegisterBusinessUserModalProps> = ({ s
 
     const dispatch = useDispatch();
 
+    useEffect(() => {
+        if (!show) {
+            // Reset form fields when modal closes
+            setFirstName('');
+            setLastName('');
+            setEmail('');
+            setPhoneNumber('');
+            setAddress('');
+        }
+    }, [show]);
+
     const handleSubmit = () => {
         const newBusinessUser = {
             business_id: businessId,
@@ -32,9 +43,17 @@ const RegisterBusinessUserModal: React.FC<RegisterBusinessUserModalProps> = ({ s
         };
 
         dispatch(registerBusinessUser(newBusinessUser));
-        dispatch(businessList());
-        onClose();
-        dispatch(businessList());
+        setTimeout(() => {
+            dispatch(businessList());
+
+            setFirstName('');
+            setLastName('');
+            setEmail('');
+            setPhoneNumber('');
+            setAddress('');
+
+            onClose();
+        }, 500);
     };
 
     return (

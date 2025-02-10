@@ -38,6 +38,20 @@ const RegisterOutletModal: React.FC<RegisterOutletModalProps> = ({ show, onClose
         }
     }, [dispatch, languages]);
 
+    useEffect(() => {
+        if (!show) {
+            // Reset form fields when modal closes
+            setOutletName('');
+            setOutletType('');
+            setOutletAddress('');
+            setGstNo('');
+            setLanguageId('');
+            setCurrency('INR');
+            setIsPrimaryOutlet(false);
+            setErrorMessage('');
+        }
+    }, [show]);
+
     const handleSubmit = () => {
         if (!languageId) {
             setErrorMessage('Please select a language.');
@@ -56,8 +70,20 @@ const RegisterOutletModal: React.FC<RegisterOutletModalProps> = ({ show, onClose
         };
 
         dispatch(registerOutlet(newOutlet));
-        onClose();
-        dispatch(businessList());
+        setTimeout(() => {
+            dispatch(businessList()); // ✅ Refresh list AFTER store updates
+
+            setOutletName('');
+            setOutletType('');
+            setOutletAddress('');
+            setGstNo('');
+            setLanguageId('');
+            setCurrency('INR');
+            setIsPrimaryOutlet(false);
+            setErrorMessage('');
+
+            onClose(); // ✅ Close modal AFTER update
+        }, 500);
     };
 
     return (

@@ -24,6 +24,7 @@ interface BusinessOutletsFormProps {
     handleSubmit: (e: React.FormEvent) => void;
     onOutletsChange: (outlets: Outlet[]) => void;
     languages: { id: string; name: string }[]; // Add this line
+    // errors: string; // Add this line
 }
 
 const BusinessOutletsForm: React.FC<BusinessOutletsFormProps> = ({
@@ -32,6 +33,8 @@ const BusinessOutletsForm: React.FC<BusinessOutletsFormProps> = ({
     successMsg,
     handleSubmit,
     onOutletsChange,
+    // errors,
+    handleChange,
 }) => {
     const dispatch = useDispatch();
 
@@ -69,11 +72,17 @@ const BusinessOutletsForm: React.FC<BusinessOutletsFormProps> = ({
 
     const removeOutlet = (index: number) => {
         if (outlets.length === 1) {
-            alert("At least one outlet should be there!");
+            alert('At least one outlet should be there!');
             return;
         }
         const updatedOutlets = outlets.filter((_, i) => i !== index);
         setOutlets(updatedOutlets);
+        onOutletsChange(updatedOutlets);
+    };
+
+    const handleOutletFieldChange = (index: number, field: string, value: string) => {
+        const updatedOutlets = [...formData.outlets];
+        updatedOutlets[index][field] = value;
         onOutletsChange(updatedOutlets);
     };
 
@@ -169,7 +178,6 @@ const BusinessOutletsForm: React.FC<BusinessOutletsFormProps> = ({
                                                         {type}
                                                     </option>
                                                 ))}
-
                                             </Form.Control>
                                             {validationErrors[index]?.outlet_type && (
                                                 <Alert variant="danger">{validationErrors[index]?.outlet_type}</Alert>
@@ -187,7 +195,6 @@ const BusinessOutletsForm: React.FC<BusinessOutletsFormProps> = ({
                                             checked={outlet.is_primary_outlet}
                                             onChange={(e) => handleInputChange(e, index)}
                                         />
-
                                     </Col>
                                     <Col>
                                         <Form.Label>Outlet Address</Form.Label>

@@ -93,29 +93,30 @@ const RegisterBusiness: React.FC = () => {
 
         if (currentStepIndex === 0) {
             // Validate Business Info Step
-            if (!formData.business_name.trim()) newErrors.business_name = "Business name is required.";
-            if (!formData.business_contact.trim()) newErrors.business_contact = "Business contact is required.";
-            if (!formData.business_address.trim()) newErrors.business_address = "Business address is required.";
-            if (!formData.gst_no.trim()) newErrors.gst_no = "GST number is required.";
-            if (!formData.cuisine.trim()) newErrors.cuisine = "Cuisine is required.";
-            if (!formData.currency.trim()) newErrors.currency = "Currency is required.";
-            if (!formData.business_logo) newErrors.business_logo = "Business logo is required.";
+            if (!formData.business_name.trim()) newErrors.business_name = 'Business name is required.';
+            if (!formData.business_contact.trim()) newErrors.business_contact = 'Business contact is required.';
+            if (!formData.business_address.trim()) newErrors.business_address = 'Business address is required.';
+            if (!formData.gst_no.trim()) newErrors.gst_no = 'GST number is required.';
+            if (!formData.cuisine.trim()) newErrors.cuisine = 'Cuisine is required.';
+            if (!formData.currency.trim()) newErrors.currency = 'Currency is required.';
+            if (!formData.business_logo) newErrors.business_logo = 'Business logo is required.';
         } else if (currentStepIndex === 1) {
             // Validate Business Outlets Step
-            if (formData.outlets.length === 0 || formData.outlets[0].outlet_name.trim() === "") {
-                newErrors.outlets = "At least one outlet is required.";
-            }
+            formData.outlets.forEach((outlet, index) => {
+                if (!outlet.outlet_name.trim()) newErrors[`outlet_name_${index}`] = 'Outlet name is required.';
+                if (!outlet.outlet_address.trim()) newErrors[`outlet_address_${index}`] = 'Outlet address is required.';
+            });
         } else if (currentStepIndex === 2) {
             // Validate Business Users Step
-            if (formData.business_users.length === 0 || formData.business_users[0].first_name.trim() === "") {
-                newErrors.business_users = "At least one user is required.";
-            }
+            formData.business_users.forEach((user, index) => {
+                if (!user.first_name.trim()) newErrors[`first_name_${index}`] = 'First name is required.';
+                if (!user.email.trim()) newErrors[`email_${index}`] = 'Email is required.';
+            });
         }
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
-
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -156,11 +157,11 @@ const RegisterBusiness: React.FC = () => {
         setFormSubmitted(true);
 
         // Validate required fields for outlets and business_users
-        if (formData.outlets.length === 0 || formData.business_users.length === 0) {
-            setError('At least one outlet and one business user are required.');
-            setFormSubmitted(false);
-            return;
-        }
+        // if (formData.outlets.length === 0 || formData.business_users.length === 0) {
+        //     setError('At least one outlet and one business user are required.');
+        //     setFormSubmitted(false);
+        //     return;
+        // }
 
         const formDataToSend = new FormData();
         formDataToSend.append('business_name', formData.business_name);
@@ -247,6 +248,7 @@ const RegisterBusiness: React.FC = () => {
             handleFileChange={handleFileChange}
             handleSubmit={handleSubmit}
             onUsersChange={handleUserChange}
+            // errors={errors}
         />,
     ]);
 
@@ -277,11 +279,9 @@ const RegisterBusiness: React.FC = () => {
                                         next();
                                     }
                                 }}
-                                className="px-4 py-2"
-                            >
+                                className="px-4 py-2">
                                 {isLastStep ? 'Finish' : 'Next'}
                             </Button>
-
                         </div>
                     </form>
 

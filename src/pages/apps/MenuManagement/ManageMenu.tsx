@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ErrorBoundary from '../../../components/ErrorBoundary';
-import { categoryItemList } from '../../../redux/menuManagementCategory/actions';
+import { categoryItemList, categoryUpdateIsActive } from '../../../redux/menuManagementCategory/actions';
 import { deleteItem, updateItem } from '../../../redux/menuManagementItem/actions';
 import { deleteCategory } from '../../../redux/menuManagementCategory/actions';
 import RegisterCategory from './RegisterCategory';
@@ -10,10 +10,12 @@ import { FaRegEdit, FaTrash } from 'react-icons/fa';
 import { RootState } from '../../../redux/store';
 import './ManageMenu.css';
 import EditCategory from './EditCategory';
+import ToggleSwitch from './ToggleSwitch';
 
 interface CategoryItem {
     business_id: string;
     category_id: string;
+    is_active: boolean;
     category_name: string;
     category_names: { [key: string]: string };
     logo_image: string;
@@ -34,6 +36,8 @@ const ManageMenu: React.FC = () => {
     const { dispatch, appSelector } = useRedux();
     const [showCategoryRegistrationModal, setShowCategoryRegistrationModal] = useState(false);
     const [showCategoryUpdateModal, setShowCategoryUpdateModal] = useState(false);
+    const [toggleStates, setToggleStates] = useState<{ [key: string]: boolean }>({});
+    const [isToggled, setIsToggled] = useState(false);
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [editItem, setEditItem] = useState<CategoryItem['items'][number] | null>(null);
     const [message, setMessage] = useState<string>('');
@@ -53,10 +57,33 @@ const ManageMenu: React.FC = () => {
             setSelectedCategoryId(categories[0].category_id);
         }
     }, [categories, selectedCategoryId]);
+    useEffect(() => {
+        if (categories.length > 0) {
+            const initialToggleStates: { [key: string]: boolean } = {};
+            categories.forEach((category: CategoryItem) => {
+                initialToggleStates[category.category_id] = category.is_active;
+            });
+            setToggleStates(initialToggleStates);
+        }
+    }, [categories]);
 
     const handleCategoryClick = (category_id: string) => {
         console.log('Category Clicked:', category_id); // Debugging log
         setSelectedCategoryId(category_id === selectedCategoryId ? null : category_id);
+    };
+
+    const handleToggle = (category_id: string, is_active: boolean) => {
+        setToggleStates((prev) => ({
+            ...prev,
+            [category_id]: is_active,
+        }));
+        dispatch(categoryUpdateIsActive(category_id, is_active));
+
+        setTimeout(() => {
+            setMessage('');
+            dispatch(categoryItemList(business_id!));
+        }, 100);
+        // setSelectedBusinessUser(editedBusinessUser);
     };
 
     const handleCategoryRegister = () => {
@@ -154,6 +181,14 @@ const ManageMenu: React.FC = () => {
                         onClick={() => handleCategoryClick(category.category_id)}>
                         <img src={category.logo_image} alt={category.category_name} />
                         <p>{category.category_name}</p>
+                        <div>
+                            <div onClick={(e) => e.stopPropagation()}>
+                                <ToggleSwitch
+                                    checked={toggleStates[category.category_id] || false}
+                                    onChange={(checked) => handleToggle(category.category_id, checked)}
+                                />
+                            </div>
+                        </div>
                         <td>
                             <FaRegEdit
                                 size={20}
@@ -209,6 +244,10 @@ const ManageMenu: React.FC = () => {
                                         Delete
                                     </button>
                                 </div>
+                                {/* <ToggleSwitch
+                                    checked={toggleStates[category.category_id] || false}
+                                    onChange={(checked) => handleToggle(category.category_id, checked)}
+                                /> */}
                             </div>
                         );
                     })

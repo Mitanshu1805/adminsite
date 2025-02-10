@@ -217,9 +217,9 @@ const RegisterCategory: React.FC<RegisterCategoryProps> = ({ show, onClose }) =>
                         />
                     </Form.Group>
 
-                    <Button variant="primary" type="submit">
+                    {/* <Button variant="primary" type="submit">
                         Register Category
-                    </Button>
+                    </Button> */}
                 </Form>
             </Modal.Body>
             <Modal.Footer>
