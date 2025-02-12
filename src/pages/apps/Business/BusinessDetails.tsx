@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import RegisterOutletModal from './RegisterNewOutlet';
 import RegisterBusinessUserModal from './RegisterNewBusinessUser';
 import { categoryItemList } from '../../../helpers/api/auth';
+import { FaHamburger } from 'react-icons/fa';
 
 interface Outlet {
     outlet_id: string;
@@ -128,6 +129,10 @@ const BusinessDetails: React.FC = () => {
         navigate(`/apps/manage-menu/${business_id}`);
         // console.log('Dispatching action:', categoryItemList(business_id));
         // dispatch(categoryItemList(business_id));
+    };
+
+    const handleOutletMenu = (business_id: string, outlet_id: string) => {
+        navigate(`/apps/outlet-menu/${business_id}/${outlet_id}`);
     };
 
     const handleDeleteOutlet = (outlet_id: string, business_id: string) => {
@@ -370,6 +375,7 @@ const BusinessDetails: React.FC = () => {
                                     <th>GST Number</th>
                                     <th>Language</th>
                                     <th>Currency</th>
+                                    <th>Menu</th>
                                     <th>Is Active?</th>
                                     <th>Action</th>
                                 </tr>
@@ -486,6 +492,16 @@ const BusinessDetails: React.FC = () => {
                                                     // Display currency in view mode
                                                     outlet.currency
                                                 )}
+                                            </td>
+
+                                            <td>
+                                                <FaHamburger
+                                                    onClick={() =>
+                                                        handleOutletMenu(selectedBusiness.business_id, outlet.outlet_id)
+                                                    }
+                                                    size={20}
+                                                    style={{ cursor: 'pointer' }}
+                                                />
                                             </td>
 
                                             <td>

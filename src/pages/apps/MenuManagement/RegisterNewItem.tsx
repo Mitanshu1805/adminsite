@@ -85,7 +85,8 @@ const RegisterNewItem: React.FC = () => {
     const [bannerPreview, setBannerPreview] = useState<string | null>(null);
     const [selectedBusiness, setSelectedBusiness] = useState<SelectedBusiness | null>(null);
     const [selectedOutlets, setSelectedOutlets] = useState<Outlet[]>([]);
-    const { business_id, selectedCategoryId, item_id } = useParams<{ business_id: string; selectedCategoryId: string, item_id: string }>();
+    const { business_id, selectedCategoryId, item_id } =
+        useParams<{ business_id: string; selectedCategoryId: string; item_id: string }>();
     const isEditMode = Boolean(item_id);
     const [editItem, setEditItem] = useState<CategoryItem | null>(null);
     const [errorMsg, setError] = useState<string>('');
@@ -148,14 +149,10 @@ const RegisterNewItem: React.FC = () => {
                 quantity_type: editItem.quantity_type as 'none' | 'piece' | 'weight' | 'volume',
                 quantity_params: editItem.quantity_params as 'none' | 'gm' | 'kg' | 'ml' | 'lt',
 
-
                 quantity_value: String(editItem.quantity_value || ''),
-
             });
         }
-
     }, [isEditMode, editItem]);
-
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, multiple } = e.target;
@@ -233,7 +230,6 @@ const RegisterNewItem: React.FC = () => {
             return;
         }
 
-
         const updatedOutletPrices = [...formData.outlet_prices];
         const outletIndex = updatedOutletPrices.findIndex((priceEntry) => priceEntry.outlet_id === outlet_id);
 
@@ -301,15 +297,13 @@ const RegisterNewItem: React.FC = () => {
 
         try {
             if (isEditMode) {
-                console.log('Dispatching EDIT API: ')
+                console.log('Dispatching EDIT API: ');
                 dispatch(updateItem(formDataToSend));
-            }
-            else {
+            } else {
                 console.log('Dispatching API request...');
                 await dispatch(registerItem(formDataToSend));
                 console.log('API request dispatched!');
             }
-
 
             setSuccess('Item registered successfully!');
             setError('');
@@ -533,4 +527,3 @@ export default RegisterNewItem;
 //         <button type="submit">Register Item</button>
 //     </form>
 // </div>
-

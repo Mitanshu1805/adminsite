@@ -56,6 +56,7 @@ export type MenuManagementCategoryAction =
           type: typeof MenuManagementCategoryActionTypes.CATEGORY_ITEM_LIST;
           payload: {
               business_id: string;
+              outlet_id?: string;
           };
       }
     | {
@@ -177,9 +178,9 @@ export const categoryOutletListsError = (error: string): MenuManagementCategoryA
 });
 
 // Action to fetch category item lists
-export const categoryItemList = (business_id: string): MenuManagementCategoryAction => ({
+export const categoryItemList = (business_id: string, outlet_id?: string): MenuManagementCategoryAction => ({
     type: MenuManagementCategoryActionTypes.CATEGORY_ITEM_LIST,
-    payload: { business_id },
+    payload: { business_id, outlet_id },
 });
 
 // Action for successful fetch of category item lists

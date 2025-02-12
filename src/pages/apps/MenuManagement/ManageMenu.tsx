@@ -73,9 +73,6 @@ const ManageMenu: React.FC = () => {
         }
     }, [categories]); // Ensures sync when categories are updated
 
-
-
-
     const handleCategoryClick = (category_id: string) => {
         console.log('Category Clicked:', category_id); // Debugging log
         setSelectedCategoryId(category_id === selectedCategoryId ? null : category_id);
@@ -109,7 +106,6 @@ const ManageMenu: React.FC = () => {
             dispatch(categoryItemList(business_id!));
         }, 100);
     };
-
 
     const handleCategoryRegister = () => {
         console.log('Category Register Clicked');
@@ -153,12 +149,12 @@ const ManageMenu: React.FC = () => {
         }
     };
 
-    // const handleEditItem = (item_id: string, category_id: string) => {
-    //     navigate(`/apps/edit-item/${item_id}/${selectedCategoryId}/${business_id}`);
-    //     console.log('category_id: ', category_id);
-    //     console.log('selectedCategoryId: ', selectedCategoryId);
-    //     console.log('setSelectedCategoryId: ', setSelectedCategoryId);
-    // };
+    const handleEditItem = (item_id: string, category_id: string) => {
+        navigate(`/apps/edit-item/${item_id}/${selectedCategoryId}/${business_id}`);
+        console.log('category_id: ', category_id);
+        console.log('selectedCategoryId: ', selectedCategoryId);
+        console.log('setSelectedCategoryId: ', setSelectedCategoryId);
+    };
 
     // const handleSaveChanges = () => {
     //     if (editItem) {
@@ -233,7 +229,9 @@ const ManageMenu: React.FC = () => {
                         </td>
                     </div>
                 ))}
-                <button className="add-category-button" onClick={handleCategoryRegister}>
+                <button
+                    className="add-category-button"
+                    onClick={() => navigate(`/apps/category-register/${business_id}`)}>
                     + Add Category
                 </button>
                 {showCategoryRegistrationModal && (
@@ -258,8 +256,7 @@ const ManageMenu: React.FC = () => {
                                 <div className="item-actions">
                                     <button
                                         className="edit-button"
-                                    // onClick={() => handleEditItem(item.item_id, item.category_id)}
-                                    >
+                                        onClick={() => handleEditItem(item.item_id, item.category_id)}>
                                         Edit
                                     </button>
                                 </div>
@@ -268,8 +265,6 @@ const ManageMenu: React.FC = () => {
                                     <button className="delete-button" onClick={() => handleDeleteItem(item.item_id)}>
                                         Delete
                                     </button>
-
-
                                 </div>
                                 <ToggleSwitch
                                     checked={toggleStates[item.item_id] || false}
@@ -282,7 +277,6 @@ const ManageMenu: React.FC = () => {
                     <p className="no-items-message">No items available</p>
                 )}
             </div>
-
         </div>
     );
 };

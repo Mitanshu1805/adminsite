@@ -15,6 +15,8 @@ import { LayoutTypes } from '../constants';
 
 // hooks
 import { useRedux } from '../hooks';
+import RegisterNewItem from '../pages/apps/MenuManagement/RegisterNewItem';
+import { Category } from '@material-ui/icons';
 
 // lazy load all the views
 // auth
@@ -35,6 +37,8 @@ const BusinessRegister = React.lazy(() => import('../pages/apps/Business/Busines
 const ManageMenu = React.lazy(() => import('../pages/apps/MenuManagement/ManageMenu'));
 const EditItem = React.lazy(() => import('../pages/apps/MenuManagement/EditItem'));
 const ItemRegister = React.lazy(() => import('../pages/apps/MenuManagement/RegisterNewItem'));
+const CategoryRegister = React.lazy(() => import('../pages/apps/MenuManagement/RegisterCategory'));
+const OutletMenu = React.lazy(() => import('../pages/apps/MenuManagement/OutletMenu'));
 
 const CalendarApp = React.lazy(() => import('../pages/apps/Calendar'));
 const ChatApp = React.lazy(() => import('../pages/apps/Chat'));
@@ -221,15 +225,23 @@ const AllRoutes = () => {
                         },
                         {
                             path: 'edit-item/:item_id/:category_id/:business_id',
-                            element: <LoadComponent component={EditItem} />,
+                            element: <LoadComponent component={ItemRegister} />,
                         },
                         {
                             path: 'item-register/:business_id/:selectedCategoryId?/:item_id?',
                             element: <LoadComponent component={ItemRegister} />,
                         },
                         {
+                            path: 'category-register/:business_id',
+                            element: <LoadComponent component={CategoryRegister} />,
+                        },
+                        {
                             path: 'business-register',
                             element: <LoadComponent component={BusinessRegister} />,
+                        },
+                        {
+                            path: 'outlet-menu/:business_id/:outlet_id',
+                            element: <LoadComponent component={OutletMenu} />,
                         },
                         {
                             path: 'calendar',
