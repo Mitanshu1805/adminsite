@@ -8,6 +8,7 @@ import './RegisterNewItem.css';
 import RegisterItemStep1 from './RegisterItemStep1';
 import RegisterItemStep2 from './RegisterItemStep2';
 import RegisterItemStep3 from './RegisterItemStep3';
+import { updateItem } from '../../../redux/menuManagementItem/actions';
 
 interface Outlet {
     outlet_id: string;
@@ -16,6 +17,33 @@ interface Outlet {
 interface OutletPrice {
     outlet_id: string;
     price: number;
+}
+
+interface CategoryItem {
+    selectedCategoryId: string;
+    item_id: string;
+    item_names: {
+        hindi: string;
+        english: string;
+        gujarati: string;
+    };
+    price: number;
+    dietary: string;
+    available_order_type: string[];
+    online_display_name: string;
+    description: string;
+    gst_type: string;
+    category_id: string;
+    business_id: string;
+    logo_image?: File;
+    swiggy_image?: File;
+    banner_image?: File;
+    is_loose: boolean;
+    quantity_type: string;
+    quantity_params: string;
+    quantity_value: number;
+    outlets: Outlet[];
+    outlet_prices: { outlet_id: string; price: number }[];
 }
 
 interface SelectedBusiness {
@@ -57,8 +85,9 @@ const RegisterNewItem: React.FC = () => {
     const [bannerPreview, setBannerPreview] = useState<string | null>(null);
     const [selectedBusiness, setSelectedBusiness] = useState<SelectedBusiness | null>(null);
     const [selectedOutlets, setSelectedOutlets] = useState<Outlet[]>([]);
-    const { business_id, selectedCategoryId } = useParams<{ business_id: string; selectedCategoryId: string }>();
-
+    const { business_id, selectedCategoryId, item_id } = useParams<{ business_id: string; selectedCategoryId: string, item_id: string }>();
+    const isEditMode = Boolean(item_id);
+    const [editItem, setEditItem] = useState<CategoryItem | null>(null);
     const [errorMsg, setError] = useState<string>('');
     const [successMsg, setSuccess] = useState<string>('');
 
@@ -98,42 +127,35 @@ const RegisterNewItem: React.FC = () => {
             }));
         }
     };
-    // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     const { name, type, checked, value } = e.target;
-    //     const newValue = type === 'checkbox' ? checked : value;
 
-    //     setFormData((prevState) => {
-    //         const updatedState = { ...prevState, [name]: newValue };
-    //         console.log('Updated State:', updatedState); // ✅ Debugging
-    //         return updatedState;
-    //     });
+    useEffect(() => {
+        if (editItem) {
+            setFormData({
+                item_name: editItem.item_names || { hindi: '', english: '', gujarati: '' },
+                online_display_name: editItem.online_display_name || '',
+                price: String(editItem.price || ''),
+                description: editItem.description || '',
+                dietary: editItem.dietary || 'veg',
+                available_order_type: editItem.available_order_type || [''],
+                gst_type: editItem.gst_type || 'none',
+                category_id: editItem.category_id || '',
+                business_id: editItem.business_id || '',
+                logo_image: null,
+                swiggy_image: null,
+                banner_image: null,
+                outlet_prices: editItem.outlet_prices || [{ outlet_id: '', price: 0 }],
+                is_loose: editItem.is_loose || false,
+                quantity_type: editItem.quantity_type as 'none' | 'piece' | 'weight' | 'volume',
+                quantity_params: editItem.quantity_params as 'none' | 'gm' | 'kg' | 'ml' | 'lt',
 
-    //     console.log('Name and Value', e.target.name, e.target.value);
-    // };
 
-    // const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    //     const { name, value, type, multiple } = e.target;
+                quantity_value: String(editItem.quantity_value || ''),
 
-    //     if (type === 'select' && multiple) {
-    //         const selectElement = e.target as HTMLSelectElement;
-    //         const selectedValues = Array.from(selectElement.selectedOptions, (option) => option.value);
+            });
+        }
 
-    //         // Log the selected values to debug
-    //         console.log(selectedValues);
+    }, [isEditMode, editItem]);
 
-    //         setFormData((prevState) => ({
-    //             ...prevState,
-    //             [name]: selectedValues, // Update the array of selected values
-    //         }));
-    //         return;
-    //     }
-
-    //     // Handle other changes (input, text, etc.)
-    //     setFormData((prevState) => ({
-    //         ...prevState,
-    //         [name]: value,
-    //     }));
-    // };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, multiple } = e.target;
@@ -207,9 +229,10 @@ const RegisterNewItem: React.FC = () => {
     const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>, outlet_id: string) => {
         const updatedPrice = parseFloat(e.target.value); // Convert to number
 
-        if (isNaN(updatedPrice)) {
-            return; // Prevent invalid input
+        if (isNaN(updatedPrice) || updatedPrice <= 0) {
+            return;
         }
+
 
         const updatedOutletPrices = [...formData.outlet_prices];
         const outletIndex = updatedOutletPrices.findIndex((priceEntry) => priceEntry.outlet_id === outlet_id);
@@ -245,7 +268,7 @@ const RegisterNewItem: React.FC = () => {
         formDataToSend.append('price', formData.price);
         formDataToSend.append('description', formData.description);
         formDataToSend.append('dietary', formData.dietary);
-        formDataToSend.append('available_order_type', JSON.stringify([formData.available_order_type]));
+        formDataToSend.append('available_order_type', JSON.stringify(formData.available_order_type));
 
         formDataToSend.append('gst_type', formData.gst_type);
         formDataToSend.append('category_id', formData.category_id);
@@ -277,9 +300,16 @@ const RegisterNewItem: React.FC = () => {
         });
 
         try {
-            console.log('Dispatching API request...');
-            await dispatch(registerItem(formDataToSend));
-            console.log('API request dispatched!');
+            if (isEditMode) {
+                console.log('Dispatching EDIT API: ')
+                dispatch(updateItem(formDataToSend));
+            }
+            else {
+                console.log('Dispatching API request...');
+                await dispatch(registerItem(formDataToSend));
+                console.log('API request dispatched!');
+            }
+
 
             setSuccess('Item registered successfully!');
             setError('');
@@ -364,7 +394,7 @@ const RegisterNewItem: React.FC = () => {
                                     }
                                 }}
                                 className="px-4 py-2">
-                                {isLastStep ? 'Finish' : 'Next'}
+                                {isLastStep ? (isEditMode ? 'Update' : 'Finish') : 'Next'}
                             </Button>
                         </div>
                     </form>
@@ -382,124 +412,125 @@ const RegisterNewItem: React.FC = () => {
                 </Card.Body>
             </Card>
         </Container>
-        // <div className="register-new-item-container">
-        //     <h2>Register New Item</h2>
-
-        //     {errorMsg && <p className="error-message">{errorMsg}</p>}
-        //     {successMsg && <p className="success-message">{successMsg}</p>}
-
-        //     <form onSubmit={handleSubmit}>
-        //         <div className="form-group">
-        //             <label>Item Name (Hindi)</label>
-        //             <input
-        //                 type="text"
-        //                 name="item_name.hindi"
-        //                 value={formData.item_name.hindi}
-        //                 onChange={handleInputChange}
-        //             />
-        //         </div>
-
-        //         <div className="form-group">
-        //             <label>Item Name (English)</label>
-        //             <input
-        //                 type="text"
-        //                 name="item_name.english"
-        //                 value={formData.item_name.english}
-        //                 onChange={handleInputChange}
-        //             />
-        //         </div>
-
-        //         <div className="form-group">
-        //             <label>Item Name (Gujarati)</label>
-        //             <input
-        //                 type="text"
-        //                 name="item_name.gujarati"
-        //                 value={formData.item_name.gujarati}
-        //                 onChange={handleInputChange}
-        //             />
-        //         </div>
-
-        //         <div className="form-group">
-        //             <label>Online Display Name</label>
-        //             <input
-        //                 type="text"
-        //                 name="online_display_name"
-        //                 value={formData.online_display_name}
-        //                 onChange={handleInputChange}
-        //                 required
-        //             />
-        //         </div>
-
-        //         <div className="form-group">
-        //             <label>Price</label>
-        //             <input type="number" name="price" value={formData.price} onChange={handleInputChange} required />
-        //         </div>
-
-        //         <div className="form-group">
-        //             <label>Description</label>
-        //             <textarea name="description" value={formData.description} onChange={handleInputChange} />
-        //         </div>
-
-        //         <div className="form-group">
-        //             <label>Dietary</label>
-        //             <textarea name="dietary" value={formData.dietary} onChange={handleInputChange} />
-        //         </div>
-
-        //         <div className="form-group">
-        //             <label>Available Order Type</label>
-        //             <select
-        //                 name="available_order_type"
-        //                 multiple
-        //                 value={formData.available_order_type} // Keep the state value synced
-        //                 onChange={handleInputChange}>
-        //                 <option value="delivery">Delivery</option>
-        //                 <option value="pick-up">Pick-up</option>
-        //                 <option value="dine_in">Dine-in</option>
-        //                 <option value="online">Online</option>
-        //             </select>
-        //         </div>
-
-        //         <div className="form-group">
-        //             <label>GST Type</label>
-        //             <select name="gst_type" value={formData.gst_type} onChange={handleInputChange}>
-        //                 <option value="">Select GST Type</option>
-        //                 <option value="goods">Goods</option>
-        //                 <option value="services">Services</option>
-        //             </select>
-        //         </div>
-
-        //         <div className="form-group">
-        //             <label>Logo Image</label>
-        //             <input type="file" name="logo_image" onChange={handleFileChange} accept="image/*" />
-        //             {logoPreview && <img src={logoPreview} alt="Logo Preview" className="image-preview" />}
-        //         </div>
-
-        //         <div className="form-group">
-        //             <label>Swiggy Image</label>
-        //             <input type="file" name="swiggy_image" onChange={handleFileChange} accept="image/*" />
-        //             {swiggyPreview && <img src={swiggyPreview} alt="Swiggy Preview" className="image-preview" />}
-        //         </div>
-
-        //         <div className="form-group">
-        //             <label>Banner Image</label>
-        //             <input type="file" name="banner_image" onChange={handleFileChange} accept="image/*" />
-        //             {bannerPreview && <img src={bannerPreview} alt="Banner Preview" className="image-preview" />}
-        //         </div>
-
-        //         <div className="form-group">
-        //             <label>Outlet Price</label>
-        //             <input
-        //                 type="number"
-        //                 name="outlet_prices"
-        //                 value={formData.outlet_prices[0]}
-        //                 onChange={(e) => setFormData({ ...formData, outlet_prices: [e.target.value] })}
-        //             />
-        //         </div>
-
-        //         <button type="submit">Register Item</button>
-        //     </form>
-        // </div>
     );
 };
 
 export default RegisterNewItem;
+// <div className="register-new-item-container">
+//     <h2>Register New Item</h2>
+
+//     {errorMsg && <p className="error-message">{errorMsg}</p>}
+//     {successMsg && <p className="success-message">{successMsg}</p>}
+
+//     <form onSubmit={handleSubmit}>
+//         <div className="form-group">
+//             <label>Item Name (Hindi)</label>
+//             <input
+//                 type="text"
+//                 name="item_name.hindi"
+//                 value={formData.item_name.hindi}
+//                 onChange={handleInputChange}
+//             />
+//         </div>
+
+//         <div className="form-group">
+//             <label>Item Name (English)</label>
+//             <input
+//                 type="text"
+//                 name="item_name.english"
+//                 value={formData.item_name.english}
+//                 onChange={handleInputChange}
+//             />
+//         </div>
+
+//         <div className="form-group">
+//             <label>Item Name (Gujarati)</label>
+//             <input
+//                 type="text"
+//                 name="item_name.gujarati"
+//                 value={formData.item_name.gujarati}
+//                 onChange={handleInputChange}
+//             />
+//         </div>
+
+//         <div className="form-group">
+//             <label>Online Display Name</label>
+//             <input
+//                 type="text"
+//                 name="online_display_name"
+//                 value={formData.online_display_name}
+//                 onChange={handleInputChange}
+//                 required
+//             />
+//         </div>
+
+//         <div className="form-group">
+//             <label>Price</label>
+//             <input type="number" name="price" value={formData.price} onChange={handleInputChange} required />
+//         </div>
+
+//         <div className="form-group">
+//             <label>Description</label>
+//             <textarea name="description" value={formData.description} onChange={handleInputChange} />
+//         </div>
+
+//         <div className="form-group">
+//             <label>Dietary</label>
+//             <textarea name="dietary" value={formData.dietary} onChange={handleInputChange} />
+//         </div>
+
+//         <div className="form-group">
+//             <label>Available Order Type</label>
+//             <select
+//                 name="available_order_type"
+//                 multiple
+//                 value={formData.available_order_type} // Keep the state value synced
+//                 onChange={handleInputChange}>
+//                 <option value="delivery">Delivery</option>
+//                 <option value="pick-up">Pick-up</option>
+//                 <option value="dine_in">Dine-in</option>
+//                 <option value="online">Online</option>
+//             </select>
+//         </div>
+
+//         <div className="form-group">
+//             <label>GST Type</label>
+//             <select name="gst_type" value={formData.gst_type} onChange={handleInputChange}>
+//                 <option value="">Select GST Type</option>
+//                 <option value="goods">Goods</option>
+//                 <option value="services">Services</option>
+//             </select>
+//         </div>
+
+//         <div className="form-group">
+//             <label>Logo Image</label>
+//             <input type="file" name="logo_image" onChange={handleFileChange} accept="image/*" />
+//             {logoPreview && <img src={logoPreview} alt="Logo Preview" className="image-preview" />}
+//         </div>
+
+//         <div className="form-group">
+//             <label>Swiggy Image</label>
+//             <input type="file" name="swiggy_image" onChange={handleFileChange} accept="image/*" />
+//             {swiggyPreview && <img src={swiggyPreview} alt="Swiggy Preview" className="image-preview" />}
+//         </div>
+
+//         <div className="form-group">
+//             <label>Banner Image</label>
+//             <input type="file" name="banner_image" onChange={handleFileChange} accept="image/*" />
+//             {bannerPreview && <img src={bannerPreview} alt="Banner Preview" className="image-preview" />}
+//         </div>
+
+//         <div className="form-group">
+//             <label>Outlet Price</label>
+//             <input
+//                 type="number"
+//                 name="outlet_prices"
+//                 value={formData.outlet_prices[0]}
+//                 onChange={(e) => setFormData({ ...formData, outlet_prices: [e.target.value] })}
+//             />
+//         </div>
+
+//         <button type="submit">Register Item</button>
+//     </form>
+// </div>
+

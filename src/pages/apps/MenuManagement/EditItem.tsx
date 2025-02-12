@@ -4,6 +4,7 @@ import { useRedux } from '../../../hooks';
 import { RootState } from '../../../redux/store';
 import './ManageMenu.css';
 import { updateItem } from '../../../redux/menuManagementItem/actions';
+import { categoryItemList } from '../../../redux/actions';
 
 interface CategoryItem {
     selectedCategoryId: string;
@@ -47,8 +48,8 @@ interface Category {
 }
 
 const EditItemPage: React.FC = () => {
-    const { item_id, category_id, selectedCategoryId } =
-        useParams<{ item_id: string; category_id: string; selectedCategoryId: string }>(); // Get item_id from URL
+    const { item_id, category_id, selectedCategoryId, business_id } =
+        useParams<{ item_id: string; category_id: string; selectedCategoryId: string, business_id: string }>(); // Get item_id from URL
     const { dispatch, appSelector } = useRedux();
     const [editItem, setEditItem] = useState<CategoryItem | null>(null);
     const [message, setMessage] = useState<string>('');
@@ -144,7 +145,13 @@ const EditItemPage: React.FC = () => {
 
             // Dispatch the update action
             dispatch(updateItem(formData));
+
+            setTimeout(() => {
+                setMessage('');
+                dispatch(categoryItemList(business_id!));
+            }, 500);
             // navigate('/apps/manage-menu/:business_id'); // Navigate back to the menu list after saving
+            navigate(`/apps/manage-menu/${business_id}`);
         } else {
             setMessage('No item to save.');
         }
@@ -156,6 +163,82 @@ const EditItemPage: React.FC = () => {
             {message && <p>{message}</p>}
             {editItem ? (
                 <div>
+                    <div>
+                        <label>Upload Logo Image</label>
+                        {editItem?.logo_image && editItem.logo_image instanceof File && (
+                            <div>
+                                <img
+                                    src={URL.createObjectURL(editItem.logo_image)}
+                                    alt="Logo Preview"
+                                    style={{ width: '100px', height: 'auto', marginBottom: '10px' }}
+                                />
+                            </div>
+                        )}
+                        <input
+                            type="file"
+                            onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                    setEditItem({
+                                        ...editItem!,
+                                        logo_image: file,
+                                    });
+                                }
+                            }}
+                        />
+                    </div>
+
+                    <div>
+                        <label>Upload Swiggy Image</label>
+                        {editItem?.swiggy_image && editItem.swiggy_image instanceof File && (
+                            <div>
+                                <img
+                                    src={URL.createObjectURL(editItem.swiggy_image)}
+                                    alt="Swiggy Image Preview"
+                                    style={{ width: '100px', height: 'auto', marginBottom: '10px' }}
+                                />
+                            </div>
+                        )}
+                        <input
+                            type="file"
+                            onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                    setEditItem({
+                                        ...editItem!,
+                                        swiggy_image: file,
+                                    });
+                                }
+                            }}
+                        />
+                    </div>
+
+                    <div>
+                        <label>Upload Banner Image</label>
+                        {editItem?.banner_image && editItem.banner_image instanceof File && (
+                            <div>
+                                <img
+                                    src={URL.createObjectURL(editItem.banner_image)}
+                                    alt="Banner Image Preview"
+                                    style={{ width: '100px', height: 'auto', marginBottom: '10px' }}
+                                />
+                            </div>
+                        )}
+                        <input
+                            type="file"
+                            onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                    setEditItem({
+                                        ...editItem!,
+                                        banner_image: file,
+                                    });
+                                }
+                            }}
+                        />
+                    </div>
+
+
                     <div>
                         <label>Item Name (English)</label>
                         <input

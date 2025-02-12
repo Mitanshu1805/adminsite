@@ -11,6 +11,7 @@ import { RootState } from '../../../redux/store';
 import './ManageMenu.css';
 import EditCategory from './EditCategory';
 import ToggleSwitch from './ToggleSwitch';
+import { itemUpdateIsActive } from '../../../redux/menuManagementItem/actions';
 
 interface CategoryItem {
     business_id: string;
@@ -24,6 +25,7 @@ interface CategoryItem {
         item_id: string;
         item_name: string;
         price: number;
+        is_active: boolean;
         dietary: string;
         logo_image: string;
         available_order_type: string[];
@@ -62,17 +64,24 @@ const ManageMenu: React.FC = () => {
             const initialToggleStates: { [key: string]: boolean } = {};
             categories.forEach((category: CategoryItem) => {
                 initialToggleStates[category.category_id] = category.is_active;
+                // Update toggle states for each item inside the category
+                category.items.forEach((item) => {
+                    initialToggleStates[item.item_id] = item.is_active;
+                });
             });
             setToggleStates(initialToggleStates);
         }
-    }, [categories]);
+    }, [categories]); // Ensures sync when categories are updated
+
+
+
 
     const handleCategoryClick = (category_id: string) => {
         console.log('Category Clicked:', category_id); // Debugging log
         setSelectedCategoryId(category_id === selectedCategoryId ? null : category_id);
     };
 
-    const handleToggle = (category_id: string, is_active: boolean) => {
+    const handleCategoryToggle = (category_id: string, is_active: boolean) => {
         setToggleStates((prev) => ({
             ...prev,
             [category_id]: is_active,
@@ -85,6 +94,22 @@ const ManageMenu: React.FC = () => {
         }, 100);
         // setSelectedBusinessUser(editedBusinessUser);
     };
+
+    const handleItemToggle = (item_id: string, is_active: boolean) => {
+        setToggleStates((prev) => ({
+            ...prev,
+            [item_id]: is_active,
+        }));
+
+        // Dispatch action to update the item status
+        dispatch(itemUpdateIsActive(item_id, is_active));
+
+        setTimeout(() => {
+            setMessage('');
+            dispatch(categoryItemList(business_id!));
+        }, 100);
+    };
+
 
     const handleCategoryRegister = () => {
         console.log('Category Register Clicked');
@@ -128,33 +153,33 @@ const ManageMenu: React.FC = () => {
         }
     };
 
-    const handleEditItem = (item_id: string, category_id: string) => {
-        navigate(`/apps/edit-item/${item_id}/${selectedCategoryId}`);
-        console.log('category_id: ', category_id);
-        console.log('selectedCategoryId: ', selectedCategoryId);
-        console.log('setSelectedCategoryId: ', setSelectedCategoryId);
-    };
+    // const handleEditItem = (item_id: string, category_id: string) => {
+    //     navigate(`/apps/edit-item/${item_id}/${selectedCategoryId}/${business_id}`);
+    //     console.log('category_id: ', category_id);
+    //     console.log('selectedCategoryId: ', selectedCategoryId);
+    //     console.log('setSelectedCategoryId: ', setSelectedCategoryId);
+    // };
 
-    const handleSaveChanges = () => {
-        if (editItem) {
-            // Create a FormData object
-            const formData = new FormData();
+    // const handleSaveChanges = () => {
+    //     if (editItem) {
+    //         // Create a FormData object
+    //         const formData = new FormData();
 
-            // Append each field of the editItem to the FormData
-            formData.append('item_id', editItem.item_id);
-            formData.append('item_name', editItem.item_name);
-            formData.append('price', editItem.price.toString()); // Ensure the price is a string
-            formData.append('dietary', editItem.dietary);
-            formData.append('available_order_type', JSON.stringify(editItem.available_order_type)); // Serialize array
+    //         // Append each field of the editItem to the FormData
+    //         formData.append('item_id', editItem.item_id);
+    //         formData.append('item_name', editItem.item_name);
+    //         formData.append('price', editItem.price.toString()); // Ensure the price is a string
+    //         formData.append('dietary', editItem.dietary);
+    //         formData.append('available_order_type', JSON.stringify(editItem.available_order_type)); // Serialize array
 
-            console.log('Dispatching update with FormData payload', formData);
+    //         console.log('Dispatching update with FormData payload', formData);
 
-            // Dispatch the updateItem action with the FormData
-            dispatch(updateItem(formData));
-        } else {
-            setMessage('No item to save.');
-        }
-    };
+    //         // Dispatch the updateItem action with the FormData
+    //         dispatch(updateItem(formData));
+    //     } else {
+    //         setMessage('No item to save.');
+    //     }
+    // };
 
     const filteredItems = categories
         .filter((category: CategoryItem) => !selectedCategoryId || category.category_id === selectedCategoryId)
@@ -185,7 +210,7 @@ const ManageMenu: React.FC = () => {
                             <div onClick={(e) => e.stopPropagation()}>
                                 <ToggleSwitch
                                     checked={toggleStates[category.category_id] || false}
-                                    onChange={(checked) => handleToggle(category.category_id, checked)}
+                                    onChange={(checked) => handleCategoryToggle(category.category_id, checked)}
                                 />
                             </div>
                         </div>
@@ -222,8 +247,6 @@ const ManageMenu: React.FC = () => {
             <div className="item-list">
                 {filteredItems.length > 0 ? (
                     filteredItems.map((item: CategoryItem['items'][number]) => {
-                        // Find the category for this item to get the category_id
-                        const category = categories.find((cat: CategoryItem) => cat.category_id === item.category_id);
                         return (
                             <div className="item-card" key={item.item_id}>
                                 <img src={item.logo_image} alt={item.item_name} className="item-image" />
@@ -235,19 +258,23 @@ const ManageMenu: React.FC = () => {
                                 <div className="item-actions">
                                     <button
                                         className="edit-button"
-                                        onClick={() =>
-                                            handleEditItem(item.item_id, category ? category.category_id : '')
-                                        }>
+                                    // onClick={() => handleEditItem(item.item_id, item.category_id)}
+                                    >
                                         Edit
                                     </button>
+                                </div>
+
+                                <div className="item-actions">
                                     <button className="delete-button" onClick={() => handleDeleteItem(item.item_id)}>
                                         Delete
                                     </button>
+
+
                                 </div>
-                                {/* <ToggleSwitch
-                                    checked={toggleStates[category.category_id] || false}
-                                    onChange={(checked) => handleToggle(category.category_id, checked)}
-                                /> */}
+                                <ToggleSwitch
+                                    checked={toggleStates[item.item_id] || false}
+                                    onChange={(checked) => handleItemToggle(item.item_id, checked)}
+                                />
                             </div>
                         );
                     })
@@ -255,6 +282,7 @@ const ManageMenu: React.FC = () => {
                     <p className="no-items-message">No items available</p>
                 )}
             </div>
+
         </div>
     );
 };

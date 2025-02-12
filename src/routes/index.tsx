@@ -220,7 +220,7 @@ const AllRoutes = () => {
                             element: <LoadComponent component={ManageMenu} />,
                         },
                         {
-                            path: 'edit-item/:item_id/:category_id',
+                            path: 'edit-item/:item_id/:category_id/:business_id',
                             element: <LoadComponent component={EditItem} />,
                         },
                         {

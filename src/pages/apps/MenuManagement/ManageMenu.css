@@ -167,10 +167,13 @@
     font-size: 14px;
     cursor: pointer;
     color: white;
+    margin: 2px 6px 2px 8px;
 }
 
 .edit-button {
     background-color: #4caf50;
+    margin: 0px 0px 1px 0px;
+
 }
 
 .delete-button {
