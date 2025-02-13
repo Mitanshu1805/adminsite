@@ -115,7 +115,7 @@ const RegisterItemStep2: React.FC<RegisterItemStep2Props> = ({ selectedOutlets, 
     };
 
     const selectAllOutlets = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault(); // Prevents form submission
+        event.preventDefault();
         if (business) {
             setSelectedOutlets(business.outlets);
         }

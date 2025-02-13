@@ -225,7 +225,7 @@ const AllRoutes = () => {
                         },
                         {
                             path: 'edit-item/:item_id/:category_id/:business_id',
-                            element: <LoadComponent component={ItemRegister} />,
+                            element: <LoadComponent component={EditItem} />,
                         },
                         {
                             path: 'item-register/:business_id/:selectedCategoryId?/:item_id?',

@@ -34,5 +34,5 @@ const rootReducer = combineReducers({
     MenuManagementItemReducer,
 });
 
-export type RootState = ReturnType<typeof rootReducer>; // Defines the type of your Redux state
+export type RootState = ReturnType<typeof rootReducer>;
 export default rootReducer;

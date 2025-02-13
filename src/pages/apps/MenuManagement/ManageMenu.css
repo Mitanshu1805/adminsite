@@ -45,6 +45,7 @@
 }
 
 .add-category-button {
+    /* position: absolute; */
     background-color: #ff6464;
     color: white;
     border: none;
@@ -173,7 +174,6 @@
 .edit-button {
     background-color: #4caf50;
     margin: 0px 0px 1px 0px;
-
 }
 
 .delete-button {

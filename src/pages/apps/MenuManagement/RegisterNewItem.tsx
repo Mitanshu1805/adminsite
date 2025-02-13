@@ -88,7 +88,7 @@ const RegisterNewItem: React.FC = () => {
     const { business_id, selectedCategoryId, item_id } =
         useParams<{ business_id: string; selectedCategoryId: string; item_id: string }>();
     const isEditMode = Boolean(item_id);
-    const [editItem, setEditItem] = useState<CategoryItem | null>(null);
+    // const [editItem, setEditItem] = useState<CategoryItem | null>(null);
     const [errorMsg, setError] = useState<string>('');
     const [successMsg, setSuccess] = useState<string>('');
 
@@ -129,30 +129,30 @@ const RegisterNewItem: React.FC = () => {
         }
     };
 
-    useEffect(() => {
-        if (editItem) {
-            setFormData({
-                item_name: editItem.item_names || { hindi: '', english: '', gujarati: '' },
-                online_display_name: editItem.online_display_name || '',
-                price: String(editItem.price || ''),
-                description: editItem.description || '',
-                dietary: editItem.dietary || 'veg',
-                available_order_type: editItem.available_order_type || [''],
-                gst_type: editItem.gst_type || 'none',
-                category_id: editItem.category_id || '',
-                business_id: editItem.business_id || '',
-                logo_image: null,
-                swiggy_image: null,
-                banner_image: null,
-                outlet_prices: editItem.outlet_prices || [{ outlet_id: '', price: 0 }],
-                is_loose: editItem.is_loose || false,
-                quantity_type: editItem.quantity_type as 'none' | 'piece' | 'weight' | 'volume',
-                quantity_params: editItem.quantity_params as 'none' | 'gm' | 'kg' | 'ml' | 'lt',
+    // useEffect(() => {
+    //     if (editItem) {
+    //         setFormData({
+    //             item_name: editItem.item_names || { hindi: '', english: '', gujarati: '' },
+    //             online_display_name: editItem.online_display_name || '',
+    //             price: String(editItem.price || ''),
+    //             description: editItem.description || '',
+    //             dietary: editItem.dietary || 'veg',
+    //             available_order_type: editItem.available_order_type || [''],
+    //             gst_type: editItem.gst_type || 'none',
+    //             category_id: editItem.category_id || '',
+    //             business_id: editItem.business_id || '',
+    //             logo_image: null,
+    //             swiggy_image: null,
+    //             banner_image: null,
+    //             outlet_prices: editItem.outlet_prices || [{ outlet_id: '', price: 0 }],
+    //             is_loose: editItem.is_loose || false,
+    //             quantity_type: editItem.quantity_type as 'none' | 'piece' | 'weight' | 'volume',
+    //             quantity_params: editItem.quantity_params as 'none' | 'gm' | 'kg' | 'ml' | 'lt',
 
-                quantity_value: String(editItem.quantity_value || ''),
-            });
-        }
-    }, [isEditMode, editItem]);
+    //             quantity_value: String(editItem.quantity_value || ''),
+    //         });
+    //     }
+    // }, [isEditMode, editItem]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, multiple } = e.target;
@@ -334,6 +334,8 @@ const RegisterNewItem: React.FC = () => {
             setSuccess('');
         }
     };
+
+    console.log('Selected outlets in parent component:', selectedOutlets);
 
     const { steps, currentStepIndex, step, isFirstStep, isLastStep, back, next } = useMultistepForm([
         <RegisterItemStep1

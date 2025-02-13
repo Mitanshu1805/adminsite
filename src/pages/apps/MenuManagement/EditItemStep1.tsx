@@ -1,14 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useRedux } from '../../../hooks';
-import { RootState } from '../../../redux/store';
-import { useMultistepForm } from '../../../hooks/useMultistepForm';
-import { updateItem } from '../../../redux/menuManagementItem/actions';
-import { categoryItemList } from '../../../redux/actions';
-import EditItemStep1 from './EditItemStep1';
-import EditItemStep2 from './EditItemStep2';
-import EditItemStep3 from './EditItemStep3';
-import { Button, Alert, Container, Card } from 'react-bootstrap';
+import React from 'react';
+import { Form, Button, Container } from 'react-bootstrap';
+import { Card, Row, Col, Alert } from 'react-bootstrap';
 
 interface CategoryItem {
     selectedCategoryId: string;
@@ -36,6 +28,7 @@ interface CategoryItem {
     outlets: Outlet[];
     outlet_prices: { outlet_id: string; price: number }[];
 }
+
 interface Outlet {
     outlet_id: string;
     outlet_name: string;
@@ -50,153 +43,231 @@ interface Category {
     items: CategoryItem[];
 }
 
-const EditItemPage: React.FC = () => {
-    const { item_id, business_id } = useParams<{ item_id: string; business_id: string }>();
-    const { dispatch, appSelector } = useRedux();
-    const [selectedOutlets, setSelectedOutlets] = useState<Outlet[]>([]);
-    const [editItem, setEditItem] = useState<CategoryItem | null>(null);
-    const [message, setMessage] = useState<string>('');
-    const categories = appSelector((state: RootState) => state.category.categories || []);
-    const [successMsg, setSuccess] = useState<string>('');
-    const [errorMsg, setError] = useState<string>('');
-    const navigate = useNavigate();
-    const isEditMode = Boolean(editItem && item_id);
-    // Define edit mode based on item existence
+interface EditItemStep1Props {
+    handleSubmit: (e: React.FormEvent) => void;
+    editItem: CategoryItem | null;
+    setEditItem: React.Dispatch<React.SetStateAction<CategoryItem | null>>;
+    message: string;
+}
 
-    useEffect(() => {
-        if (item_id) {
-            const itemToEdit = categories
-                .flatMap((category: Category) =>
-                    category.items.map((item: CategoryItem) => ({
-                        ...item,
-                        category_id: category.category_id,
-                    }))
-                )
-                .find((item: CategoryItem) => item.item_id === item_id);
+const EditItemStep1: React.FC<EditItemStep1Props> = ({ editItem, setEditItem, handleSubmit, message }) => {
+    if (!editItem) {
+        return <p>Loading...</p>;
+    }
 
-            if (itemToEdit) {
-                console.log('Item to Edit:', itemToEdit);
-                setEditItem(itemToEdit);
-            } else {
-                setMessage('Item not found.');
-            }
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof CategoryItem) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setEditItem({
+                ...editItem!,
+                [field]: file,
+            });
         }
-    }, [item_id, categories]);
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!editItem) {
-            setMessage('No item to save.');
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('item_name', JSON.stringify(editItem.item_names));
-        formData.append('online_display_name', editItem.online_display_name);
-        formData.append('price', editItem.price.toString());
-        formData.append('description', editItem.description);
-        formData.append('dietary', editItem.dietary);
-        formData.append('available_order_type', JSON.stringify(editItem.available_order_type));
-        formData.append('gst_type', editItem.gst_type);
-        formData.append('category_id', editItem.category_id);
-        formData.append('item_id', editItem.item_id);
-
-        if (editItem.logo_image) {
-            formData.append('logo_image', editItem.logo_image);
-        }
-        if (editItem.swiggy_image) {
-            formData.append('swiggy_image', editItem.swiggy_image);
-        }
-        if (editItem.banner_image) {
-            formData.append('banner_image', editItem.banner_image);
-        }
-
-        const validOutletPrices = editItem.outlets
-            .map((outlet) => ({
-                outlet_id: outlet.outlet_id,
-                price: outlet.price,
-            }))
-            .filter((outletPrice) => outletPrice.outlet_id !== '' && outletPrice.price !== 0);
-
-        if (validOutletPrices.length > 0) {
-            formData.append('outlet_prices', JSON.stringify(validOutletPrices));
-        }
-
-        formData.append('is_loose', editItem.is_loose.toString());
-        formData.append('quantity_type', editItem.quantity_type);
-        formData.append('quantity_params', editItem.quantity_params);
-        formData.append('quantity_value', editItem.quantity_value.toString());
-
-        dispatch(updateItem(formData));
-
-        setTimeout(() => {
-            setMessage('');
-            dispatch(categoryItemList(business_id!));
-        }, 500);
-
-        navigate(`/apps/manage-menu/${business_id}`);
     };
-
-    console.log('Selected outlets in parent component:', selectedOutlets);
-
-    const { steps, currentStepIndex, step, isFirstStep, isLastStep, back, next } = useMultistepForm([
-        <EditItemStep1 handleSubmit={handleSubmit} editItem={editItem} setEditItem={setEditItem} message={message} />,
-        <EditItemStep2
-            selectedOutlets={selectedOutlets} // ✅ Pass the state
-            setSelectedOutlets={setSelectedOutlets}
-        />,
-        <EditItemStep3 handleSubmit={handleSubmit} editItem={editItem} setEditItem={setEditItem} message={message} />,
-    ]);
-
     return (
-        <Container className="register-business-container">
+        <Container className="edit-item-page">
             <Card className="shadow-sm">
+                <Card.Header as="h2" className="text-center">
+                    Edit Item
+                </Card.Header>
                 <Card.Body>
-                    <form onSubmit={handleSubmit}>
-                        {' '}
-                        {/* Single Form here */}
-                        <div>
-                            Step {currentStepIndex + 1} of {steps.length}
-                        </div>
-                        {step}
-                        <div className="d-flex justify-content-center mt-4 gap-3">
-                            {!isFirstStep && (
-                                <Button variant="secondary" type="button" onClick={back} className="px-4 py-2">
-                                    Back
-                                </Button>
-                            )}
-                            <Button
-                                variant="primary"
-                                onClick={(e) => {
-                                    if (isLastStep) {
-                                        handleSubmit(e);
-                                    } else {
-                                        next();
+                    <Row className="mb-3">
+                        <Col md={4}>
+                            <Form.Group>
+                                <Form.Label>Menu Image</Form.Label>
+                                <Form.Control
+                                    type="file"
+                                    name="logo_image"
+                                    onChange={(e) => {
+                                        const file = (e.target as HTMLInputElement).files?.[0];
+                                        if (file) {
+                                            setEditItem({
+                                                ...editItem!,
+                                                logo_image: file,
+                                            });
+                                        }
+                                    }}
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col md={4}>
+                            <Form.Group>
+                                <Form.Label>Swiggy Image</Form.Label>
+                                <Form.Control
+                                    type="file"
+                                    name="swiggy_image"
+                                    onChange={(e) => {
+                                        const file = (e.target as HTMLInputElement).files?.[0];
+                                        if (file) {
+                                            setEditItem({
+                                                ...editItem!,
+                                                swiggy_image: file,
+                                            });
+                                        }
+                                    }}
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col md={4}>
+                            <Form.Group>
+                                <Form.Label>Banner Image</Form.Label>
+                                <Form.Control
+                                    type="file"
+                                    name="banner_image"
+                                    onChange={(e) => {
+                                        const file = (e.target as HTMLInputElement).files?.[0];
+                                        if (file) {
+                                            setEditItem({
+                                                ...editItem!,
+                                                banner_image: file,
+                                            });
+                                        }
+                                    }}
+                                />
+                            </Form.Group>
+                        </Col>
+                    </Row>
+                    <Row className="mb-3">
+                        <Col md={12} className="text-center">
+                            <Form.Group>
+                                <Form.Label>Item Name (English)</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="item_name.english"
+                                    required
+                                    value={editItem.item_names.english}
+                                    onChange={(e) =>
+                                        setEditItem({
+                                            ...editItem,
+                                            item_names: { ...editItem.item_names, english: e.target.value },
+                                        })
                                     }
-                                }}
-                                className="px-4 py-2">
-                                {isLastStep ? (isEditMode ? 'Update' : 'Finish') : 'Next'}
-                            </Button>
-                        </div>
-                    </form>
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col md={12} className="text-center">
+                            <Form.Group>
+                                <Form.Label>Item Name (Hindi)</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="item_name.hindi"
+                                    // required
+                                    value={editItem.item_names.hindi}
+                                    onChange={(e) =>
+                                        setEditItem({
+                                            ...editItem,
+                                            item_names: { ...editItem.item_names, hindi: e.target.value },
+                                        })
+                                    }
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col md={12} className="text-center">
+                            <Form.Group>
+                                <Form.Label>Item Name (Gujarati)</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="item_name.gujarati"
+                                    required
+                                    value={editItem.item_names.gujarati}
+                                    onChange={(e) =>
+                                        setEditItem({
+                                            ...editItem,
+                                            item_names: { ...editItem.item_names, gujarati: e.target.value },
+                                        })
+                                    }
+                                />
+                            </Form.Group>
+                        </Col>
+                    </Row>
+                    <Row className="mb-3">
+                        <Col md={6}>
+                            <Form.Label>Online Display Name</Form.Label>
+                            <Form.Control
+                                type="text"
+                                name="online_display_name"
+                                value={editItem.online_display_name}
+                                onChange={(e) => setEditItem({ ...editItem, online_display_name: e.target.value })}
+                            />
+                        </Col>
+                        <Col md={6}>
+                            <Form.Label>Item Description</Form.Label>
+                            <Form.Control
+                                type="text"
+                                name="description"
+                                value={editItem.description}
+                                onChange={(e) => setEditItem({ ...editItem, description: e.target.value })}
+                            />
+                        </Col>
+                        <Col md={6}>
+                            <Form.Label>Item Price</Form.Label>
+                            <Form.Control
+                                type="number"
+                                name="price"
+                                value={editItem.price}
+                                onChange={(e) => setEditItem({ ...editItem, price: Number(e.target.value) })}
+                            />
+                        </Col>
+                        <Col md={6}>
+                            <Form.Label>Dietary</Form.Label>
+                            <Form.Select
+                                name="dietary"
+                                value={editItem.dietary}
+                                onChange={(e) => setEditItem({ ...editItem, dietary: e.target.value })}>
+                                <option value="">Select Dietary Type</option>
+                                <option value="veg">Veg</option>
+                                <option value="non-veg">Nonveg</option>
+                            </Form.Select>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col md={6}>
+                            <Form.Group>
+                                <Form.Label>Item Order Type</Form.Label>
+                                <Form.Control
+                                    as="select"
+                                    name="available_order_type"
+                                    multiple
+                                    value={editItem.available_order_type || []}
+                                    onChange={(e) => {
+                                        const target = e.target as unknown as HTMLSelectElement;
+                                        const selectedOptions = Array.from(
+                                            target.selectedOptions,
+                                            (option) => option.value
+                                        );
+                                        setEditItem({ ...editItem, available_order_type: selectedOptions });
+                                    }}
+                                    required>
+                                    <option value="delivery">Delivery</option>
+                                    <option value="pick_up">Pick-up</option>
+                                    <option value="dine_in">Dine-in</option>
+                                    <option value="online">Online</option>
+                                </Form.Control>
+                            </Form.Group>
+                        </Col>
 
-                    {errorMsg && (
-                        <Alert variant="danger" className="mt-3">
-                            {errorMsg}
-                        </Alert>
-                    )}
-                    {successMsg && (
-                        <Alert variant="success" className="mt-3">
-                            {successMsg}
-                        </Alert>
-                    )}
+                        <Col md={6}>
+                            <Form.Group>
+                                <Form.Label>Item GST Type</Form.Label>
+                                <Form.Control
+                                    as="select"
+                                    name="gst_type"
+                                    value={editItem.gst_type || ''}
+                                    onChange={(e) => setEditItem({ ...editItem, gst_type: e.target.value })}
+                                    required>
+                                    <option value="goods">Goods</option>
+                                    <option value="services">Services</option>
+                                </Form.Control>
+                            </Form.Group>
+                        </Col>
+                    </Row>
                 </Card.Body>
             </Card>
         </Container>
     );
 };
 
-export default EditItemPage;
+export default EditItemStep1;
 
 {
     /* <div className="edit-item-page">
@@ -369,11 +440,11 @@ export default EditItemPage;
 
                     <div>
                         <label>GST Type:</label>
-                        {/* <input
+                        <input
                             type="text"
                             value={editItem.gst_type}
                             onChange={(e) => setEditItem({ ...editItem, gst_type: e.target.value })}
-                        /> s}
+                        />
                         <select
                             value={editItem.gst_type}
                             onChange={(e) => setEditItem({ ...editItem, gst_type: e.target.value })}>
@@ -419,7 +490,7 @@ export default EditItemPage;
                             )}
 
                             {(editItem.quantity_type === 'weight' || editItem.quantity_type === 'volume') && (
-                                <>
+                                <div>
                                     <div>
                                         <label>Quantity Params:</label>
                                         <select
@@ -452,12 +523,12 @@ export default EditItemPage;
                                             }
                                         />
                                     </div>
-                                </>
+                                </div>
                             )}
                         </div>
                     )}
 
-                    <button onClick={handleSaveChanges}>Save Changes</button>
+                    <button onClick={handleSubmit}>Save Changes</button>
                 </div>
             ) : (
                 <p>Loading...</p>

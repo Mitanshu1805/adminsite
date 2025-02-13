@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { categoryItemList, categoryUpdateIsActive } from "../../../redux/menuManagementCategory/actions";
-import { useRedux } from "../../../hooks";
-import { RootState } from "../../../redux/store";
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { categoryItemList, categoryUpdateIsActive } from '../../../redux/menuManagementCategory/actions';
+import { useRedux } from '../../../hooks';
+import { RootState } from '../../../redux/store';
 import ToggleSwitch from './ToggleSwitch';
-import "./ManageMenu.css";
+import './ManageMenu.css';
 
 interface Item {
     item_id: string;
@@ -34,6 +34,12 @@ const OutletMenu: React.FC = () => {
             dispatch(categoryItemList(business_id, outlet_id));
         }
     }, [business_id, outlet_id, dispatch]);
+
+    useEffect(() => {
+        if (categories.length > 0 && !selectedCategoryId) {
+            setSelectedCategoryId(categories[0].category_id);
+        }
+    }, [categories, selectedCategoryId]);
 
     const handleCategoryClick = (categoryId: string) => {
         setSelectedCategoryId(categoryId);
@@ -75,10 +81,9 @@ const OutletMenu: React.FC = () => {
             <div className="category-tabs">
                 {categories.map((category: CategoryItem) => (
                     <div
-                        className={`category-tab ${selectedCategoryId === category.category_id ? "active" : ""}`}
+                        className={`category-tab ${selectedCategoryId === category.category_id ? 'active' : ''}`}
                         key={category.category_id}
-                        onClick={() => handleCategoryClick(category.category_id)}
-                    >
+                        onClick={() => handleCategoryClick(category.category_id)}>
                         <img src={category.logo_image} alt={category.category_name} />
                         <p>{category.category_name}</p>
                         <div>
@@ -104,7 +109,9 @@ const OutletMenu: React.FC = () => {
                                 <p>Total Amount: 0</p>
                             </div>
                             <div className="item-actions">
-                                <button className="edit-button" onClick={() => handleEditItem(item.item_id, selectedCategoryId!)}>
+                                <button
+                                    className="edit-button"
+                                    onClick={() => handleEditItem(item.item_id, selectedCategoryId!)}>
                                     Edit
                                 </button>
                                 <button className="delete-button" onClick={() => handleDeleteItem(item.item_id)}>

@@ -325,6 +325,17 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
                     <Row>
                         <Col md={6}>
                             <Form.Group>
+                                <Form.Label>Price</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    name="price"
+                                    value={formData.price}
+                                    onChange={handleChange}
+                                    placeholder="Enter Item Price"></Form.Control>
+                            </Form.Group>
+                        </Col>
+                        <Col md={6}>
+                            <Form.Group>
                                 <Form.Label>Item Order Type</Form.Label>
                                 <Form.Control
                                     as="select"
