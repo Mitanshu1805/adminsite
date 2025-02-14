@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useRedux } from '../../../hooks';
 import { RootState } from '../../../redux/store';
 import { businessList } from '../../../redux/business/actions';
-import './ManageMenu.css'; // Import styles if needed
+import './ManageMenu.css';
 
 interface Outlet {
     outlet_id: string;
@@ -20,7 +20,7 @@ interface Business {
 }
 
 interface EditItemStep2Props {
-    selectedOutlets: Outlet[]; // Outlets user selected during registration
+    selectedOutlets: Outlet[];
     setSelectedOutlets: React.Dispatch<React.SetStateAction<Outlet[]>>;
 }
 

@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { useRedux } from '../../../hooks';
-import { registerCategory } from '../../../redux/actions';
+import { useDispatch } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import { useParams, useNavigate } from 'react-router-dom';
+import { updateCategory } from '../../../redux/actions';
+import { useMultistepForm } from '../../../hooks/useMultistepForm';
+import { Alert, Container, Card } from 'react-bootstrap';
+import { categoryItemList } from '../../../redux/actions';
+import EditCategoryStep1 from './EditCategoryStep1';
+import EditCategoryStep2 from './EditCategoryStep2';
 
 interface UpdateCategoryProps {
     show: boolean;
@@ -23,20 +31,23 @@ interface UpdateCategory {
 }
 
 const EditCategory: React.FC<UpdateCategoryProps> = ({ show, onClose }) => {
-    const { dispatch } = useRedux();
+    const { dispatch, appSelector } = useRedux();
     const [editItem, setEditItem] = useState<UpdateCategory | null>(null);
     const [message, setMessage] = useState<string>('');
+    const [successMsg, setSuccess] = useState<string>('');
+    const [editCategory, setEditCategory] = useState<UpdateCategory | null>(null);
+    const { business_id, selectedCategoryId } = useParams<{ business_id: string; selectedCategoryId: string }>();
+    console.log('Params:', { business_id, selectedCategoryId });
+
+    const categories = appSelector((state: RootState) => state.category.categories || []);
+    const isEditMode = Boolean(editCategory && selectedCategoryId);
+    const [errorMsg, setError] = useState<string>('');
+    const navigate = useNavigate();
+    const [selectedOutlets, setSelectedOutlets] = useState<string[]>([]);
+
     const [logoPreview, setLogoPreview] = useState<string | null>(null);
     const [swiggyPreview, setSwiggyPreview] = useState<string | null>(null);
     const [bannerPreview, setBannerPreview] = useState<string | null>(null);
-
-    useEffect(() => {
-        // If the modal is shown, reset or load the category data
-        if (show && editItem === null) {
-            // You might want to fetch the category data based on category_id here
-            // Example: setEditItem(fetchedCategory);
-        }
-    }, [show]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -51,56 +62,147 @@ const EditCategory: React.FC<UpdateCategoryProps> = ({ show, onClose }) => {
         }
     };
 
+    useEffect(() => {
+        if (!selectedCategoryId) return;
+
+        if (categories.length === 0) {
+            dispatch(categoryItemList(business_id!));
+        }
+
+        const categoryToEdit = categories.find(
+            (category: UpdateCategory) => category.category_id === selectedCategoryId
+        );
+
+        if (categoryToEdit) {
+            console.log('Category to EDIT: ', categoryToEdit);
+            setEditCategory({ ...categoryToEdit, business_id });
+
+            // Pre-select active outlets
+            if (categoryToEdit.outlets) {
+                const activeOutlets = categoryToEdit.outlets
+                    .filter((outlet: any) => outlet.is_active)
+                    .map((outlet: any) => outlet.id);
+                setSelectedOutlets(activeOutlets);
+            }
+        } else {
+            setMessage('Category to EDIT not found');
+        }
+    }, [selectedCategoryId, categories, dispatch, business_id]);
+
     const handleFileChange = (
         e: React.ChangeEvent<HTMLInputElement>,
         field: 'logo_image' | 'swiggy_image' | 'banner_image'
     ) => {
         const file = e.target.files?.[0];
-        if (file && editItem) {
-            const updatedItem = { ...editItem };
-            updatedItem[field] = file;
-            setEditItem(updatedItem);
+        if (!file || !editItem) return;
 
-            // Set image preview
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                if (field === 'logo_image') {
-                    setLogoPreview(reader.result as string);
-                } else if (field === 'swiggy_image') {
-                    setSwiggyPreview(reader.result as string);
-                } else if (field === 'banner_image') {
-                    setBannerPreview(reader.result as string);
-                }
-            };
-            reader.readAsDataURL(file);
-        }
+        setEditItem((prev) => ({
+            ...(prev as UpdateCategory),
+            [field]: file,
+        }));
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            if (field === 'logo_image') setLogoPreview(reader.result as string);
+            if (field === 'swiggy_image') setSwiggyPreview(reader.result as string);
+            if (field === 'banner_image') setBannerPreview(reader.result as string);
+        };
+        reader.readAsDataURL(file);
     };
 
-    const handleSaveChanges = () => {
-        if (editItem) {
-            const formData = new FormData();
-            formData.append('category_name', JSON.stringify(editItem.category_names));
-            if (editItem.logo_image) {
-                formData.append('logo_image', editItem.logo_image);
-            }
-            if (editItem.swiggy_image) {
-                formData.append('swiggy_image', editItem.swiggy_image);
-            }
-            if (editItem.banner_image) {
-                formData.append('banner_image', editItem.banner_image);
-            }
-            formData.append('is_active', editItem.is_active.toString());
-            formData.append('category_id', editItem.category_id);
-            formData.append('business_id', editItem.business_id);
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log('Form submitted');
 
-            dispatch(registerCategory(formData));
-        } else {
+        if (!editCategory) {
+            console.log('No Category Save');
             setMessage('No Category Save');
+            return;
         }
+
+        const formData = new FormData();
+        formData.append('category_name', JSON.stringify(editCategory.category_names));
+        formData.append('is_active', editCategory.is_active.toString());
+        formData.append('category_id', editCategory.category_id);
+        formData.append('business_id', editCategory.business_id);
+
+        if (editCategory.logo_image) formData.append('logo_image', editCategory.logo_image);
+        if (editCategory.swiggy_image) formData.append('swiggy_image', editCategory.swiggy_image);
+        if (editCategory.banner_image) formData.append('banner_image', editCategory.banner_image);
+
+        console.log('Dispatching API call with data:', Object.fromEntries(formData.entries()));
+        console.log('Final EditCategory:', editCategory);
+
+        dispatch(updateCategory(formData));
     };
+
+    const { steps, currentStepIndex, step, isFirstStep, isLastStep, back, next } = useMultistepForm([
+        <EditCategoryStep1
+            handleSubmit={handleSubmit}
+            editCategory={editCategory}
+            setEditCategory={setEditCategory}
+            message={message}
+        />,
+        <EditCategoryStep2
+            handleSubmit={handleSubmit}
+            editCategory={editCategory}
+            setEditCategory={setEditCategory}
+            message={message}
+        />,
+    ]);
 
     return (
-        <Modal show={show} onHide={onClose}>
+        <Container className="register-business-container">
+            <Card className="shadow-sm">
+                <Card.Body>
+                    <form onSubmit={handleSubmit}>
+                        {' '}
+                        {/* Single Form here */}
+                        <div>
+                            Step {currentStepIndex + 1} of {steps.length}
+                        </div>
+                        {step}
+                        <div className="d-flex justify-content-center mt-4 gap-3">
+                            {!isFirstStep && (
+                                <Button variant="secondary" type="button" onClick={back} className="px-4 py-2">
+                                    Back
+                                </Button>
+                            )}
+                            <Button
+                                variant="primary"
+                                onClick={(e) => {
+                                    if (isLastStep) {
+                                        handleSubmit(e);
+                                    } else {
+                                        next();
+                                    }
+                                }}
+                                className="px-4 py-2">
+                                {isLastStep ? (isEditMode ? 'Update' : 'Finish') : 'Next'}
+                            </Button>
+                        </div>
+                    </form>
+
+                    {errorMsg && (
+                        <Alert variant="danger" className="mt-3">
+                            {errorMsg}
+                        </Alert>
+                    )}
+                    {successMsg && (
+                        <Alert variant="success" className="mt-3">
+                            {successMsg}
+                        </Alert>
+                    )}
+                </Card.Body>
+            </Card>
+        </Container>
+    );
+};
+
+export default EditCategory;
+
+{
+    /* <Modal show={show} onHide={onClose}>
             <Modal.Header closeButton>
                 <Modal.Title>Edit Category</Modal.Title>
             </Modal.Header>
@@ -193,8 +295,5 @@ const EditCategory: React.FC<UpdateCategoryProps> = ({ show, onClose }) => {
                     </Button>
                 </Form>
             </Modal.Body>
-        </Modal>
-    );
-};
-
-export default EditCategory;
+        </Modal> */
+}

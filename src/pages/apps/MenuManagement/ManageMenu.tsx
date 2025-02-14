@@ -36,8 +36,8 @@ const ManageMenu: React.FC = () => {
     const { business_id } = useParams<{ business_id: string }>();
 
     const { dispatch, appSelector } = useRedux();
-    const [showCategoryRegistrationModal, setShowCategoryRegistrationModal] = useState(false);
-    const [showCategoryUpdateModal, setShowCategoryUpdateModal] = useState(false);
+    // const [showCategoryRegistrationModal, setShowCategoryRegistrationModal] = useState(false);
+    // const [showCategoryUpdateModal, setShowCategoryUpdateModal] = useState(false);
     const [toggleStates, setToggleStates] = useState<{ [key: string]: boolean }>({});
     const [isToggled, setIsToggled] = useState(false);
     const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -107,31 +107,31 @@ const ManageMenu: React.FC = () => {
         }, 100);
     };
 
-    const handleCategoryRegister = () => {
-        console.log('Category Register Clicked');
+    // const handleCategoryRegister = () => {
+    //     console.log('Category Register Clicked');
 
-        if (!showCategoryRegistrationModal) {
-            setShowCategoryRegistrationModal(true);
-        }
-    };
+    //     if (!showCategoryRegistrationModal) {
+    //         setShowCategoryRegistrationModal(true);
+    //     }
+    // };
 
-    const handleCategoryUpdate = () => {
-        console.log('Category Update Clicked');
+    // const handleCategoryUpdate = () => {
+    //     console.log('Category Update Clicked');
 
-        if (!showCategoryUpdateModal) {
-            setShowCategoryUpdateModal(true);
-        }
-    };
+    //     if (!showCategoryUpdateModal) {
+    //         setShowCategoryUpdateModal(true);
+    //     }
+    // };
 
-    const handleCloseCategoryRegistrationModal = () => {
-        console.log('Category Register Closed');
-        setShowCategoryRegistrationModal(false);
-    };
+    // const handleCloseCategoryRegistrationModal = () => {
+    //     console.log('Category Register Closed');
+    //     setShowCategoryRegistrationModal(false);
+    // };
 
-    const handleCloseCategoryUpdateModal = () => {
-        console.log('Category Update Clicked');
-        setShowCategoryUpdateModal(false);
-    };
+    // const handleCloseCategoryUpdateModal = () => {
+    //     console.log('Category Update Clicked');
+    //     setShowCategoryUpdateModal(false);
+    // };
 
     const handleDeleteItem = (item_id: string) => {
         const confirmDeleteitem = window.confirm('Are you sure you want to delete this Item?');
@@ -214,11 +214,11 @@ const ManageMenu: React.FC = () => {
                             <FaRegEdit
                                 size={20}
                                 style={{ cursor: 'pointer', marginRight: '10px' }}
-                                onClick={handleCategoryUpdate}
+                                onClick={() => navigate(`/apps/category-update/${business_id!}/${selectedCategoryId}`)}
                             />
-                            {showCategoryUpdateModal && (
+                            {/* {showCategoryUpdateModal && (
                                 <EditCategory show={showCategoryUpdateModal} onClose={handleCloseCategoryUpdateModal} />
-                            )}
+                            )} */}
                         </td>
                         <td>
                             <FaTrash
@@ -234,12 +234,12 @@ const ManageMenu: React.FC = () => {
                     onClick={() => navigate(`/apps/category-register/${business_id}`)}>
                     + Add Category
                 </button>
-                {showCategoryRegistrationModal && (
+                {/* {showCategoryRegistrationModal && (
                     <RegisterCategory
                         show={showCategoryRegistrationModal}
                         onClose={handleCloseCategoryRegistrationModal}
-                    />
-                )}
+                    /> */}
+                )
             </div>
 
             <div className="item-list">

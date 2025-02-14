@@ -17,6 +17,7 @@ import { LayoutTypes } from '../constants';
 import { useRedux } from '../hooks';
 import RegisterNewItem from '../pages/apps/MenuManagement/RegisterNewItem';
 import { Category } from '@material-ui/icons';
+// import EditCategory from '../pages/apps/MenuManagement/EditCategory';
 
 // lazy load all the views
 // auth
@@ -38,6 +39,7 @@ const ManageMenu = React.lazy(() => import('../pages/apps/MenuManagement/ManageM
 const EditItem = React.lazy(() => import('../pages/apps/MenuManagement/EditItem'));
 const ItemRegister = React.lazy(() => import('../pages/apps/MenuManagement/RegisterNewItem'));
 const CategoryRegister = React.lazy(() => import('../pages/apps/MenuManagement/RegisterCategory'));
+const EditCategory = React.lazy(() => import('../pages/apps/MenuManagement/EditCategory'));
 const OutletMenu = React.lazy(() => import('../pages/apps/MenuManagement/OutletMenu'));
 
 const CalendarApp = React.lazy(() => import('../pages/apps/Calendar'));
@@ -234,6 +236,10 @@ const AllRoutes = () => {
                         {
                             path: 'category-register/:business_id',
                             element: <LoadComponent component={CategoryRegister} />,
+                        },
+                        {
+                            path: 'category-update/:business_id/:selectedCategoryId?',
+                            element: <LoadComponent component={EditCategory} />,
                         },
                         {
                             path: 'business-register',

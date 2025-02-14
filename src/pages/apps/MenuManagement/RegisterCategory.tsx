@@ -122,33 +122,32 @@ const RegisterCategory: React.FC<RegisterCategoryProps> = ({ show, onClose }) =>
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Ensure `outlet_id` contains only the selected outlets
+        const updatedOutletIds = selectedOutlets.length > 0 ? selectedOutlets : [];
+
         const formDataToSend = new FormData();
         formDataToSend.append('category_name', JSON.stringify(formData.category_name));
-        formDataToSend.append('outlet_id', JSON.stringify(formData.outlet_id));
+        formDataToSend.append('outlet_id', JSON.stringify(updatedOutletIds)); // ✅ Send selected outlets
         formDataToSend.append('business_id', formData.business_id);
-        formDataToSend.append('is_active', formData.is_active.toString());
+        formDataToSend.append('is_active', (updatedOutletIds.length > 0).toString()); // ✅ Active if any outlets are selected
 
-        if (formData.logo_image) {
-            formDataToSend.append('logo_image', formData.logo_image);
-        }
-        if (formData.swiggy_image) {
-            formDataToSend.append('swiggy_image', formData.swiggy_image);
-        }
-        if (formData.banner_image) {
-            formDataToSend.append('banner_image', formData.banner_image);
-        }
+        if (formData.logo_image) formDataToSend.append('logo_image', formData.logo_image);
+        if (formData.swiggy_image) formDataToSend.append('swiggy_image', formData.swiggy_image);
+        if (formData.banner_image) formDataToSend.append('banner_image', formData.banner_image);
 
         try {
-            console.log('Dispatching API request...');
+            console.log('Dispatching API request with:', Object.fromEntries(formDataToSend.entries()));
             await dispatch(registerCategory(formDataToSend));
             console.log('API request dispatched!');
 
             setSuccess('Category registration successful');
             setError('');
+
             // Reset form state
             setFormData({
                 category_name: { hindi: '', english: '', gujarati: '' },
-                outlet_id: outletIds,
+                outlet_id: [], // Reset outlet selection
                 business_id: '',
                 logo_image: null,
                 swiggy_image: null,
@@ -156,6 +155,7 @@ const RegisterCategory: React.FC<RegisterCategoryProps> = ({ show, onClose }) =>
                 is_active: false,
                 selectedOutlets: [],
             });
+            setSelectedOutlets([]); // Clear selected outlets
             setLogoPreview(null);
             setSwiggyPreview(null);
             setBannerPreview(null);
@@ -182,6 +182,7 @@ const RegisterCategory: React.FC<RegisterCategoryProps> = ({ show, onClose }) =>
             selectedOutlets={selectedOutlets}
             setSelectedOutlets={setSelectedOutlets}
             formData={formData}
+            handleSubmit={handleSubmit}
         />,
     ]);
 

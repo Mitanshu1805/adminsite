@@ -23,6 +23,7 @@ interface RegisterCategoryTwoProps {
     };
     selectedOutlets: string[]; // Expect selectedOutlets as a separate prop
     setSelectedOutlets: React.Dispatch<React.SetStateAction<string[]>>; // Expect setSelectedOutlets as a separate prop
+    handleSubmit: (e: React.FormEvent) => void;
 }
 
 const RegisterCategoryStep2: React.FC<RegisterCategoryTwoProps> = ({
@@ -50,23 +51,36 @@ const RegisterCategoryStep2: React.FC<RegisterCategoryTwoProps> = ({
     const business = businesses.find((biz: Business) => biz.business_id === business_id);
 
     const toggleOutletSelection = (outlet: Outlet) => {
-        const isSelected = selectedOutlets.includes(outlet.outlet_id); // Use selectedOutlets directly
+        const isSelected = selectedOutlets.includes(outlet.outlet_id);
 
         setSelectedOutlets((prev: string[]) => {
             const newSelected = isSelected ? prev.filter((id) => id !== outlet.outlet_id) : [...prev, outlet.outlet_id];
 
             return newSelected;
         });
+
+        // Update the is_active status for the selected outlet
+        if (business) {
+            business.outlets = business.outlets.map((o: Outlet) =>
+                o.outlet_id === outlet.outlet_id ? { ...o, is_active: !o.is_active } : o
+            );
+        }
     };
 
     const selectAllOutlets = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         if (business) {
-            const allSelected = business.outlets.every(
-                (outlet: Outlet) => selectedOutlets.includes(outlet.outlet_id) // Use selectedOutlets directly
-            );
+            const allSelected = business.outlets.every((outlet: Outlet) => selectedOutlets.includes(outlet.outlet_id));
+
             const newSelected = allSelected ? [] : business.outlets.map((outlet: Outlet) => outlet.outlet_id);
+
             setSelectedOutlets(newSelected);
+
+            // Update is_active status for all outlets
+            business.outlets = business.outlets.map((outlet: Outlet) => ({
+                ...outlet,
+                is_active: !allSelected, // If deselecting, set all to inactive
+            }));
         }
     };
 
