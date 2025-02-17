@@ -11,6 +11,7 @@ interface Outlet {
 interface OutletPrice {
     outlet_id: string;
     price: number;
+    outlet_name: string;
 }
 
 interface CategoryItem {
@@ -36,8 +37,8 @@ interface CategoryItem {
     quantity_type: string;
     quantity_params: string;
     quantity_value: number;
-    outlets: Outlet[];
-    outlet_prices: { outlet_id: string; price: number }[];
+    // outlets: Outlet[];
+    outlet_prices: { outlet_id: string; price: number }[]; // This should default to an empty array if undefined
 }
 
 interface EditItemStep3Props {
@@ -45,26 +46,42 @@ interface EditItemStep3Props {
     editItem: CategoryItem | null;
     setEditItem: React.Dispatch<React.SetStateAction<CategoryItem | null>>;
     message: string;
+    selectedOutlets: Outlet[];
 }
 
-const EditItemStep3: React.FC<EditItemStep3Props> = ({ editItem, setEditItem, handleSubmit, message }) => {
+const EditItemStep3: React.FC<EditItemStep3Props> = ({
+    editItem,
+    setEditItem,
+    handleSubmit,
+    message,
+    selectedOutlets,
+}) => {
     if (!editItem) {
         return <p>Loading...</p>;
     }
 
-    // ✅ Ensure selectedOutlets is properly defined
-    const selectedOutlets = editItem.outlets || [];
+    // Ensure outlet_prices is never undefined
+    const outletPrices = editItem.outlet_prices ?? [];
 
-    // ✅ Define handlePriceChange
     const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>, outletId: string) => {
         const newPrice = parseFloat(e.target.value);
+
+        if (newPrice < 0 || isNaN(newPrice)) {
+            return; // Ignore invalid or negative values
+        }
+
         setEditItem((prev) => {
             if (!prev) return prev;
+
+            const updatedPrices = (prev.outlet_prices ?? []).map((priceEntry) =>
+                priceEntry.outlet_id === outletId ? { ...priceEntry, price: newPrice } : priceEntry
+            );
+
+            console.log('Updated prices:', updatedPrices); // Debugging the state update
+
             return {
                 ...prev,
-                outlet_prices: prev.outlet_prices.map((priceEntry) =>
-                    priceEntry.outlet_id === outletId ? { ...priceEntry, price: newPrice } : priceEntry
-                ),
+                outlet_prices: updatedPrices,
             };
         });
     };
@@ -73,10 +90,8 @@ const EditItemStep3: React.FC<EditItemStep3Props> = ({ editItem, setEditItem, ha
         <div className="step3-container">
             <h2 className="title">Outlet List</h2>
             {selectedOutlets.length > 0 ? (
-                selectedOutlets.map((outlet) => {
-                    const price =
-                        editItem.outlet_prices?.find((priceEntry) => priceEntry.outlet_id === outlet.outlet_id)
-                            ?.price || '';
+                selectedOutlets.map((outlet: OutletPrice) => {
+                    const price = outletPrices.find((priceEntry) => priceEntry.outlet_id === outlet.outlet_id)?.price;
 
                     return (
                         <div key={outlet.outlet_id} className="outlet-card">

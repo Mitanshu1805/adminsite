@@ -120,6 +120,11 @@ const EditCategory: React.FC<UpdateCategoryProps> = ({ show, onClose }) => {
             return;
         }
 
+        const updatedCategory = selectedOutlets.map((outlet_data: any) => outlet_data?.outlet_id);
+        console.log('Selected Outlets: ', selectedOutlets);
+
+        console.log('Updated Category Before Dispatch:', updatedCategory);
+
         const formData = new FormData();
         formData.append('category_name', JSON.stringify(editCategory.category_names));
         formData.append('is_active', editCategory.is_active.toString());
@@ -129,6 +134,7 @@ const EditCategory: React.FC<UpdateCategoryProps> = ({ show, onClose }) => {
         if (editCategory.logo_image) formData.append('logo_image', editCategory.logo_image);
         if (editCategory.swiggy_image) formData.append('swiggy_image', editCategory.swiggy_image);
         if (editCategory.banner_image) formData.append('banner_image', editCategory.banner_image);
+        formData.append('outlet_id', JSON.stringify(selectedOutlets));
 
         console.log('Dispatching API call with data:', Object.fromEntries(formData.entries()));
         console.log('Final EditCategory:', editCategory);
@@ -148,6 +154,8 @@ const EditCategory: React.FC<UpdateCategoryProps> = ({ show, onClose }) => {
             editCategory={editCategory}
             setEditCategory={setEditCategory}
             message={message}
+            selectedOutlets={selectedOutlets}
+            setSelectedOutlets={setSelectedOutlets}
         />,
     ]);
 

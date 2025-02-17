@@ -42,7 +42,7 @@ interface CategoryItem {
     quantity_type: string;
     quantity_params: string;
     quantity_value: number;
-    outlets: Outlet[];
+    // outlets: Outlet[];
     outlet_prices: { outlet_id: string; price: number }[];
 }
 
@@ -335,7 +335,7 @@ const RegisterNewItem: React.FC = () => {
         }
     };
 
-    console.log('Selected outlets in parent component:', selectedOutlets);
+    // console.log('Selected outlets in parent component:', selectedOutlets);
 
     const { steps, currentStepIndex, step, isFirstStep, isLastStep, back, next } = useMultistepForm([
         <RegisterItemStep1

@@ -239,7 +239,6 @@ const ManageMenu: React.FC = () => {
                         show={showCategoryRegistrationModal}
                         onClose={handleCloseCategoryRegistrationModal}
                     /> */}
-                )
             </div>
 
             <div className="item-list">

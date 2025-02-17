@@ -33,7 +33,7 @@ interface CategoryItem {
     quantity_type: string;
     quantity_params: string;
     quantity_value: number;
-    outlets: Outlet[];
+    // outlets: Outlet[];
     outlet_prices: { outlet_id: string; price: number }[];
 }
 interface Outlet {
@@ -111,17 +111,17 @@ const EditItemPage: React.FC = () => {
             formData.append('banner_image', editItem.banner_image);
         }
 
-        const validOutletPrices = editItem.outlets
-            .map((outlet) => ({
-                outlet_id: outlet.outlet_id,
-                price: outlet.price,
-            }))
-            .filter((outletPrice) => outletPrice.outlet_id !== '' && outletPrice.price !== 0);
+        // const validOutletPrices = editItem.outlets
+        //     .map((outlet) => ({
+        //         outlet_id: outlet.outlet_id,
+        //         price: outlet.price,
+        //     }))
+        //     .filter((outletPrice) => outletPrice.outlet_id !== '' && outletPrice.price !== 0);
 
-        if (validOutletPrices.length > 0) {
-            formData.append('outlet_prices', JSON.stringify(validOutletPrices));
-        }
-
+        // if (validOutletPrices.length > 0) {
+        //     formData.append('outlet_prices', JSON.stringify(validOutletPrices));
+        // }
+        formData.append('outlet_prices', JSON.stringify(editItem.outlet_prices));
         formData.append('is_loose', editItem.is_loose.toString());
         formData.append('quantity_type', editItem.quantity_type);
         formData.append('quantity_params', editItem.quantity_params);
@@ -130,14 +130,14 @@ const EditItemPage: React.FC = () => {
         dispatch(updateItem(formData));
 
         setTimeout(() => {
-            setMessage('');
+            // setMessage('');
             dispatch(categoryItemList(business_id!));
         }, 500);
 
         navigate(`/apps/manage-menu/${business_id}`);
     };
 
-    console.log('Selected outlets in parent component:', selectedOutlets);
+    // console.log('Selected outlets in parent component:', selectedOutlets);
 
     const { steps, currentStepIndex, step, isFirstStep, isLastStep, back, next } = useMultistepForm([
         <EditItemStep1 handleSubmit={handleSubmit} editItem={editItem} setEditItem={setEditItem} message={message} />,
@@ -145,7 +145,13 @@ const EditItemPage: React.FC = () => {
             selectedOutlets={selectedOutlets} // ✅ Pass the state
             setSelectedOutlets={setSelectedOutlets}
         />,
-        <EditItemStep3 handleSubmit={handleSubmit} editItem={editItem} setEditItem={setEditItem} message={message} />,
+        <EditItemStep3
+            handleSubmit={handleSubmit}
+            editItem={editItem}
+            setEditItem={setEditItem}
+            message={message}
+            selectedOutlets={selectedOutlets}
+        />,
     ]);
 
     return (
