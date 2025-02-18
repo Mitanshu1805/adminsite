@@ -10,20 +10,18 @@ interface Outlet {
     outlet_id: string;
     outlet_name: string;
     price: number;
-    sequence_no: number;
-    disable_until: string | null;
 }
 
 interface Business {
     business_id: string;
     business_name: string;
-    outlets: Outlet[];
+    // outlets: Outlet[];
 }
 
 interface Item {
     item_id: string;
     item_name: string;
-    outlets: Outlet[];
+    // outlets: Outlet[];
 }
 
 interface Category {

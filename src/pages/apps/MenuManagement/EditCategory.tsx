@@ -37,7 +37,7 @@ const EditCategory: React.FC<UpdateCategoryProps> = ({ show, onClose }) => {
     const [successMsg, setSuccess] = useState<string>('');
     const [editCategory, setEditCategory] = useState<UpdateCategory | null>(null);
     const { business_id, selectedCategoryId } = useParams<{ business_id: string; selectedCategoryId: string }>();
-    console.log('Params:', { business_id, selectedCategoryId });
+    // console.log('Params:', { business_id, selectedCategoryId });
 
     const categories = appSelector((state: RootState) => state.category.categories || []);
     const isEditMode = Boolean(editCategory && selectedCategoryId);
@@ -48,6 +48,11 @@ const EditCategory: React.FC<UpdateCategoryProps> = ({ show, onClose }) => {
     const [logoPreview, setLogoPreview] = useState<string | null>(null);
     const [swiggyPreview, setSwiggyPreview] = useState<string | null>(null);
     const [bannerPreview, setBannerPreview] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!editCategory) return;
+        console.log('Updated category:', editCategory);
+    }, [editCategory]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -111,6 +116,7 @@ const EditCategory: React.FC<UpdateCategoryProps> = ({ show, onClose }) => {
     };
 
     const handleSubmit = (e: React.FormEvent) => {
+        console.log('Submitting payload:', editCategory);
         e.preventDefault();
         console.log('Form submitted');
 
@@ -140,6 +146,8 @@ const EditCategory: React.FC<UpdateCategoryProps> = ({ show, onClose }) => {
         console.log('Final EditCategory:', editCategory);
 
         dispatch(updateCategory(formData));
+        setSuccess('Category Updated successfully!');
+        navigate(`/apps/manage-menu/${business_id}`);
     };
 
     const { steps, currentStepIndex, step, isFirstStep, isLastStep, back, next } = useMultistepForm([

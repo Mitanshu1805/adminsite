@@ -25,16 +25,16 @@ interface CategoryItem {
     quantity_type: string;
     quantity_params: string;
     quantity_value: number;
-    // outlets: Outlet[];
-    outlets: { outlet_id: string; price: number }[];
+    outlets: Outlet[];
+    outlet_prices: { outlet_id: string; price: number }[];
 }
 
 interface Outlet {
     outlet_id: string;
     outlet_name: string;
     price: number;
-    sequence_no: number;
-    disable_until: string | null;
+    // sequence_no: number;
+    // disable_until: string | null;
 }
 
 interface Category {
@@ -63,6 +63,24 @@ const EditItemStep1: React.FC<EditItemStep1Props> = ({ editItem, setEditItem, ha
                 [field]: file,
             });
         }
+    };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+
+        setEditItem((prev) => {
+            const updateItem = prev
+                ? {
+                      ...prev,
+                      item_names: {
+                          ...prev.item_names,
+                          [name]: value,
+                      },
+                  }
+                : null;
+
+            return updateItem;
+        });
     };
     return (
         <Container className="edit-item-page">
@@ -133,15 +151,10 @@ const EditItemStep1: React.FC<EditItemStep1Props> = ({ editItem, setEditItem, ha
                                 <Form.Label>Item Name (English)</Form.Label>
                                 <Form.Control
                                     type="text"
-                                    name="item_name.english"
+                                    name="english"
                                     required
-                                    value={editItem.item_names.english}
-                                    onChange={(e) =>
-                                        setEditItem({
-                                            ...editItem,
-                                            item_names: { ...editItem.item_names, english: e.target.value },
-                                        })
-                                    }
+                                    value={editItem?.item_names.english || ''}
+                                    onChange={handleInputChange}
                                 />
                             </Form.Group>
                         </Col>

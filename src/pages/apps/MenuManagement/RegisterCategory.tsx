@@ -55,6 +55,8 @@ const RegisterCategory: React.FC<RegisterCategoryProps> = ({ show, onClose }) =>
     const [swiggyPreview, setSwiggyPreview] = useState<string | null>(null);
     const [bannerPreview, setBannerPreview] = useState<string | null>(null);
     const [errorMsg, setError] = useState<string>('');
+    const navigate = useNavigate();
+    const [errors, setErrors] = useState<Record<string, string>>({});
     const [selectedOutlets, setSelectedOutlets] = useState<string[]>([]);
     const [successMsg, setSuccess] = useState<string>('');
 
@@ -120,6 +122,22 @@ const RegisterCategory: React.FC<RegisterCategoryProps> = ({ show, onClose }) =>
         }
     };
 
+    const validateCurrentStep = () => {
+        let newErrors: Record<string, string> = {};
+
+        if (currentStepIndex === 0) {
+            if (!formData.category_name.english.trim()) {
+                newErrors.category_name = 'Category Name is required!';
+            }
+            if (!formData.logo_image || formData.logo_image.name.trim() === '') {
+                newErrors.logo_image = 'Logo Image is required!';
+            }
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -142,6 +160,7 @@ const RegisterCategory: React.FC<RegisterCategoryProps> = ({ show, onClose }) =>
             console.log('API request dispatched!');
 
             setSuccess('Category registration successful');
+            navigate(`/apps/manage-menu/${business_id}`);
             setError('');
 
             // Reset form state
@@ -176,6 +195,7 @@ const RegisterCategory: React.FC<RegisterCategoryProps> = ({ show, onClose }) =>
             logoPreview={logoPreview}
             swiggyPreview={swiggyPreview}
             bannerPreview={bannerPreview}
+            errors={errors}
         />,
 
         <RegisterCategoryStep2
@@ -206,6 +226,7 @@ const RegisterCategory: React.FC<RegisterCategoryProps> = ({ show, onClose }) =>
                             <Button
                                 variant="primary"
                                 onClick={(e) => {
+                                    if (!validateCurrentStep()) return;
                                     if (isLastStep) {
                                         handleSubmit(e);
                                     } else {

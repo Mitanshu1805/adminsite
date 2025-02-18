@@ -34,6 +34,7 @@ export interface RegisterItemOneProps {
     logoPreview: string | null;
     swiggyPreview: string | null;
     bannerPreview: string | null;
+    errors: Record<string, string>;
 }
 
 const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
@@ -45,6 +46,7 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
     logoPreview,
     swiggyPreview,
     bannerPreview,
+    errors,
 }) => {
     // const [quantityType, setQuantityType] = useState(formData.quantity_type || ''); // State for Quantity Type
     // const [quantityParams, setQuantityParams] = useState(formData.quantity_params || ''); // State for Quantity Params
@@ -68,6 +70,7 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
             } as any);
         }
     };
+
     const handleQuantityValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         handleChange({
@@ -130,6 +133,7 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
                                     onChange={handleChange}
                                     placeholder="Enter Item Name in English"
                                 />
+                                {errors.item_name && <small className="text-danger">{errors.item_name}</small>}
                             </Form.Group>
                         </Col>
                         <Col>
@@ -306,6 +310,7 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
                                 <option value="veg">veg</option>
                                 <option value="non-veg">non-veg</option>
                             </Form.Control>
+                            {errors.dietary && <small className="text-danger">{errors.dietary}</small>}
                         </Col>
                         <Col md={6}>
                             <Form.Group>
@@ -343,12 +348,16 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
                                     multiple
                                     value={formData.available_order_type}
                                     onChange={handleChange}
-                                    required>
+                                    // required
+                                >
                                     <option value="delivery">Delivery</option>
                                     <option value="pick_up">Pick-up</option>
                                     <option value="dine_in">Dine-in</option>
                                     <option value="online">Online</option>
                                 </Form.Control>
+                                {errors.available_order_type && (
+                                    <small className="text-danger">{errors.available_order_type}</small>
+                                )}
                             </Form.Group>
                         </Col>
                     </Row>

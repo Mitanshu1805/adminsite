@@ -23,6 +23,7 @@ export interface RegisterCategoryOneProps {
     logoPreview: string | null;
     swiggyPreview: string | null;
     bannerPreview: string | null;
+    errors: Record<string, string>;
 }
 
 const RegisterCategoryStep1: React.FC<RegisterCategoryOneProps> = ({
@@ -34,6 +35,7 @@ const RegisterCategoryStep1: React.FC<RegisterCategoryOneProps> = ({
     logoPreview,
     swiggyPreview,
     bannerPreview,
+    errors,
 }) => {
     return (
         <Container className="register-item-container">
@@ -50,6 +52,7 @@ const RegisterCategoryStep1: React.FC<RegisterCategoryOneProps> = ({
                                 <Form.Control type="file" name="logo_image" onChange={handleFileChange} />
                                 {logoPreview && <img src={logoPreview} alt="Menu Preview" width="100" />}
                             </Form.Group>
+                            {errors.logo_image && <small className="text-danger">{errors.logo_image}</small>}
                         </Col>
 
                         {/* Swiggy Image */}
@@ -83,6 +86,7 @@ const RegisterCategoryStep1: React.FC<RegisterCategoryOneProps> = ({
                                     onChange={handleChange}
                                     placeholder="Enter Item Name in English"
                                 />
+                                {errors.category_name && <small className="text-danger">{errors.category_name}</small>}
                             </Form.Group>
                         </Col>
                         <Col>

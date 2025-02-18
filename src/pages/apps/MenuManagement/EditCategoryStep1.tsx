@@ -32,6 +32,12 @@ const EditCategoryStep1: React.FC<EditCategoryStep1Props> = ({
     const [swiggyPreview, setSwiggyPreview] = useState<string | null>(null);
     const [bannerPreview, setBannerPreview] = useState<string | null>(null);
 
+    useEffect(() => {
+        if (editCategory) {
+            console.log('Updated category:', editCategory);
+        }
+    }, [editCategory]); // ✅ Always called in the same order, but runs conditionally inside
+
     if (!editCategory) return <p>Loading...</p>;
 
     const handleFileChange = (
@@ -59,8 +65,9 @@ const EditCategoryStep1: React.FC<EditCategoryStep1Props> = ({
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setEditCategory((prev) =>
-            prev
+
+        setEditCategory((prev) => {
+            const updatedCategory = prev
                 ? {
                       ...prev,
                       category_names: {
@@ -68,8 +75,11 @@ const EditCategoryStep1: React.FC<EditCategoryStep1Props> = ({
                           [name]: value,
                       },
                   }
-                : null
-        );
+                : null;
+
+            console.log('Updated inside setState:', updatedCategory);
+            return updatedCategory;
+        });
     };
 
     return (

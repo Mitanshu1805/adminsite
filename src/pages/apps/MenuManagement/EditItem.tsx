@@ -33,15 +33,13 @@ interface CategoryItem {
     quantity_type: string;
     quantity_params: string;
     quantity_value: number;
-    // outlets: Outlet[];
-    outlets: { outlet_id: string; price: number }[];
+    outlets: Outlet[];
+    outlet_prices: { outlet_id: string; price: number }[];
 }
 interface Outlet {
     outlet_id: string;
     outlet_name: string;
     price: number;
-    sequence_no: number;
-    disable_until: string | null;
 }
 
 interface Category {
@@ -61,20 +59,32 @@ const EditItemPage: React.FC = () => {
     const [errorMsg, setError] = useState<string>('');
     const navigate = useNavigate();
     const isEditMode = Boolean(editItem && item_id);
-    // Define edit mode based on item existence
 
     useEffect(() => {
+        console.log('useEffect triggered');
+        console.log('Categories Data:', categories);
         if (item_id) {
             console.log('Categories Data:', categories);
             const itemToEdit = categories
-
                 .flatMap((category: Category) =>
-                    category.items.map((item: CategoryItem) => ({
-                        ...item,
-                        category_id: category.category_id,
-                    }))
+                    category.items.map((item: CategoryItem) => {
+                        console.log('Item:', item);
+                        return {
+                            ...item,
+                            category_id: category.category_id,
+                            outlet_prices:
+                                item.outlets?.map((outlet: Outlet) => ({
+                                    outlet_id: outlet.outlet_id,
+                                    price: outlet.price,
+                                })) ?? [],
+                        };
+                    })
                 )
                 .find((item: CategoryItem) => item.item_id === item_id);
+
+            console.log('Item with outlet_prices:', JSON.stringify(itemToEdit, null, 2));
+
+            console.log('Categories Data:', categories);
 
             if (itemToEdit) {
                 console.log('Item to Edit:', itemToEdit);
@@ -87,6 +97,10 @@ const EditItemPage: React.FC = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        setTimeout(() => {
+            console.log('Submitting category after delay:', editItem);
+        }, 100);
+
         if (!editItem) {
             setMessage('No item to save.');
             return;
@@ -123,7 +137,7 @@ const EditItemPage: React.FC = () => {
         // if (validOutletPrices.length > 0) {
         //     formData.append('outlet_prices', JSON.stringify(validOutletPrices));
         // }
-        formData.append('outlet_prices', JSON.stringify(editItem.outlets));
+        formData.append('outlet_prices', JSON.stringify(editItem.outlet_prices));
         formData.append('is_loose', editItem.is_loose.toString());
         formData.append('quantity_type', editItem.quantity_type);
         formData.append('quantity_params', editItem.quantity_params);

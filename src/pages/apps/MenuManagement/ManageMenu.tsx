@@ -138,6 +138,10 @@ const ManageMenu: React.FC = () => {
         if (confirmDeleteitem) {
             dispatch(deleteItem(item_id));
             setMessage('Item deleted successfully');
+            setTimeout(() => {
+                setMessage('');
+                dispatch(categoryItemList(business_id!));
+            }, 500);
         }
     };
 
@@ -146,6 +150,10 @@ const ManageMenu: React.FC = () => {
         if (confirmDeletecategory) {
             dispatch(deleteCategory(category_id));
             setMessage('Category deleted successfully');
+            setTimeout(() => {
+                setMessage('');
+                dispatch(categoryItemList(business_id!));
+            }, 500);
         }
     };
 

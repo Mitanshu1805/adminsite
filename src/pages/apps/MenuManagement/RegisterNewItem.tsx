@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Alert, Container, Card } from 'react-bootstrap';
 import { useMultistepForm } from '../../../hooks/useMultistepForm';
 import { registerItem } from '../../../redux/menuManagementItem/actions';
@@ -51,7 +51,7 @@ interface SelectedBusiness {
     business_id: string;
     name: string;
     business_name: string;
-    outlets: Outlet[]; // Add other required properties
+    // outlets: Outlet[]; // Add other required properties
 }
 
 const RegisterNewItem: React.FC = () => {
@@ -88,6 +88,8 @@ const RegisterNewItem: React.FC = () => {
     const { business_id, selectedCategoryId, item_id } =
         useParams<{ business_id: string; selectedCategoryId: string; item_id: string }>();
     const isEditMode = Boolean(item_id);
+    const navigate = useNavigate();
+    const [errors, setErrors] = useState<Record<string, string>>({});
     // const [editItem, setEditItem] = useState<CategoryItem | null>(null);
     const [errorMsg, setError] = useState<string>('');
     const [successMsg, setSuccess] = useState<string>('');
@@ -154,12 +156,32 @@ const RegisterNewItem: React.FC = () => {
     //     }
     // }, [isEditMode, editItem]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value, type, multiple } = e.target;
+    const validateCurrentStep = () => {
+        let newErrors: Record<string, string> = {};
 
-        // Handling nested state updates properly
+        if (currentStepIndex === 0) {
+            if (!formData.item_name.english.trim()) {
+                newErrors.item_name = 'Item name is required.';
+            }
+
+            if (
+                formData.available_order_type.length === 0 ||
+                formData.available_order_type.some((type) => !type.trim())
+            ) {
+                newErrors.available_order_type = 'Order Type is required.';
+            }
+
+            if (!formData.dietary) newErrors.dietary = 'Dietary Type is required';
+        }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value, type } = e.target;
+
         setFormData((prevState) => {
-            // Check if the field is inside `item_name`
+            // Handling nested state updates for item_name fields
             if (name.startsWith('item_name.')) {
                 const field = name.split('.')[1]; // Extract 'hindi', 'english', or 'gujarati'
                 return {
@@ -171,6 +193,15 @@ const RegisterNewItem: React.FC = () => {
                 };
             }
 
+            // Handling multiple selection in <select multiple>
+            if (e.target instanceof HTMLSelectElement && e.target.multiple) {
+                const selectedValues = Array.from(e.target.selectedOptions).map((option) => option.value);
+                return {
+                    ...prevState,
+                    [name]: selectedValues, // Store as an array
+                };
+            }
+
             // Handle normal fields
             return {
                 ...prevState,
@@ -179,13 +210,13 @@ const RegisterNewItem: React.FC = () => {
         });
     };
 
-    const validateForm = () => {
-        if (!formData.item_name || !formData.online_display_name || !formData.price) {
-            setError('Please fill out all required fields.');
-            return false;
-        }
-        return true;
-    };
+    // const validateForm = () => {
+    //     if (!formData.item_name || !formData.online_display_name || !formData.price) {
+    //         setError('Please fill out all required fields.');
+    //         return false;
+    //     }
+    //     return true;
+    // };
 
     useEffect(() => {
         console.log('Selected Business:', selectedBusiness); // Debugging
@@ -253,10 +284,10 @@ const RegisterNewItem: React.FC = () => {
         e.preventDefault();
         console.log('Final Payload Before Dispatch:', JSON.stringify(formData, null, 2));
         console.log('Final Payload:', formData);
-        if (!validateForm()) {
-            console.log('Form validation failed');
-            return;
-        }
+        // if (!validateForm()) {
+        //     console.log('Form validation failed');
+        //     return;
+        // }
 
         const formDataToSend = new FormData();
         formDataToSend.append('item_name', JSON.stringify(formData.item_name));
@@ -306,6 +337,7 @@ const RegisterNewItem: React.FC = () => {
             }
 
             setSuccess('Item registered successfully!');
+            navigate(`/apps/manage-menu/${business_id}`);
             setError('');
             setFormData({
                 item_name: { hindi: '', english: '', gujarati: '' },
@@ -348,6 +380,7 @@ const RegisterNewItem: React.FC = () => {
             logoPreview={logoPreview}
             swiggyPreview={swiggyPreview}
             bannerPreview={bannerPreview}
+            errors={errors}
         />,
         <RegisterItemStep2 selectedOutlets={selectedOutlets} setSelectedOutlets={setSelectedOutlets} />,
         // selectedBusiness ? (
@@ -383,6 +416,7 @@ const RegisterNewItem: React.FC = () => {
                             <Button
                                 variant="primary"
                                 onClick={(e) => {
+                                    if (!validateCurrentStep()) return;
                                     if (isLastStep) {
                                         handleSubmit(e);
                                     } else {

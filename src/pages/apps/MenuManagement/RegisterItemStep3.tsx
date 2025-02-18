@@ -10,7 +10,7 @@ interface Outlet {
 interface Business {
     business_id: string;
     business_name: string;
-    outlets: Outlet[];
+    // outlets: Outlet[];
 }
 
 interface RegisterItemStep3Props {

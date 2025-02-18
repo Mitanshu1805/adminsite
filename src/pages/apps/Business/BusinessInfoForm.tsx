@@ -106,7 +106,9 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
                                     required
                                     placeholder="Enter business contact number"
                                 />
-                                {errors.business_contact && <small className="text-danger">{errors.business_contact}</small>}
+                                {errors.business_contact && (
+                                    <small className="text-danger">{errors.business_contact}</small>
+                                )}
                             </Col>
                         </Row>
                         <Row className="mb-3">
@@ -120,7 +122,9 @@ const BusinessInfoForm: React.FC<BusinessInfoFormProps> = ({
                                     required
                                     placeholder="Enter business address"
                                 />
-                                {errors.business_address && <small className="text-danger">{errors.business_address}</small>}
+                                {errors.business_address && (
+                                    <small className="text-danger">{errors.business_address}</small>
+                                )}
                             </Col>
                             <Col md={6}>
                                 <Form.Label>GST Number</Form.Label>
