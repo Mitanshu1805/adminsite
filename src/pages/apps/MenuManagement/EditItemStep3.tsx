@@ -38,7 +38,7 @@ interface CategoryItem {
     quantity_params: string;
     quantity_value: number;
     // outlets: Outlet[];
-    outlet_prices: { outlet_id: string; price: number }[]; // This should default to an empty array if undefined
+    outlets: { outlet_id: string; price: number }[]; // This should default to an empty array if undefined
 }
 
 interface EditItemStep3Props {
@@ -61,7 +61,7 @@ const EditItemStep3: React.FC<EditItemStep3Props> = ({
     }
 
     // Ensure outlet_prices is never undefined
-    const outletPrices = editItem.outlet_prices ?? [];
+    const outletPrices = editItem.outlets ?? [];
 
     const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>, outletId: string) => {
         const newPrice = parseFloat(e.target.value);
@@ -73,7 +73,7 @@ const EditItemStep3: React.FC<EditItemStep3Props> = ({
         setEditItem((prev) => {
             if (!prev) return prev;
 
-            const updatedPrices = (prev.outlet_prices ?? []).map((priceEntry) =>
+            const updatedPrices = (prev.outlets ?? []).map((priceEntry) =>
                 priceEntry.outlet_id === outletId ? { ...priceEntry, price: newPrice } : priceEntry
             );
 

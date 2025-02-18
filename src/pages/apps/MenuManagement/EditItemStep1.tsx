@@ -26,7 +26,7 @@ interface CategoryItem {
     quantity_params: string;
     quantity_value: number;
     // outlets: Outlet[];
-    outlet_prices: { outlet_id: string; price: number }[];
+    outlets: { outlet_id: string; price: number }[];
 }
 
 interface Outlet {

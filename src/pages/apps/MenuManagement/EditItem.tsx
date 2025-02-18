@@ -34,7 +34,7 @@ interface CategoryItem {
     quantity_params: string;
     quantity_value: number;
     // outlets: Outlet[];
-    outlet_prices: { outlet_id: string; price: number }[];
+    outlets: { outlet_id: string; price: number }[];
 }
 interface Outlet {
     outlet_id: string;
@@ -65,7 +65,9 @@ const EditItemPage: React.FC = () => {
 
     useEffect(() => {
         if (item_id) {
+            console.log('Categories Data:', categories);
             const itemToEdit = categories
+
                 .flatMap((category: Category) =>
                     category.items.map((item: CategoryItem) => ({
                         ...item,
@@ -121,7 +123,7 @@ const EditItemPage: React.FC = () => {
         // if (validOutletPrices.length > 0) {
         //     formData.append('outlet_prices', JSON.stringify(validOutletPrices));
         // }
-        formData.append('outlet_prices', JSON.stringify(editItem.outlet_prices));
+        formData.append('outlet_prices', JSON.stringify(editItem.outlets));
         formData.append('is_loose', editItem.is_loose.toString());
         formData.append('quantity_type', editItem.quantity_type);
         formData.append('quantity_params', editItem.quantity_params);
