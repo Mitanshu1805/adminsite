@@ -20,6 +20,11 @@ interface EditCategoryStep1Props {
     editCategory: UpdateCategory | null;
     setEditCategory: React.Dispatch<React.SetStateAction<UpdateCategory | null>>;
     message: string;
+    handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    handleFileChange: (
+        e: React.ChangeEvent<HTMLInputElement>,
+        field: 'logo_image' | 'swiggy_image' | 'banner_image'
+    ) => void;
 }
 
 const EditCategoryStep1: React.FC<EditCategoryStep1Props> = ({
@@ -27,6 +32,8 @@ const EditCategoryStep1: React.FC<EditCategoryStep1Props> = ({
     setEditCategory,
     handleSubmit,
     message,
+    handleInputChange,
+    handleFileChange,
 }) => {
     const [logoPreview, setLogoPreview] = useState<string | null>(null);
     const [swiggyPreview, setSwiggyPreview] = useState<string | null>(null);
@@ -40,47 +47,47 @@ const EditCategoryStep1: React.FC<EditCategoryStep1Props> = ({
 
     if (!editCategory) return <p>Loading...</p>;
 
-    const handleFileChange = (
-        e: React.ChangeEvent<HTMLInputElement>,
-        field: 'logo_image' | 'swiggy_image' | 'banner_image'
-    ) => {
-        const file = e.target.files?.[0];
-        console.log(`Selected ${field}:`, file);
+    // const handleFileChange = (
+    //     e: React.ChangeEvent<HTMLInputElement>,
+    //     field: 'logo_image' | 'swiggy_image' | 'banner_image'
+    // ) => {
+    //     const file = e.target.files?.[0];
+    //     console.log(`Selected ${field}:`, file);
 
-        if (!file) return;
+    //     if (!file) return;
 
-        setEditCategory((prev) => ({
-            ...(prev as UpdateCategory),
-            [field]: file,
-        }));
+    //     setEditCategory((prev) => ({
+    //         ...(prev as UpdateCategory),
+    //         [field]: file,
+    //     }));
 
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            if (field === 'logo_image') setLogoPreview(reader.result as string);
-            if (field === 'swiggy_image') setSwiggyPreview(reader.result as string);
-            if (field === 'banner_image') setBannerPreview(reader.result as string);
-        };
-        reader.readAsDataURL(file);
-    };
+    //     const reader = new FileReader();
+    //     reader.onloadend = () => {
+    //         if (field === 'logo_image') setLogoPreview(reader.result as string);
+    //         if (field === 'swiggy_image') setSwiggyPreview(reader.result as string);
+    //         if (field === 'banner_image') setBannerPreview(reader.result as string);
+    //     };
+    //     reader.readAsDataURL(file);
+    // };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
+    // const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const { name, value } = e.target;
 
-        setEditCategory((prev) => {
-            const updatedCategory = prev
-                ? {
-                      ...prev,
-                      category_names: {
-                          ...prev.category_names,
-                          [name]: value,
-                      },
-                  }
-                : null;
+    //     setEditCategory((prev) => {
+    //         const updatedCategory = prev
+    //             ? {
+    //                   ...prev,
+    //                   category_names: {
+    //                       ...prev.category_names,
+    //                       [name]: value,
+    //                   },
+    //               }
+    //             : null;
 
-            console.log('Updated inside setState:', updatedCategory);
-            return updatedCategory;
-        });
-    };
+    //         console.log('Updated inside setState:', updatedCategory);
+    //         return updatedCategory;
+    //     });
+    // };
 
     return (
         <Container className="edit-item-page">

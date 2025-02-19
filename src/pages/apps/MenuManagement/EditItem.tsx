@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useRedux } from '../../../hooks';
 import { RootState } from '../../../redux/store';
 import { useMultistepForm } from '../../../hooks/useMultistepForm';
@@ -49,8 +49,13 @@ interface Category {
 }
 
 const EditItemPage: React.FC = () => {
-    const { item_id, business_id } = useParams<{ item_id: string; business_id: string }>();
+    // const { item_id, business_id } = useParams<{ item_id: string; business_id: string }>();
+    const location = useLocation();
+    const business_id = location.state?.business_id;
+    const item_id = location.state?.item_id;
+    const category_id = location.state?.category_id;
     const { dispatch, appSelector } = useRedux();
+    const [isEditing, setIsEditing] = useState(false);
     const [selectedOutlets, setSelectedOutlets] = useState<Outlet[]>([]);
     const [editItem, setEditItem] = useState<CategoryItem | null>(null);
     const [message, setMessage] = useState<string>('');
@@ -61,39 +66,74 @@ const EditItemPage: React.FC = () => {
     const isEditMode = Boolean(editItem && item_id);
 
     useEffect(() => {
-        console.log('useEffect triggered');
-        console.log('Categories Data:', categories);
-        if (item_id) {
-            console.log('Categories Data:', categories);
-            const itemToEdit = categories
-                .flatMap((category: Category) =>
-                    category.items.map((item: CategoryItem) => {
-                        console.log('Item:', item);
-                        return {
-                            ...item,
-                            category_id: category.category_id,
-                            outlet_prices:
-                                item.outlets?.map((outlet: Outlet) => ({
-                                    outlet_id: outlet.outlet_id,
-                                    price: outlet.price,
-                                })) ?? [],
-                        };
-                    })
-                )
-                .find((item: CategoryItem) => item.item_id === item_id);
+        if (!editItem) return;
+        console.log('updated ITEM: ', editItem);
+    }, [editItem]);
 
-            console.log('Item with outlet_prices:', JSON.stringify(itemToEdit, null, 2));
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        setIsEditing(true);
+        const { name, value } = e.target;
 
-            console.log('Categories Data:', categories);
+        setEditItem((prev) => {
+            if (!prev) return prev; // Prevent errors if state is null
 
-            if (itemToEdit) {
-                console.log('Item to Edit:', itemToEdit);
-                setEditItem(itemToEdit);
-            } else {
-                setMessage('Item not found.');
+            // If the field belongs to `item_names`, update it inside the object
+            if (name.startsWith('item_names.')) {
+                const key = name.replace('item_names.', ''); // Extract field name (e.g., "english")
+                return {
+                    ...prev,
+                    item_names: {
+                        ...prev.item_names,
+                        [key]: value, // Update only the targeted field
+                    },
+                };
             }
+
+            // Otherwise, update the field directly
+            return {
+                ...prev,
+                [name]: value,
+            };
+        });
+    };
+
+    useEffect(() => {
+        if (!item_id || editItem || isEditing) return;
+
+        console.log('Fetching categories from Redux:', categories);
+
+        if (categories.length === 0) {
+            dispatch(categoryItemList(business_id!));
         }
-    }, [item_id, categories]);
+
+        const itemToEdit = categories
+            .flatMap((category: Category) =>
+                category.items.map((item: CategoryItem) => {
+                    console.log('Item:', item);
+                    return {
+                        ...item,
+                        category_id: category.category_id,
+                        outlet_prices:
+                            item.outlets?.map((outlet: Outlet) => ({
+                                outlet_id: outlet.outlet_id,
+                                price: outlet.price,
+                            })) ?? [],
+                    };
+                })
+            )
+            .find((item: CategoryItem) => item.item_id === item_id);
+
+        if (itemToEdit) {
+            console.log('item to EDIT found:', itemToEdit);
+
+            setEditItem((prev) => {
+                const updatedItem = { ...itemToEdit, item_id };
+
+                console.log('Setting editItem:', updatedItem);
+                return updatedItem;
+            });
+        }
+    }, [item_id, categories, dispatch]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -126,17 +166,6 @@ const EditItemPage: React.FC = () => {
         if (editItem.banner_image) {
             formData.append('banner_image', editItem.banner_image);
         }
-
-        // const validOutletPrices = editItem.outlets
-        //     .map((outlet) => ({
-        //         outlet_id: outlet.outlet_id,
-        //         price: outlet.price,
-        //     }))
-        //     .filter((outletPrice) => outletPrice.outlet_id !== '' && outletPrice.price !== 0);
-
-        // if (validOutletPrices.length > 0) {
-        //     formData.append('outlet_prices', JSON.stringify(validOutletPrices));
-        // }
         formData.append('outlet_prices', JSON.stringify(editItem.outlet_prices));
         formData.append('is_loose', editItem.is_loose.toString());
         formData.append('quantity_type', editItem.quantity_type);
@@ -150,13 +179,55 @@ const EditItemPage: React.FC = () => {
             dispatch(categoryItemList(business_id!));
         }, 500);
 
-        navigate(`/apps/manage-menu/${business_id}`);
+        navigate(`/apps/manage-menu`, { state: { business_id: business_id } });
     };
+
+    // useEffect(() => {
+    //     console.log('useEffect triggered');
+    //     console.log('Categories Data:', categories);
+    //     if (!categories.length) return;
+    //     if (item_id) {
+    //         console.log('Categories Data:', categories);
+    //         const itemToEdit = categories
+    //             .flatMap((category: Category) =>
+    //                 category.items.map((item: CategoryItem) => {
+    //                     console.log('Item:', item);
+    //                     return {
+    //                         ...item,
+    //                         category_id: category.category_id,
+    //                         outlet_prices:
+    //                             item.outlets?.map((outlet: Outlet) => ({
+    //                                 outlet_id: outlet.outlet_id,
+    //                                 price: outlet.price,
+    //                             })) ?? [],
+    //                     };
+    //                 })
+    //             )
+    //             .find((item: CategoryItem) => item.item_id === item_id);
+
+    //         console.log('Item with outlet_prices:', JSON.stringify(itemToEdit, null, 2));
+
+    //         console.log('Categories Data:', categories);
+
+    //         if (itemToEdit) {
+    //             console.log('Item to Edit:', itemToEdit);
+    //             setEditItem(itemToEdit);
+    //         } else {
+    //             setMessage('Item not found.');
+    //         }
+    //     }
+    // }, [item_id, categories]);
 
     // console.log('Selected outlets in parent component:', selectedOutlets);
 
     const { steps, currentStepIndex, step, isFirstStep, isLastStep, back, next } = useMultistepForm([
-        <EditItemStep1 handleSubmit={handleSubmit} editItem={editItem} setEditItem={setEditItem} message={message} />,
+        <EditItemStep1
+            handleSubmit={handleSubmit}
+            editItem={editItem}
+            setEditItem={setEditItem}
+            message={message}
+            handleInputChange={handleInputChange}
+        />,
         <EditItemStep2
             selectedOutlets={selectedOutlets} // ✅ Pass the state
             setSelectedOutlets={setSelectedOutlets}
@@ -187,14 +258,17 @@ const EditItemPage: React.FC = () => {
                                     Back
                                 </Button>
                             )}
+
                             <Button
                                 variant="primary"
                                 onClick={(e) => {
+                                    console.log('Before clicking next: ', editItem);
                                     if (isLastStep) {
                                         handleSubmit(e);
                                     } else {
                                         next();
                                     }
+                                    console.log('After clicking next: ', editItem);
                                 }}
                                 className="px-4 py-2">
                                 {isLastStep ? (isEditMode ? 'Update' : 'Finish') : 'Next'}

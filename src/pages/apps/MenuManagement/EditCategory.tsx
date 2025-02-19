@@ -3,7 +3,7 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import { useRedux } from '../../../hooks';
 import { useDispatch } from 'react-redux';
 import { RootState } from '../../../redux/store';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { updateCategory } from '../../../redux/actions';
 import { useMultistepForm } from '../../../hooks/useMultistepForm';
 import { Alert, Container, Card } from 'react-bootstrap';
@@ -36,11 +36,16 @@ const EditCategory: React.FC<UpdateCategoryProps> = ({ show, onClose }) => {
     const [message, setMessage] = useState<string>('');
     const [successMsg, setSuccess] = useState<string>('');
     const [editCategory, setEditCategory] = useState<UpdateCategory | null>(null);
-    const { business_id, selectedCategoryId } = useParams<{ business_id: string; selectedCategoryId: string }>();
+    // const { business_id, selectedCategoryId } = useParams<{ business_id: string; selectedCategoryId: string }>();
+    const location = useLocation();
+    const business_id = location.state?.business_id;
+    const selectedCategoryId = location.state?.category_id;
     // console.log('Params:', { business_id, selectedCategoryId });
 
     const categories = appSelector((state: RootState) => state.category.categories || []);
     const isEditMode = Boolean(editCategory && selectedCategoryId);
+    const [isEditing, setIsEditing] = useState(false); // 🔹 Track if user has edited data
+
     const [errorMsg, setError] = useState<string>('');
     const navigate = useNavigate();
     const [selectedOutlets, setSelectedOutlets] = useState<string[]>([]);
@@ -55,20 +60,25 @@ const EditCategory: React.FC<UpdateCategoryProps> = ({ show, onClose }) => {
     }, [editCategory]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setIsEditing(true); // ✅ Set editing state so `useEffect` doesn’t reset
         const { name, value } = e.target;
-        if (editItem) {
-            setEditItem({
-                ...editItem,
-                category_names: {
-                    ...editItem.category_names,
-                    [name]: value,
-                },
-            });
-        }
+        setEditCategory((prev) =>
+            prev
+                ? {
+                      ...prev,
+                      category_names: {
+                          ...prev.category_names,
+                          [name]: value,
+                      },
+                  }
+                : null
+        );
     };
 
     useEffect(() => {
-        if (!selectedCategoryId) return;
+        if (!selectedCategoryId || editCategory || isEditing) return;
+
+        console.log('Fetching categories from Redux:', categories);
 
         if (categories.length === 0) {
             dispatch(categoryItemList(business_id!));
@@ -79,10 +89,15 @@ const EditCategory: React.FC<UpdateCategoryProps> = ({ show, onClose }) => {
         );
 
         if (categoryToEdit) {
-            console.log('Category to EDIT: ', categoryToEdit);
-            setEditCategory({ ...categoryToEdit, business_id });
+            console.log('Category to EDIT found:', categoryToEdit);
 
-            // Pre-select active outlets
+            setEditCategory((prev) => {
+                const updatedCategory = { ...categoryToEdit, business_id };
+
+                console.log('Setting editCategory:', updatedCategory);
+                return updatedCategory;
+            });
+
             if (categoryToEdit.outlets) {
                 const activeOutlets = categoryToEdit.outlets
                     .filter((outlet: any) => outlet.is_active)
@@ -92,20 +107,24 @@ const EditCategory: React.FC<UpdateCategoryProps> = ({ show, onClose }) => {
         } else {
             setMessage('Category to EDIT not found');
         }
-    }, [selectedCategoryId, categories, dispatch, business_id]);
+    }, [selectedCategoryId, categories, business_id, dispatch]);
 
     const handleFileChange = (
         e: React.ChangeEvent<HTMLInputElement>,
         field: 'logo_image' | 'swiggy_image' | 'banner_image'
     ) => {
         const file = e.target.files?.[0];
-        if (!file || !editItem) return;
+        if (!file) return;
 
-        setEditItem((prev) => ({
-            ...(prev as UpdateCategory),
-            [field]: file,
-        }));
+        setEditCategory((prev) => {
+            if (!prev) return null; // Ensure prev exists
+            return {
+                ...prev,
+                [field]: file, // Update file field
+            };
+        });
 
+        // Update preview images
         const reader = new FileReader();
         reader.onloadend = () => {
             if (field === 'logo_image') setLogoPreview(reader.result as string);
@@ -147,16 +166,22 @@ const EditCategory: React.FC<UpdateCategoryProps> = ({ show, onClose }) => {
 
         dispatch(updateCategory(formData));
         setSuccess('Category Updated successfully!');
-        navigate(`/apps/manage-menu/${business_id}`);
+        navigate(`/apps/manage-menu/`, { state: { business_id: business_id } });
     };
 
     const { steps, currentStepIndex, step, isFirstStep, isLastStep, back, next } = useMultistepForm([
         <EditCategoryStep1
             handleSubmit={handleSubmit}
+            handleFileChange={handleFileChange}
             editCategory={editCategory}
-            setEditCategory={setEditCategory}
+            setEditCategory={(updatedCategory) => {
+                console.log('Persisting editCategory across steps:', updatedCategory);
+                // setEditCategory((prev) => ({ ...prev, ...updatedCategory })); // Merge changes
+            }}
             message={message}
+            handleInputChange={handleInputChange}
         />,
+
         <EditCategoryStep2
             handleSubmit={handleSubmit}
             editCategory={editCategory}
@@ -187,11 +212,13 @@ const EditCategory: React.FC<UpdateCategoryProps> = ({ show, onClose }) => {
                             <Button
                                 variant="primary"
                                 onClick={(e) => {
+                                    console.log('Before clicking next:', editCategory);
                                     if (isLastStep) {
                                         handleSubmit(e);
                                     } else {
                                         next();
                                     }
+                                    console.log('After clicking next:', editCategory);
                                 }}
                                 className="px-4 py-2">
                                 {isLastStep ? (isEditMode ? 'Update' : 'Finish') : 'Next'}

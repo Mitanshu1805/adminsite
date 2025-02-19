@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { categoryItemList, categoryUpdateIsActive } from '../../../redux/menuManagementCategory/actions';
 import { useRedux } from '../../../hooks';
 import { RootState } from '../../../redux/store';
@@ -21,7 +21,10 @@ interface CategoryItem {
 }
 
 const OutletMenu: React.FC = () => {
-    const { business_id, outlet_id } = useParams<{ business_id: string; outlet_id: string }>();
+    // const { business_id, outlet_id } = useParams<{ business_id: string; outlet_id: string }>();
+    const location = useLocation();
+    const business_id = location.state?.business_id;
+    const outlet_id = location.state?.outlet_id;
     const { dispatch, appSelector } = useRedux();
 
     const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);

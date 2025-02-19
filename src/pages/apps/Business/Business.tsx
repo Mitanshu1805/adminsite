@@ -84,7 +84,7 @@ const BusinessDetails = () => {
     };
 
     const handleBusinessNameClick = (business_id: string) => {
-        navigate(`/apps/business-details/${business_id}`);
+        navigate(`/apps/business-details`, { state: { business_id: business_id } });
     };
 
     const handleRegisterBusiness = () => {

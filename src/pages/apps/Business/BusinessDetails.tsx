@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Table, Form, Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import {
     resetBusiness,
@@ -69,8 +69,11 @@ interface UpdateOutlet {
 }
 
 const BusinessDetails: React.FC = () => {
-    const { id } = useParams<{ id: string }>(); // Extracting 'id' from URL params
+    // const { id } = useParams<{ id: string }>(); // Extracting 'id' from URL params
     const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
+    const location = useLocation();
+    const id = location.state?.business_id;
+
     const { dispatch, appSelector } = useRedux();
     const businesses = appSelector((state: RootState) => state.business.businesses || []);
     const navigate = useNavigate();
@@ -126,13 +129,13 @@ const BusinessDetails: React.FC = () => {
     }
 
     const handleManageMenu = (business_id: string) => {
-        navigate(`/apps/manage-menu/${business_id}`);
+        navigate(`/apps/manage-menu`, { state: { business_id: business_id } });
         // console.log('Dispatching action:', categoryItemList(business_id));
         // dispatch(categoryItemList(business_id));
     };
 
     const handleOutletMenu = (business_id: string, outlet_id: string) => {
-        navigate(`/apps/outlet-menu/${business_id}/${outlet_id}`);
+        navigate(`/apps/outlet-menu`, { state: { business_id: business_id, outlet_id: outlet_id } });
     };
 
     const handleDeleteOutlet = (outlet_id: string, business_id: string) => {

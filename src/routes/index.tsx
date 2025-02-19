@@ -218,27 +218,27 @@ const AllRoutes = () => {
                             element: <LoadComponent component={BusinessList} />,
                         },
                         {
-                            path: 'business-details/:id',
+                            path: 'business-details',
                             element: <LoadComponent component={BusinessDetails} />,
                         },
                         {
-                            path: 'manage-menu/:business_id',
+                            path: 'manage-menu',
                             element: <LoadComponent component={ManageMenu} />,
                         },
                         {
-                            path: 'edit-item/:item_id/:category_id/:business_id',
+                            path: 'edit-item',
                             element: <LoadComponent component={EditItem} />,
                         },
                         {
-                            path: 'item-register/:business_id/:selectedCategoryId?/:item_id?',
+                            path: 'item-register',
                             element: <LoadComponent component={ItemRegister} />,
                         },
                         {
-                            path: 'category-register/:business_id',
+                            path: 'category-register',
                             element: <LoadComponent component={CategoryRegister} />,
                         },
                         {
-                            path: 'category-update/:business_id/:selectedCategoryId?',
+                            path: 'category-update?',
                             element: <LoadComponent component={EditCategory} />,
                         },
                         {
@@ -246,7 +246,7 @@ const AllRoutes = () => {
                             element: <LoadComponent component={BusinessRegister} />,
                         },
                         {
-                            path: 'outlet-menu/:business_id/:outlet_id',
+                            path: 'outlet-menu',
                             element: <LoadComponent component={OutletMenu} />,
                         },
                         {

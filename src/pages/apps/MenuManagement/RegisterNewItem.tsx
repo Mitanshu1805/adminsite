@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { Button, Alert, Container, Card } from 'react-bootstrap';
 import { useMultistepForm } from '../../../hooks/useMultistepForm';
 import { registerItem } from '../../../redux/menuManagementItem/actions';
@@ -85,8 +85,12 @@ const RegisterNewItem: React.FC = () => {
     const [bannerPreview, setBannerPreview] = useState<string | null>(null);
     const [selectedBusiness, setSelectedBusiness] = useState<SelectedBusiness | null>(null);
     const [selectedOutlets, setSelectedOutlets] = useState<Outlet[]>([]);
-    const { business_id, selectedCategoryId, item_id } =
-        useParams<{ business_id: string; selectedCategoryId: string; item_id: string }>();
+    // const { business_id, selectedCategoryId, item_id } =
+    //     useParams<{ business_id: string; selectedCategoryId: string; item_id: string }>();
+    const location = useLocation();
+    const business_id = location.state?.business_id;
+    const selectedCategoryId = location.state?.category_id;
+    const item_id = location.state?.item_id;
     const isEditMode = Boolean(item_id);
     const navigate = useNavigate();
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -337,7 +341,7 @@ const RegisterNewItem: React.FC = () => {
             }
 
             setSuccess('Item registered successfully!');
-            navigate(`/apps/manage-menu/${business_id}`);
+            navigate(`/apps/manage-menu`);
             setError('');
             setFormData({
                 item_name: { hindi: '', english: '', gujarati: '' },

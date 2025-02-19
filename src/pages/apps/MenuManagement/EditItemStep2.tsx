@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { useRedux } from '../../../hooks';
 import { RootState } from '../../../redux/store';
 import { businessList } from '../../../redux/business/actions';
@@ -36,8 +36,10 @@ interface EditItemStep2Props {
 }
 
 const EditItemStep2: React.FC<EditItemStep2Props> = ({ selectedOutlets, setSelectedOutlets }) => {
-    const { business_id, category_id, item_id } =
-        useParams<{ business_id: string; category_id: string; item_id: string }>();
+    const location = useLocation();
+    const business_id = location.state?.business_id;
+    const item_id = location.state?.item_id;
+    const category_id = location.state?.category_id;
     const { dispatch, appSelector } = useRedux();
     // const [selectedOutlets, setSelectedOutlets] = useState<Outlet[]>([]);
     const businesses = appSelector((state: RootState) => state.business.businesses || []);

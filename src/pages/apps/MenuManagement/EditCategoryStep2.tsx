@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { useRedux } from '../../../hooks';
 import { RootState } from '../../../redux/store';
 import { businessList } from '../../../redux/business/actions';
@@ -55,8 +55,11 @@ const EditCategoryStep2: React.FC<EditCategoryStep2Props> = ({
     setSelectedOutlets,
 }) => {
     // const [selectedOutlets, setSelectedOutlets] = useState<Outlet[]>([]);
-    const { business_id, selectedCategoryId, item_id } =
-        useParams<{ business_id: string; selectedCategoryId: string; item_id: string }>();
+    // const { business_id, selectedCategoryId, item_id } =
+    //     useParams<{ business_id: string; selectedCategoryId: string; item_id: string }>();
+    const location = useLocation();
+    const business_id = location.state?.business_id;
+    const selectedCategoryId = location.state?.category_id;
     const { dispatch, appSelector } = useRedux();
     // const [selectedOutlets, setSelectedOutlets] = useState<Outlet[]>([]);
     const businesses = appSelector((state: RootState) => state.business.businesses || []);

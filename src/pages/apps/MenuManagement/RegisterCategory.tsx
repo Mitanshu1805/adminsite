@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Alert, Container, Card, Modal, Form } from 'react-bootstrap';
 import { RootState } from '../../../redux/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { registerCategory } from '../../../redux/actions';
 import { useMultistepForm } from '../../../hooks/useMultistepForm';
 import RegisterCategoryStep1 from './RegisterCategoryStep1';
@@ -31,7 +31,9 @@ interface Outlet {
 const RegisterCategory: React.FC<RegisterCategoryProps> = ({ show, onClose }) => {
     const dispatch = useDispatch();
     // const { business_id } = useSelector((state: RootState) => state.business); // Assuming you get business_id from Redux store
-    const { business_id } = useParams<{ business_id: string }>();
+    // const { business_id } = useParams<{ business_id: string }>();
+    const location = useLocation();
+    const business_id = location.state?.business_id;
 
     const outlets: Outlet[] = useSelector((state: RootState) => state.outlet?.outlets ?? []);
 
@@ -160,7 +162,7 @@ const RegisterCategory: React.FC<RegisterCategoryProps> = ({ show, onClose }) =>
             console.log('API request dispatched!');
 
             setSuccess('Category registration successful');
-            navigate(`/apps/manage-menu/${business_id}`);
+            navigate(`/apps/manage-menu`);
             setError('');
 
             // Reset form state

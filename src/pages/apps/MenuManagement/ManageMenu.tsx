@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import ErrorBoundary from '../../../components/ErrorBoundary';
 import { categoryItemList, categoryUpdateIsActive } from '../../../redux/menuManagementCategory/actions';
 import { deleteItem, updateItem } from '../../../redux/menuManagementItem/actions';
@@ -33,7 +33,9 @@ interface CategoryItem {
 }
 
 const ManageMenu: React.FC = () => {
-    const { business_id } = useParams<{ business_id: string }>();
+    // const { business_id } = useParams<{ business_id: string }>();
+    const location = useLocation();
+    const business_id = location.state?.business_id;
 
     const { dispatch, appSelector } = useRedux();
     // const [showCategoryRegistrationModal, setShowCategoryRegistrationModal] = useState(false);
@@ -158,7 +160,9 @@ const ManageMenu: React.FC = () => {
     };
 
     const handleEditItem = (item_id: string, category_id: string) => {
-        navigate(`/apps/edit-item/${item_id}/${selectedCategoryId}/${business_id}`);
+        navigate(`/apps/edit-item`, {
+            state: { business_id: business_id, category_id: selectedCategoryId, item_id: item_id },
+        });
         console.log('category_id: ', category_id);
         console.log('selectedCategoryId: ', selectedCategoryId);
         console.log('setSelectedCategoryId: ', setSelectedCategoryId);
@@ -197,7 +201,11 @@ const ManageMenu: React.FC = () => {
                 <h2>Item List</h2>
                 <button
                     className="add-item-button"
-                    onClick={() => navigate(`/apps/item-register/${business_id!}/${selectedCategoryId}`)}>
+                    onClick={() =>
+                        navigate(`/apps/item-register`, {
+                            state: { business_id: business_id, category_id: selectedCategoryId },
+                        })
+                    }>
                     + Add Item
                 </button>
             </div>
@@ -222,7 +230,14 @@ const ManageMenu: React.FC = () => {
                             <FaRegEdit
                                 size={20}
                                 style={{ cursor: 'pointer', marginRight: '10px' }}
-                                onClick={() => navigate(`/apps/category-update/${business_id!}/${selectedCategoryId}`)}
+                                onClick={() =>
+                                    navigate(`/apps/category-update`, {
+                                        state: {
+                                            business_id: business_id,
+                                            category_id: selectedCategoryId,
+                                        },
+                                    })
+                                }
                             />
                             {/* {showCategoryUpdateModal && (
                                 <EditCategory show={showCategoryUpdateModal} onClose={handleCloseCategoryUpdateModal} />
@@ -239,7 +254,7 @@ const ManageMenu: React.FC = () => {
                 ))}
                 <button
                     className="add-category-button"
-                    onClick={() => navigate(`/apps/category-register/${business_id}`)}>
+                    onClick={() => navigate(`/apps/category-register`, { state: { business_id: business_id } })}>
                     + Add Category
                 </button>
                 {/* {showCategoryRegistrationModal && (

@@ -48,9 +48,16 @@ interface EditItemStep1Props {
     editItem: CategoryItem | null;
     setEditItem: React.Dispatch<React.SetStateAction<CategoryItem | null>>;
     message: string;
+    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
 }
 
-const EditItemStep1: React.FC<EditItemStep1Props> = ({ editItem, setEditItem, handleSubmit, message }) => {
+const EditItemStep1: React.FC<EditItemStep1Props> = ({
+    editItem,
+    setEditItem,
+    handleSubmit,
+    message,
+    handleInputChange,
+}) => {
     if (!editItem) {
         return <p>Loading...</p>;
     }
@@ -65,23 +72,23 @@ const EditItemStep1: React.FC<EditItemStep1Props> = ({ editItem, setEditItem, ha
         }
     };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
+    // const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const { name, value } = e.target;
 
-        setEditItem((prev) => {
-            const updateItem = prev
-                ? {
-                      ...prev,
-                      item_names: {
-                          ...prev.item_names,
-                          [name]: value,
-                      },
-                  }
-                : null;
+    //     setEditItem((prev) => {
+    //         const updateItem = prev
+    //             ? {
+    //                   ...prev,
+    //                   item_names: {
+    //                       ...prev.item_names,
+    //                       [name]: value,
+    //                   },
+    //               }
+    //             : null;
 
-            return updateItem;
-        });
-    };
+    //         return updateItem;
+    //     });
+    // };
     return (
         <Container className="edit-item-page">
             <Card className="shadow-sm">
@@ -163,15 +170,10 @@ const EditItemStep1: React.FC<EditItemStep1Props> = ({ editItem, setEditItem, ha
                                 <Form.Label>Item Name (Hindi)</Form.Label>
                                 <Form.Control
                                     type="text"
-                                    name="item_name.hindi"
+                                    name="hindi"
                                     // required
-                                    value={editItem.item_names.hindi}
-                                    onChange={(e) =>
-                                        setEditItem({
-                                            ...editItem,
-                                            item_names: { ...editItem.item_names, hindi: e.target.value },
-                                        })
-                                    }
+                                    value={editItem?.item_names.hindi}
+                                    onChange={handleInputChange}
                                 />
                             </Form.Group>
                         </Col>
@@ -180,15 +182,10 @@ const EditItemStep1: React.FC<EditItemStep1Props> = ({ editItem, setEditItem, ha
                                 <Form.Label>Item Name (Gujarati)</Form.Label>
                                 <Form.Control
                                     type="text"
-                                    name="item_name.gujarati"
+                                    name="gujarati"
                                     required
-                                    value={editItem.item_names.gujarati}
-                                    onChange={(e) =>
-                                        setEditItem({
-                                            ...editItem,
-                                            item_names: { ...editItem.item_names, gujarati: e.target.value },
-                                        })
-                                    }
+                                    value={editItem?.item_names.gujarati}
+                                    onChange={handleInputChange}
                                 />
                             </Form.Group>
                         </Col>
@@ -199,8 +196,8 @@ const EditItemStep1: React.FC<EditItemStep1Props> = ({ editItem, setEditItem, ha
                             <Form.Control
                                 type="text"
                                 name="online_display_name"
-                                value={editItem.online_display_name}
-                                onChange={(e) => setEditItem({ ...editItem, online_display_name: e.target.value })}
+                                value={editItem?.online_display_name}
+                                onChange={handleInputChange}
                             />
                         </Col>
                         <Col md={6}>
@@ -208,8 +205,8 @@ const EditItemStep1: React.FC<EditItemStep1Props> = ({ editItem, setEditItem, ha
                             <Form.Control
                                 type="text"
                                 name="description"
-                                value={editItem.description}
-                                onChange={(e) => setEditItem({ ...editItem, description: e.target.value })}
+                                value={editItem?.description}
+                                onChange={handleInputChange}
                             />
                         </Col>
                         <Col md={6}>
@@ -217,16 +214,17 @@ const EditItemStep1: React.FC<EditItemStep1Props> = ({ editItem, setEditItem, ha
                             <Form.Control
                                 type="number"
                                 name="price"
-                                value={editItem.price}
-                                onChange={(e) => setEditItem({ ...editItem, price: Number(e.target.value) })}
+                                value={editItem?.price}
+                                onChange={handleInputChange}
                             />
                         </Col>
                         <Col md={6}>
                             <Form.Label>Dietary</Form.Label>
                             <Form.Select
                                 name="dietary"
-                                value={editItem.dietary}
-                                onChange={(e) => setEditItem({ ...editItem, dietary: e.target.value })}>
+                                value={editItem?.dietary}
+                                // onChange={(e) => setEditItem({ ...editItem, dietary: e.target.value })}
+                                onChange={handleInputChange}>
                                 <option value="">Select Dietary Type</option>
                                 <option value="veg">Veg</option>
                                 <option value="non-veg">Nonveg</option>
@@ -241,15 +239,16 @@ const EditItemStep1: React.FC<EditItemStep1Props> = ({ editItem, setEditItem, ha
                                     as="select"
                                     name="available_order_type"
                                     multiple
-                                    value={editItem.available_order_type || []}
-                                    onChange={(e) => {
-                                        const target = e.target as unknown as HTMLSelectElement;
-                                        const selectedOptions = Array.from(
-                                            target.selectedOptions,
-                                            (option) => option.value
-                                        );
-                                        setEditItem({ ...editItem, available_order_type: selectedOptions });
-                                    }}
+                                    value={editItem?.available_order_type || []}
+                                    // onChange={(e) => {
+                                    //     const target = e.target as unknown as HTMLSelectElement;
+                                    //     const selectedOptions = Array.from(
+                                    //         target.selectedOptions,
+                                    //         (option) => option.value
+                                    //     );
+                                    //     setEditItem({ ...editItem, available_order_type: selectedOptions });
+                                    // }}
+                                    onChange={handleInputChange}
                                     required>
                                     <option value="delivery">Delivery</option>
                                     <option value="pick_up">Pick-up</option>
@@ -265,9 +264,10 @@ const EditItemStep1: React.FC<EditItemStep1Props> = ({ editItem, setEditItem, ha
                                 <Form.Control
                                     as="select"
                                     name="gst_type"
-                                    value={editItem.gst_type || ''}
-                                    onChange={(e) => setEditItem({ ...editItem, gst_type: e.target.value })}
-                                    required>
+                                    value={editItem?.gst_type || ''}
+                                    // onChange={(e) => setEditItem({ ...editItem, gst_type: e.target.value })}
+                                    // required
+                                    onChange={handleInputChange}>
                                     <option value="goods">Goods</option>
                                     <option value="services">Services</option>
                                 </Form.Control>
