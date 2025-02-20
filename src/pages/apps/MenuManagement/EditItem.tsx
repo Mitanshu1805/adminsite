@@ -70,31 +70,48 @@ const EditItemPage: React.FC = () => {
         console.log('updated ITEM: ', editItem);
     }, [editItem]);
 
+    // const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    //     setIsEditing(true);
+    //     const { name, value } = e.target;
+
+    //     setEditItem((prev) => {
+    //         if (!prev) return prev; // Prevent errors if state is null
+
+    //         // If the field belongs to `item_names`, update it inside the object
+    //         if (name.startsWith('item_names.')) {
+    //             const key = name.replace('item_names.', ''); // Extract field name (e.g., "english")
+    //             return {
+    //                 ...prev,
+    //                 item_names: {
+    //                     ...prev.item_names,
+    //                     [key]: value, // Update only the targeted field
+    //                 },
+    //             };
+    //         }
+
+    //         // Otherwise, update the field directly
+    //         return {
+    //             ...prev,
+    //             [name]: value,
+    //         };
+    //     });
+    // };
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         setIsEditing(true);
+
         const { name, value } = e.target;
-
-        setEditItem((prev) => {
-            if (!prev) return prev; // Prevent errors if state is null
-
-            // If the field belongs to `item_names`, update it inside the object
-            if (name.startsWith('item_names.')) {
-                const key = name.replace('item_names.', ''); // Extract field name (e.g., "english")
-                return {
-                    ...prev,
-                    item_names: {
-                        ...prev.item_names,
-                        [key]: value, // Update only the targeted field
-                    },
-                };
-            }
-
-            // Otherwise, update the field directly
-            return {
-                ...prev,
-                [name]: value,
-            };
-        });
+        setEditItem((prev) =>
+            prev
+                ? {
+                      ...prev,
+                      item_names: {
+                          ...prev.item_names,
+                          [name]: value,
+                      },
+                  }
+                : null
+        );
     };
 
     useEffect(() => {
@@ -109,7 +126,7 @@ const EditItemPage: React.FC = () => {
         const itemToEdit = categories
             .flatMap((category: Category) =>
                 category.items.map((item: CategoryItem) => {
-                    console.log('Item:', item);
+                    // console.log('Item:', item);
                     return {
                         ...item,
                         category_id: category.category_id,
