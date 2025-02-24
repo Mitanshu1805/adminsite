@@ -102,10 +102,13 @@ const RegisterItemStep2: React.FC<RegisterItemStep2Props> = ({ selectedOutlets, 
     const businesses = appSelector((state: RootState) => state.business.businesses || []);
 
     useEffect(() => {
-        dispatch(businessList());
+        const response = dispatch(businessList());
+        console.log("Response: ", response)
     }, [dispatch]);
 
     const business = businesses.find((biz: Business) => biz.business_id === business_id);
+    console.log("Response: ", business)
+
 
     const toggleOutletSelection = (outlet: Outlet) => {
         setSelectedOutlets((prev: Outlet[]) => {

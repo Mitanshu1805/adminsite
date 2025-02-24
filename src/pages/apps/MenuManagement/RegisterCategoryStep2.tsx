@@ -102,9 +102,8 @@ const RegisterCategoryStep2: React.FC<RegisterCategoryTwoProps> = ({
                         {business.outlets.map((outlet: Outlet) => (
                             <div
                                 key={outlet.outlet_id}
-                                className={`outlet-item ${
-                                    selectedOutlets.includes(outlet.outlet_id) ? 'selected' : ''
-                                }`}
+                                className={`outlet-item ${selectedOutlets.includes(outlet.outlet_id) ? 'selected' : ''
+                                    }`}
                                 onClick={() => toggleOutletSelection(outlet)}>
                                 <input
                                     type="checkbox"

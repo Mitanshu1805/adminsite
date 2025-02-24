@@ -97,22 +97,39 @@ const EditItemPage: React.FC = () => {
     //     });
     // };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const handleInputChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    ) => {
         setIsEditing(true);
 
-        const { name, value } = e.target;
+        const { name, type } = e.target;
+        let value: any;
+
+        if (type === "file") {
+            const input = e.target as HTMLInputElement;
+            value = input.files?.[0] || null;
+        } else if (e.target instanceof HTMLSelectElement && e.target.multiple) {
+            value = Array.from(e.target.selectedOptions, (option) => option.value);
+        } else if (type === "number") {
+            value = e.target.value ? Number(e.target.value) : "";
+        } else {
+            value = e.target.value;
+        }
+
         setEditItem((prev) =>
             prev
                 ? {
-                      ...prev,
-                      item_names: {
-                          ...prev.item_names,
-                          [name]: value,
-                      },
-                  }
+                    ...prev,
+                    item_names: {
+                        ...prev.item_names,
+                        [name]: value,
+                    },
+                }
                 : null
         );
     };
+
+
 
     useEffect(() => {
         if (!item_id || editItem || isEditing) return;

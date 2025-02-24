@@ -111,6 +111,7 @@ const BusinessDetails: React.FC = () => {
         if (id) {
             // Ensure that 'id' is a string and matches the format of business.business_id
             const business = businesses.find((business: Business) => business.business_id === id);
+            console.log("business res: ", business)
 
             if (business) {
                 setSelectedBusiness(business);
@@ -608,7 +609,7 @@ const BusinessDetails: React.FC = () => {
                                             {/* {console.log('user_id >>>>>>>>>>>', business_users.user_id)} */}
                                             <td>
                                                 {isBusinessUserEditing &&
-                                                selectedBusinessUser?.user_id === business_users.user_id ? (
+                                                    selectedBusinessUser?.user_id === business_users.user_id ? (
                                                     <input
                                                         type="text"
                                                         value={editedBusinessUser?.first_name || ''}
@@ -624,7 +625,7 @@ const BusinessDetails: React.FC = () => {
                                             </td>
                                             <td>
                                                 {isBusinessUserEditing &&
-                                                selectedBusinessUser?.user_id === business_users.user_id ? (
+                                                    selectedBusinessUser?.user_id === business_users.user_id ? (
                                                     <input
                                                         type="text"
                                                         value={editedBusinessUser?.last_name || ''}
@@ -640,7 +641,7 @@ const BusinessDetails: React.FC = () => {
                                             </td>
                                             <td>
                                                 {isBusinessUserEditing &&
-                                                selectedBusinessUser?.user_id === business_users.user_id ? (
+                                                    selectedBusinessUser?.user_id === business_users.user_id ? (
                                                     <input
                                                         type="text"
                                                         value={editedBusinessUser?.email || ''}
@@ -656,7 +657,7 @@ const BusinessDetails: React.FC = () => {
                                             </td>
                                             <td>
                                                 {isBusinessUserEditing &&
-                                                selectedBusinessUser?.user_id === business_users.user_id ? (
+                                                    selectedBusinessUser?.user_id === business_users.user_id ? (
                                                     <input
                                                         type="text"
                                                         value={editedBusinessUser?.phone_number || ''}
@@ -672,7 +673,7 @@ const BusinessDetails: React.FC = () => {
                                             </td>
                                             <td>
                                                 {isBusinessUserEditing &&
-                                                selectedBusinessUser?.user_id === business_users.user_id ? (
+                                                    selectedBusinessUser?.user_id === business_users.user_id ? (
                                                     <input
                                                         type="text"
                                                         value={editedBusinessUser?.address || ''}
@@ -689,7 +690,7 @@ const BusinessDetails: React.FC = () => {
 
                                             <td className="d-flex align-items-center">
                                                 {isBusinessUserEditing &&
-                                                selectedBusinessUser?.user_id === business_users.user_id ? (
+                                                    selectedBusinessUser?.user_id === business_users.user_id ? (
                                                     <>
                                                         <Button
                                                             variant="success"
