@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { useRedux } from '../../../hooks';
 import { RootState } from '../../../redux/store';
 import { businessList } from '../../../redux/business/actions';
@@ -31,7 +31,9 @@ const RegisterCategoryStep2: React.FC<RegisterCategoryTwoProps> = ({
     setSelectedOutlets,
     selectedOutlets,
 }) => {
-    const { business_id } = useParams<{ business_id: string }>();
+    // const { business_id } = useParams<{ business_id: string }>();
+    const location = useLocation();
+    const business_id = location.state?.business_id;
     const { dispatch, appSelector } = useRedux();
     const businesses = appSelector((state: RootState) => state.business.businesses || []);
     const [loading, setLoading] = useState(true);
@@ -102,8 +104,9 @@ const RegisterCategoryStep2: React.FC<RegisterCategoryTwoProps> = ({
                         {business.outlets.map((outlet: Outlet) => (
                             <div
                                 key={outlet.outlet_id}
-                                className={`outlet-item ${selectedOutlets.includes(outlet.outlet_id) ? 'selected' : ''
-                                    }`}
+                                className={`outlet-item ${
+                                    selectedOutlets.includes(outlet.outlet_id) ? 'selected' : ''
+                                }`}
                                 onClick={() => toggleOutletSelection(outlet)}>
                                 <input
                                     type="checkbox"

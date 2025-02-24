@@ -1,84 +1,9 @@
-// import React, { useState } from 'react';
-// import { Card, Row, Col, Button, Alert, Form } from 'react-bootstrap';
-
-// interface Outlet {
-//     outlet_id: string;
-//     outlet_name: string;
-// }
-
-// interface SelectedBusiness {
-//     outlets: Outlet[];
-// }
-
-// interface RegisterItemStepTwoProps {
-//     selectedBusiness: SelectedBusiness;
-//     onNext: (selectedOutlets: Outlet[]) => void;
-//     errorMsg: string;
-//     successMsg: string;
-//     handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-//     handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-//     handleSubmit: (e: React.FormEvent) => void;
-// }
-
-// const RegisterItemStepTwo: React.FC<RegisterItemStepTwoProps> = ({ selectedBusiness, onNext }) => {
-//     const [selectedOutlets, setSelectedOutlets] = useState<Outlet[]>([]);
-
-//     const handleOutletChange = (outlet: Outlet) => {
-//         setSelectedOutlets((prevSelectedOutlets) => {
-//             if (prevSelectedOutlets.some((o) => o.outlet_id === outlet.outlet_id)) {
-//                 return prevSelectedOutlets.filter((o) => o.outlet_id !== outlet.outlet_id);
-//             } else {
-//                 return [...prevSelectedOutlets, outlet];
-//             }
-//         });
-//     };
-
-//     const handleNextClick = () => {
-//         onNext(selectedOutlets); // Pass the selected outlets to the parent component
-//     };
-
-//     return (
-//         <Card>
-//             <Card.Body>
-//                 <Row>
-//                     <Col md={12}>
-//                         {selectedBusiness.outlets.length > 0 ? (
-//                             selectedBusiness.outlets.map((outlet) => (
-//                                 <div key={outlet.outlet_id}>
-//                                     <Form.Check
-//                                         type="checkbox"
-//                                         label={outlet.outlet_name}
-//                                         checked={selectedOutlets.some((o) => o.outlet_id === outlet.outlet_id)}
-//                                         onChange={() => handleOutletChange(outlet)}
-//                                     />
-//                                 </div>
-//                             ))
-//                         ) : (
-//                             <Alert variant="info">No outlets found for this business.</Alert>
-//                         )}
-//                     </Col>
-//                 </Row>
-//                 <Row className="mt-3">
-//                     <Col md={12} className="text-center">
-//                         <Button onClick={handleNextClick} variant="primary">
-//                             Next
-//                         </Button>
-//                     </Col>
-//                 </Row>
-//             </Card.Body>
-//         </Card>
-//     );
-// };
-
-// export default RegisterItemStepTwo;
-
-//Here in this code , from which we can access the selectedOutlets which user selects and can display in the next step of the form ?
-
 import React, { useState, useEffect } from 'react';
 import { useRedux } from '../../../hooks';
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { RootState } from '../../../redux/store';
 import { businessList } from '../../../redux/business/actions';
+import { categoryItemList } from '../../../redux/menuManagementCategory/actions';
 import './ManageMenu'; // Importing CSS
 
 interface Outlet {
@@ -91,27 +16,55 @@ interface Business {
     outlets: Outlet[];
 }
 
+interface Category {
+    category_id: string;
+    category_name: string;
+    outlets: string[]; // Array of outlet IDs
+}
+
 interface RegisterItemStep2Props {
     selectedOutlets: Outlet[];
     setSelectedOutlets: React.Dispatch<React.SetStateAction<Outlet[]>>;
 }
 
 const RegisterItemStep2: React.FC<RegisterItemStep2Props> = ({ selectedOutlets, setSelectedOutlets }) => {
-    const { business_id } = useParams<{ business_id: string }>();
+    const location = useLocation();
+    const business_id = location.state?.business_id;
+    const category_id = location.state?.category_id;
     const { dispatch, appSelector } = useRedux();
+
+    // Fetch businesses and categories from Redux
     const businesses = appSelector((state: RootState) => state.business.businesses || []);
+    const categories = appSelector((state: RootState) => state.category.categories || []);
+
+    // Find the business and category from the Redux state
+    const business = businesses.find((biz: Business) => biz.business_id === business_id);
+    const category = categories.find((cat: Category) => cat.category_id === category_id);
 
     useEffect(() => {
-        const response = dispatch(businessList());
-        console.log("Response: ", response)
-    }, [dispatch]);
+        if (!business) {
+            dispatch(businessList());
+        }
+        if (!category) {
+            dispatch(categoryItemList(business_id, category_id));
+        }
+    }, [dispatch, business, category, business_id, category_id]);
 
-    const business = businesses.find((biz: Business) => biz.business_id === business_id);
-    console.log("Response: ", business)
+    useEffect(() => {
+        console.log('Business Response:', business);
+        console.log('Category Response:', category);
+    }, [business, category]);
 
+    // Ensure data exists before rendering
+    if (!business || !category) {
+        return <p className="loading">Loading data...</p>;
+    }
+
+    // Filter business outlets based on category outlet IDs
+    const filteredOutlets = business.outlets.filter((outlet: Outlet) => category.outlets.includes(outlet.outlet_id));
 
     const toggleOutletSelection = (outlet: Outlet) => {
-        setSelectedOutlets((prev: Outlet[]) => {
+        setSelectedOutlets((prev) => {
             const isSelected = prev.some((o) => o.outlet_id === outlet.outlet_id);
             return isSelected ? prev.filter((o) => o.outlet_id !== outlet.outlet_id) : [...prev, outlet];
         });
@@ -119,9 +72,7 @@ const RegisterItemStep2: React.FC<RegisterItemStep2Props> = ({ selectedOutlets, 
 
     const selectAllOutlets = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        if (business) {
-            setSelectedOutlets(business.outlets);
-        }
+        setSelectedOutlets(filteredOutlets);
     };
 
     return (
@@ -133,32 +84,140 @@ const RegisterItemStep2: React.FC<RegisterItemStep2Props> = ({ selectedOutlets, 
                 </button>
             </div>
 
-            {business ? (
-                business.outlets.length > 0 ? (
-                    <div className="outlet-list">
-                        {business.outlets.map((outlet: Outlet) => (
-                            <div
-                                key={outlet.outlet_id}
-                                className="outlet-item"
-                                onClick={() => toggleOutletSelection(outlet)}>
-                                <input
-                                    type="checkbox"
-                                    checked={selectedOutlets.some((o) => o.outlet_id === outlet.outlet_id)}
-                                    readOnly
-                                    className="checkbox"
-                                />
-                                <span className="outlet-name">{outlet.outlet_name}</span>
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <p className="no-outlets">No outlets available for this business.</p>
-                )
+            {filteredOutlets.length > 0 ? (
+                <div className="outlet-list">
+                    {filteredOutlets.map((outlet: Outlet) => (
+                        <div
+                            key={outlet.outlet_id}
+                            className="outlet-item"
+                            onClick={() => toggleOutletSelection(outlet)}>
+                            <input
+                                type="checkbox"
+                                checked={selectedOutlets.some((o) => o.outlet_id === outlet.outlet_id)}
+                                readOnly
+                                className="checkbox"
+                            />
+                            <span className="outlet-name">{outlet.outlet_name}</span>
+                        </div>
+                    ))}
+                </div>
             ) : (
-                <p className="no-outlets">Business not found.</p>
+                <p className="no-outlets">No outlets available for this Category.</p>
             )}
         </div>
     );
 };
 
 export default RegisterItemStep2;
+
+// import React, { useState, useEffect } from 'react';
+// import { useRedux } from '../../../hooks';
+// import { useParams, useLocation } from 'react-router-dom';
+// import { RootState } from '../../../redux/store';
+// import { businessList } from '../../../redux/business/actions';
+// import { categoryItemList } from '../../../redux/menuManagementCategory/actions';
+// import './ManageMenu'; // Importing CSS
+
+// interface Outlet {
+//     outlet_id: string;
+//     outlet_name: string;
+// }
+// interface Business {
+//     business_id: string;
+//     business_name: string;
+//     outlets: Outlet[];
+// }
+
+// interface Item {
+//     item_id: string;
+//     item_name: string;
+//     // outlets: Outlet[];
+// }
+
+// interface Category {
+//     category_id: string;
+//     category_name: string;
+//     items: Item[];
+// }
+
+// interface RegisterItemStep2Props {
+//     selectedOutlets: Outlet[];
+//     setSelectedOutlets: React.Dispatch<React.SetStateAction<Outlet[]>>;
+// }
+
+// const RegisterItemStep2: React.FC<RegisterItemStep2Props> = ({ selectedOutlets, setSelectedOutlets }) => {
+//     // const { business_id } = useParams<{ business_id: string }>();
+//     const location = useLocation();
+//     const business_id = location.state?.business_id;
+//     const category_id = location.state?.category_id;
+//     const { dispatch, appSelector } = useRedux();
+//     const businesses = appSelector((state: RootState) => state.business.businesses || []);
+//     const categories = appSelector((state: RootState) => state.category.categories || []);
+
+//     useEffect(() => {
+//         const response = dispatch(businessList());
+//         const categoryResponse = dispatch(categoryItemList(business_id, category_id));
+
+//         // console.log('Business Response: ', response);
+//         // console.log('Category Response: ', categoryResponse);
+//     }, [dispatch]);
+
+//     const business = businesses.find((biz: Business) => biz.business_id === business_id);
+//     console.log('Business Response: ', business);
+//     const category = categories.find((cat: Category) => cat.category_id === category_id);
+//     console.log('Category Response: ', category);
+
+//     const toggleOutletSelection = (outlet: Outlet) => {
+//         setSelectedOutlets((prev: Outlet[]) => {
+//             const isSelected = prev.some((o) => o.outlet_id === outlet.outlet_id);
+//             return isSelected ? prev.filter((o) => o.outlet_id !== outlet.outlet_id) : [...prev, outlet];
+//         });
+//     };
+
+//     const selectAllOutlets = (event: React.MouseEvent<HTMLButtonElement>) => {
+//         event.preventDefault();
+//         if (business) {
+//             setSelectedOutlets(business.outlets);
+//         }
+//     };
+
+//     return (
+//         <div className="step2-container">
+//             <div className="header">
+//                 <h3 className="title">Outlet Name</h3>
+//                 <button onClick={selectAllOutlets} className="active-all-btn">
+//                     Select All
+//                 </button>
+//             </div>
+
+//             {business && category ? (
+//                 category.outlets.length > 0 ? (
+//                     <div className="outlet-list">
+//                         {business.outlets
+//                             .filter((outlet: Outlet) => category.outlets.includes(outlet.outlet_id)) // Filtering relevant outlets
+//                             .map((outlet: Outlet) => (
+//                                 <div
+//                                     key={outlet.outlet_id}
+//                                     className="outlet-item"
+//                                     onClick={() => toggleOutletSelection(outlet)}>
+//                                     <input
+//                                         type="checkbox"
+//                                         checked={selectedOutlets.some((o) => o.outlet_id === outlet.outlet_id)}
+//                                         readOnly
+//                                         className="checkbox"
+//                                     />
+//                                     <span className="outlet-name">{outlet.outlet_name}</span>
+//                                 </div>
+//                             ))}
+//                     </div>
+//                 ) : (
+//                     <p className="no-outlets">No outlets available for this Category.</p>
+//                 )
+//             ) : (
+//                 <p className="no-outlets">Category not found.</p>
+//             )}
+//         </div>
+//     );
+// };
+
+// export default RegisterItemStep2;
