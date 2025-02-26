@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Table, Button, Form, InputGroup, Row, Col } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
-import { resetBusiness, businessList, updateBusinessList, deleteBusinessList } from '../../../redux/business/actions';
+import {
+    resetBusiness,
+    businessList,
+    updateBusinessList,
+    deleteBusinessList,
+    businessUpdateIsActive,
+} from '../../../redux/business/actions';
 import { useRedux } from '../../../hooks';
 import { RootState } from '../../../redux/store';
 import { setAuthorization, getUserFromLocalStorage } from '../../../helpers/api/apiCore';
 import { FaRegEdit, FaTrash } from 'react-icons/fa';
+import ToggleSwitch from '../MenuManagement/ToggleSwitch';
 
 interface Outlet {
     outlet_id: string;
@@ -53,6 +60,7 @@ const BusinessDetails = () => {
     const businesses = appSelector((state: RootState) => state.business.businesses);
     const navigate = useNavigate();
     const [editedBusinessLogoFile, setEditedBusinessLogoFile] = useState<File | null>(null); // State for storing the selected logo file
+    const [toggleStates, setToggleStates] = useState<{ [key: string]: boolean }>({});
 
     const [isEditing, setIsEditing] = useState<boolean>(false); // Separate state for editing
     const [editedBusiness, setEditedBusiness] = useState<Business | null>(null); // Store changes here
@@ -108,6 +116,22 @@ const BusinessDetails = () => {
     //         console.log('Edited Business:', editedBusiness);
     //     }
     // }, [isEditing, selectedBusiness, editedBusiness]);
+
+    const handleBusinessUpdateTogggle = (business_id: string, is_active: boolean) => {
+        console.log('handleBusinessUpdateTogggle called with:', business_id, is_active);
+
+        setToggleStates((prev) => ({
+            ...prev,
+            [business_id]: is_active,
+        }));
+
+        dispatch(businessUpdateIsActive(business_id, is_active));
+
+        setTimeout(() => {
+            setMessage('');
+            dispatch(businessList());
+        }, 500);
+    };
 
     const handleSaveChanges = () => {
         if (editedBusiness) {
@@ -291,8 +315,14 @@ const BusinessDetails = () => {
                                                 )}
                                             </td>
                                             <td>
-                                                <Form.Check type="switch" />
+                                                <ToggleSwitch
+                                                    checked={toggleStates[business.business_id] ?? business.is_active}
+                                                    onChange={(checked) =>
+                                                        handleBusinessUpdateTogggle(business.business_id, checked)
+                                                    }
+                                                />
                                             </td>
+
                                             <td>
                                                 {/* GST Number */}
                                                 {isEditing && selectedBusiness?.business_id === business.business_id ? (

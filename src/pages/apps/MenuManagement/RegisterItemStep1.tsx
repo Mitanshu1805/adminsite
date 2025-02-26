@@ -328,7 +328,7 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
                         </Col>
                     </Row>
                     <Row>
-                        <Col md={6}>
+                        {/* <Col md={6}>
                             <Form.Group>
                                 <Form.Label>Price</Form.Label>
                                 <Form.Control
@@ -338,7 +338,7 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
                                     onChange={handleChange}
                                     placeholder="Enter Item Price"></Form.Control>
                             </Form.Group>
-                        </Col>
+                        </Col> */}
                         <Col md={6}>
                             <Form.Group>
                                 <Form.Label>Item Order Type</Form.Label>

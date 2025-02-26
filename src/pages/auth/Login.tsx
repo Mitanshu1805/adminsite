@@ -32,7 +32,7 @@ const BottomLink = () => {
 
     return (
         <Row className="mt-3">
-            <Col xs={12} className="text-center">
+            {/* <Col xs={12} className="text-center">
                 <p className="text-muted">
                     <Link to="/auth/forget-password" className="text-muted ms-1">
                         <i className="fa fa-lock me-1"></i>
@@ -45,7 +45,7 @@ const BottomLink = () => {
                         <b>{t('Sign Up')}</b>
                     </Link>
                 </p>
-            </Col>
+            </Col> */}
         </Row>
     );
 };
@@ -109,8 +109,7 @@ const Login = () => {
                 <VerticalForm<UserData>
                     onSubmit={onSubmit}
                     resolver={schemaResolver}
-                    defaultValues={{ email: 'adminto@coderthemes.com', password: 'test' }}
-                >
+                    defaultValues={{ email: 'adminto@coderthemes.com', password: 'test' }}>
                     <FormInput
                         type="email"
                         name="email"
@@ -123,8 +122,7 @@ const Login = () => {
                         type="password"
                         name="password"
                         placeholder="Enter your password"
-                        containerClass={'mb-3'}
-                    ></FormInput>
+                        containerClass={'mb-3'}></FormInput>
 
                     <FormInput
                         type="checkbox"

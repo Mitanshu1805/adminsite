@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Form, Button, Container } from 'react-bootstrap';
+import { Card, Row, Col, Alert } from 'react-bootstrap';
 import { useRedux } from '../../../hooks';
 import { useLocation } from 'react-router-dom';
 import { RootState } from '../../../redux/store';
@@ -32,6 +34,7 @@ const RegisterItemStep2: React.FC<RegisterItemStep2Props> = ({ selectedOutlets, 
     const business_id = location.state?.business_id;
     const category_id = location.state?.category_id;
     const { dispatch, appSelector } = useRedux();
+    const [isChecked, setIsChecked] = useState(true);
 
     // Fetch businesses and categories from Redux
     const businesses = appSelector((state: RootState) => state.business.businesses || []);
@@ -75,36 +78,67 @@ const RegisterItemStep2: React.FC<RegisterItemStep2Props> = ({ selectedOutlets, 
         setSelectedOutlets(filteredOutlets);
     };
 
-    return (
-        <div className="step2-container">
-            <div className="header">
-                <h3 className="title">Outlet Name</h3>
-                <button onClick={selectAllOutlets} className="active-all-btn">
-                    Select All
-                </button>
-            </div>
+    // return (
+    //     <div className="step2-container">
+    //         <div className="header">
+    //             <h3 className="title">Master Outlet</h3>
+    //             {/* <button onClick={selectAllOutlets} className="active-all-btn">
+    //                 Select All
+    //             </button> */}
+    //         </div>
+    //         <div className="outlet-item">
+    //             <input type="checkbox" checked={isChecked} onChange={() => setIsChecked(true)} className="checkbox" />
+    //             <span className="outlet-name">Master Outlet</span>
+    //         </div>
 
-            {filteredOutlets.length > 0 ? (
-                <div className="outlet-list">
-                    {filteredOutlets.map((outlet: Outlet) => (
-                        <div
-                            key={outlet.outlet_id}
-                            className="outlet-item"
-                            onClick={() => toggleOutletSelection(outlet)}>
-                            <input
-                                type="checkbox"
-                                checked={selectedOutlets.some((o) => o.outlet_id === outlet.outlet_id)}
-                                readOnly
-                                className="checkbox"
-                            />
-                            <span className="outlet-name">{outlet.outlet_name}</span>
-                        </div>
-                    ))}
-                </div>
-            ) : (
-                <p className="no-outlets">No outlets available for this Category.</p>
-            )}
-        </div>
+    //         <div className="header">
+    //             <h3 className="title">Outlet Name</h3>
+    //             <button onClick={selectAllOutlets} className="active-all-btn">
+    //                 Select All
+    //             </button>
+    //         </div>
+
+    //         {filteredOutlets.length > 0 ? (
+    //             <div className="outlet-list">
+    //                 {filteredOutlets.map((outlet: Outlet) => (
+    //                     <div
+    //                         key={outlet.outlet_id}
+    //                         className="outlet-item"
+    //                         onClick={() => toggleOutletSelection(outlet)}>
+    //                         <input
+    //                             type="checkbox"
+    //                             checked={selectedOutlets.some((o) => o.outlet_id === outlet.outlet_id)}
+    //                             readOnly
+    //                             className="checkbox"
+    //                         />
+    //                         <span className="outlet-name">{outlet.outlet_name}</span>
+    //                     </div>
+    //                 ))}
+    //             </div>
+    //         ) : (
+    //             <p className="no-outlets">No outlets available for this Category.</p>
+    //         )}
+    //     </div>
+    // );
+
+    return (
+        <Container className="register-item-container">
+            <Card className="shadow-sm">
+                <Card.Header as="h2" className="text-center">
+                    Select Outlets
+                </Card.Header>
+                <Card.Body>
+                    <Row className="mb-3">
+                        <Col md={4}>
+                            <Form.Group>
+                                <Form.Label>Master Outlet</Form.Label>
+                                <Form.Control type="checkbox" value="Master" />
+                            </Form.Group>
+                        </Col>
+                    </Row>
+                </Card.Body>
+            </Card>
+        </Container>
     );
 };
 

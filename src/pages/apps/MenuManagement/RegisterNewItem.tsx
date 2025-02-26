@@ -397,6 +397,7 @@ const RegisterNewItem: React.FC = () => {
             handlePriceChange={handlePriceChange}
             selectedOutlets={selectedOutlets}
             business={selectedBusiness}
+            handleChange={handleChange}
         />,
     ]);
 

@@ -1,4 +1,4 @@
-import { updateBusinessList } from './actions';
+import { updateBusinessList, businessUpdateIsActive } from './actions';
 import { BusinessActionTypes } from './constants';
 
 interface Outlet {
@@ -184,6 +184,36 @@ interface DeleteBusinessUserErrorPayload {
     error: string;
 }
 
+interface BusinessUpdateIsActivePayload {
+    business_id: string;
+    is_active: boolean;
+}
+interface BusinessUpdateIsActiveSuccessPayload {
+    business_id: string;
+    is_active: boolean;
+    message: string;
+}
+interface BusinessUpdateIsActiveErrorPayload {
+    business_id: string;
+    is_active: boolean;
+    error: string;
+}
+
+interface OutletUpdateIsActivePayload {
+    outlet_id: string;
+    is_active: boolean;
+}
+interface OutletUpdateIsActiveSuccessPayload {
+    outlet_id: string;
+    is_active: boolean;
+    message: string;
+}
+interface OutletUpdateIsActiveErrorPayload {
+    outlet_id: string;
+    is_active: boolean;
+    error: string;
+}
+
 type BusinessActions =
     | { type: typeof BusinessActionTypes.BUSINESS_LIST }
     | { type: typeof BusinessActionTypes.BUSINESS_LIST_SUCCESS; payload: BusinessListSuccessPayload }
@@ -217,7 +247,16 @@ type BusinessActions =
     | { type: typeof BusinessActionTypes.UPDATE_BUSINESS_USER_ERROR; payload: UpdateBusinessUserErrorPayload }
     | { type: typeof BusinessActionTypes.DELETE_BUSINESS_USER; payload: DeleteBusinessUserPayload }
     | { type: typeof BusinessActionTypes.DELETE_BUSINESS_USER_SUCCESS; payload: DeleteBusinessUserSuccessPayload }
-    | { type: typeof BusinessActionTypes.DELETE_BUSINESS_USER_ERROR; payload: DeleteBusinessUserErrorPayload };
+    | { type: typeof BusinessActionTypes.DELETE_BUSINESS_USER_ERROR; payload: DeleteBusinessUserErrorPayload }
+    | { type: typeof BusinessActionTypes.BUSINESS_UPDATE_ISACTIVE; payload: BusinessUpdateIsActivePayload }
+    | {
+          type: typeof BusinessActionTypes.BUSINESS_UPDATE_ISACTIVE_SUCCESS;
+          payload: BusinessUpdateIsActiveSuccessPayload;
+      }
+    | { type: typeof BusinessActionTypes.BUSINESS_UPDATE_ISACTIVE_ERROR; payload: BusinessUpdateIsActiveErrorPayload }
+    | { type: typeof BusinessActionTypes.OUTLET_UPDATE_ISACTIVE; payload: OutletUpdateIsActivePayload }
+    | { type: typeof BusinessActionTypes.OUTLET_UPDATE_ISACTIVE_SUCCESS; payload: OutletUpdateIsActiveSuccessPayload }
+    | { type: typeof BusinessActionTypes.OUTLET_UPDATE_ISACTIVE_ERROR; payload: OutletUpdateIsActiveErrorPayload };
 
 // Language Reducer
 const languageReducer = (state = INITIAL_LANGUAGE_STATE, action: BusinessActions): LanguageState => {
@@ -567,6 +606,66 @@ const businessReducer = (state = INITIAL_STATE, action: BusinessActions): Busine
             };
 
         case BusinessActionTypes.DELETE_BUSINESS_USER_ERROR:
+            return {
+                ...state,
+                loading: false,
+                error: action.payload.error,
+            };
+
+        case BusinessActionTypes.BUSINESS_UPDATE_ISACTIVE:
+            return {
+                ...state,
+                loading: true,
+                error: null,
+            };
+
+        case BusinessActionTypes.BUSINESS_UPDATE_ISACTIVE_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                businesses: state.businesses.map((business) =>
+                    business.business_id === action.payload.business_id
+                        ? { ...business, is_active: action.payload.is_active }
+                        : business
+                ),
+                error: null,
+            };
+
+        case BusinessActionTypes.BUSINESS_UPDATE_ISACTIVE_ERROR:
+            return {
+                ...state,
+                loading: false,
+                error: action.payload.error,
+            };
+
+        case BusinessActionTypes.OUTLET_UPDATE_ISACTIVE:
+            return {
+                ...state,
+                loading: true,
+                error: null,
+            };
+
+        case BusinessActionTypes.OUTLET_UPDATE_ISACTIVE_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                businesses: state.businesses.map((business) => {
+                    if (business.business_id === action.payload.outlet_id) {
+                        return {
+                            ...business,
+                            outlets: business.outlets.map((outlet) =>
+                                outlet.outlet_id === action.payload.outlet_id
+                                    ? { ...outlet, is_active: action.payload.is_active }
+                                    : outlet
+                            ),
+                        };
+                    }
+                    return business;
+                }),
+                error: null,
+            };
+
+        case BusinessActionTypes.OUTLET_UPDATE_ISACTIVE_ERROR:
             return {
                 ...state,
                 loading: false,

@@ -226,7 +226,7 @@ const ManageMenu: React.FC = () => {
                                 />
                             </div>
                         </div>
-                        <td>
+                        <div>
                             <FaRegEdit
                                 size={20}
                                 style={{ cursor: 'pointer', marginRight: '10px' }}
@@ -242,14 +242,13 @@ const ManageMenu: React.FC = () => {
                             {/* {showCategoryUpdateModal && (
                                 <EditCategory show={showCategoryUpdateModal} onClose={handleCloseCategoryUpdateModal} />
                             )} */}
-                        </td>
-                        <td>
+
                             <FaTrash
                                 size={20}
                                 style={{ cursor: 'pointer', color: 'red' }}
                                 onClick={() => handleDeleteCategory(category.category_id)}
                             />
-                        </td>
+                        </div>
                     </div>
                 ))}
                 <button

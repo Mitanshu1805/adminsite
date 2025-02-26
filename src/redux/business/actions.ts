@@ -1,3 +1,4 @@
+import { Outlet } from 'react-router-dom';
 import { BusinessActionTypes } from './constants';
 import { AppDispatch } from '../store'; // Adjust based on your store
 
@@ -143,7 +144,19 @@ export type BusinessAction =
     | { type: typeof BusinessActionTypes.UPDATE_BUSINESS_USER_ERROR; payload: { error: string } }
     | { type: typeof BusinessActionTypes.DELETE_BUSINESS_USER; payload: { user_id: string; business_id: string } }
     | { type: typeof BusinessActionTypes.DELETE_BUSINESS_USER_SUCCESS; payload: { message: string } }
-    | { type: typeof BusinessActionTypes.DELETE_BUSINESS_USER_ERROR; payload: { error: string } };
+    | { type: typeof BusinessActionTypes.DELETE_BUSINESS_USER_ERROR; payload: { error: string } }
+    | {
+          type: typeof BusinessActionTypes.BUSINESS_UPDATE_ISACTIVE;
+          payload: { business_id: string; is_active: boolean };
+      }
+    | { type: typeof BusinessActionTypes.BUSINESS_UPDATE_ISACTIVE_SUCCESS; payload: { message: string } }
+    | { type: typeof BusinessActionTypes.BUSINESS_UPDATE_ISACTIVE_ERROR; payload: { error: string } }
+    | {
+          type: typeof BusinessActionTypes.OUTLET_UPDATE_ISACTIVE;
+          payload: { outlet_id: string; is_active: boolean };
+      }
+    | { type: typeof BusinessActionTypes.OUTLET_UPDATE_ISACTIVE_SUCCESS; payload: { message: string } }
+    | { type: typeof BusinessActionTypes.OUTLET_UPDATE_ISACTIVE_ERROR; payload: { error: string } };
 
 export const businessList = (): BusinessAction => ({
     type: BusinessActionTypes.BUSINESS_LIST,
@@ -359,5 +372,35 @@ export const deleteBusinessUserSuccess = (message: string): BusinessAction => ({
 
 export const deleteBusinessUserError = (error: string): BusinessAction => ({
     type: BusinessActionTypes.DELETE_BUSINESS_USER_ERROR,
+    payload: { error },
+});
+
+export const businessUpdateIsActive = (business_id: string, is_active: boolean): BusinessAction => ({
+    type: BusinessActionTypes.BUSINESS_UPDATE_ISACTIVE,
+    payload: { is_active, business_id },
+});
+
+export const businessUpdateIsActiveSuccess = (message: string): BusinessAction => ({
+    type: BusinessActionTypes.BUSINESS_UPDATE_ISACTIVE_SUCCESS,
+    payload: { message },
+});
+
+export const businessUpdateIsActiveError = (error: string): BusinessAction => ({
+    type: BusinessActionTypes.BUSINESS_UPDATE_ISACTIVE_ERROR,
+    payload: { error },
+});
+
+export const outletUpdateIsActive = (is_active: boolean, outlet_id: string): BusinessAction => ({
+    type: BusinessActionTypes.OUTLET_UPDATE_ISACTIVE,
+    payload: { is_active, outlet_id },
+});
+
+export const outletUpdateIsActiveSuccess = (message: string): BusinessAction => ({
+    type: BusinessActionTypes.OUTLET_UPDATE_ISACTIVE_SUCCESS,
+    payload: { message },
+});
+
+export const outletUpdateIsActiveError = (error: string): BusinessAction => ({
+    type: BusinessActionTypes.OUTLET_UPDATE_ISACTIVE_ERROR,
     payload: { error },
 });

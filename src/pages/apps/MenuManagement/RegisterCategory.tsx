@@ -3,7 +3,7 @@ import { Button, Alert, Container, Card, Modal, Form } from 'react-bootstrap';
 import { RootState } from '../../../redux/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { registerCategory } from '../../../redux/actions';
+import { registerCategory, categoryItemList } from '../../../redux/actions';
 import { useMultistepForm } from '../../../hooks/useMultistepForm';
 import RegisterCategoryStep1 from './RegisterCategoryStep1';
 import RegisterCategoryStep2 from './RegisterCategoryStep2';
@@ -162,7 +162,12 @@ const RegisterCategory: React.FC<RegisterCategoryProps> = ({ show, onClose }) =>
             console.log('API request dispatched!');
 
             setSuccess('Category registration successful');
-            navigate(`/apps/manage-menu`);
+            setTimeout(() => {
+                // setMessage('');
+                navigate(`/apps/manage-menu`);
+                dispatch(categoryItemList(business_id));
+            }, 2000);
+            // navigate(`/apps/manage-menu`);
             setError('');
 
             // Reset form state

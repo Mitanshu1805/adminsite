@@ -11,6 +11,8 @@ import {
     registerBusinessUser,
     updateBusinessUser,
     deleteBusinessUser,
+    businessUpdateIsActive,
+    outletUpdateIsActive,
 } from '../../helpers/api/auth';
 import {
     businessApiResponseSuccess,
@@ -35,6 +37,10 @@ import {
     updateBusinessUserError,
     deleteBusinessUserError,
     deleteBusinessUserSuccess,
+    businessUpdateIsActiveSuccess,
+    businessUpdateIsActiveError,
+    outletUpdateIsActiveSuccess,
+    outletUpdateIsActiveError,
 } from './actions';
 import { BusinessActionTypes } from './constants';
 import { SagaIterator } from '@redux-saga/core';
@@ -243,6 +249,25 @@ function* deleteBusinessUserSaga(action: any): SagaIterator {
     }
 }
 
+function* businessUpdateIsActiveSaga(action: any): SagaIterator {
+    try {
+        console.log('Saga triggered with:', action.payload);
+        const response = yield call(businessUpdateIsActive, action.payload);
+        yield put(businessUpdateIsActiveSuccess(response.data.message));
+    } catch (error: any) {
+        yield put(businessUpdateIsActiveError(error.message || 'Error Occured'));
+    }
+}
+
+function* outletUpdateIsActiveSaga(action: any): SagaIterator {
+    try {
+        const response = yield call(outletUpdateIsActive, action.payload);
+        yield put(outletUpdateIsActiveSuccess(response.data.message));
+    } catch (error: any) {
+        yield put(outletUpdateIsActiveError(error.message || 'Error Occured'));
+    }
+}
+
 // Watcher Sagas
 function* watchBusinessList() {
     yield takeEvery(BusinessActionTypes.BUSINESS_LIST, businessListSaga);
@@ -287,6 +312,15 @@ export function* watchUpdateBusinessUser() {
 export function* watchDeleteBusinessUser() {
     yield takeEvery(BusinessActionTypes.DELETE_BUSINESS_USER, deleteBusinessUserSaga);
 }
+
+export function* watchBusinessUpdateIsActive() {
+    yield takeEvery(BusinessActionTypes.BUSINESS_UPDATE_ISACTIVE, businessUpdateIsActiveSaga);
+}
+
+export function* watchOutletUpdateIsActive() {
+    yield takeEvery(BusinessActionTypes.OUTLET_UPDATE_ISACTIVE, outletUpdateIsActiveSaga);
+}
+
 // Root Saga
 function* businessSaga() {
     yield all([
@@ -301,6 +335,8 @@ function* businessSaga() {
         fork(watchRegisterBusinessUser),
         fork(watchUpdateBusinessUser), // Added
         fork(watchDeleteBusinessUser),
+        fork(watchBusinessUpdateIsActive),
+        fork(watchOutletUpdateIsActive),
     ]);
 }
 

@@ -1,4 +1,4 @@
-import { registerBusiness } from './../../redux/business/actions';
+import { registerBusiness, businessUpdateIsActiveSuccess } from './../../redux/business/actions';
 import { Outlet } from 'react-router-dom';
 import { put } from 'redux-saga/effects';
 import { APICore } from './apiCore';
@@ -105,6 +105,15 @@ function deleteBusinessUser(data: any) {
     return api.delete(`${baseUrl}`, data); // Pass the data to the API
 }
 
+function businessUpdateIsActive(data: any) {
+    const baseUrl = '/business/update/isactive';
+    return api.update(`${baseUrl}`, data); // Pass the data to the API
+}
+function outletUpdateIsActive(data: any) {
+    const baseUrl = '/outlet/update/isactive';
+    return api.update(`${baseUrl}`, data); // Pass the data to the API
+}
+
 function updateOutletPrice(data: any) {
     const baseUrl = '/item/update/outlet/price';
     return api.update(`${baseUrl}`, data);
@@ -181,6 +190,8 @@ export {
     registerBusinessUser,
     updateBusinessUser,
     deleteBusinessUser,
+    businessUpdateIsActive,
+    outletUpdateIsActive,
     updateOutletPrice,
     registerItem,
     updateItem,
