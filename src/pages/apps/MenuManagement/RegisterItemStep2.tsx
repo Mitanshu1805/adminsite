@@ -120,7 +120,6 @@ const RegisterItemStep2: React.FC<RegisterItemStep2Props> = ({ selectedOutlets, 
     //         )}
     //     </div>
     // );
-
     return (
         <Container className="register-item-container">
             <Card className="shadow-sm">
@@ -132,10 +131,41 @@ const RegisterItemStep2: React.FC<RegisterItemStep2Props> = ({ selectedOutlets, 
                         <Col md={4}>
                             <Form.Group>
                                 <Form.Label>Master Outlet</Form.Label>
-                                <Form.Control type="checkbox" value="Master" />
+                                <Form.Check
+                                    type="checkbox"
+                                    checked={isChecked}
+                                    onChange={() => setIsChecked(true)}
+                                    label="Master"
+                                />
                             </Form.Group>
                         </Col>
                     </Row>
+
+                    <Row className="mb-3">
+                        <Col>
+                            <Form.Label>Outlet Name</Form.Label>
+                            <button onClick={selectAllOutlets} className="btn btn-primary btn-sm ms-2">
+                                Select All
+                            </button>
+                        </Col>
+                    </Row>
+
+                    {filteredOutlets.length > 0 ? (
+                        <Row>
+                            {filteredOutlets.map((outlet: Outlet) => (
+                                <Col md={4} key={outlet.outlet_id} className="mb-2">
+                                    <Form.Check
+                                        type="checkbox"
+                                        label={outlet.outlet_name}
+                                        checked={selectedOutlets.some((o) => o.outlet_id === outlet.outlet_id)}
+                                        onChange={() => toggleOutletSelection(outlet)}
+                                    />
+                                </Col>
+                            ))}
+                        </Row>
+                    ) : (
+                        <p className="text-muted text-center">No outlets available for this Category.</p>
+                    )}
                 </Card.Body>
             </Card>
         </Container>

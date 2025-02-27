@@ -261,6 +261,7 @@ function* businessUpdateIsActiveSaga(action: any): SagaIterator {
 
 function* outletUpdateIsActiveSaga(action: any): SagaIterator {
     try {
+        console.log('OutletUpdateIsActiveSaga triggered with:', action.payload);
         const response = yield call(outletUpdateIsActive, action.payload);
         yield put(outletUpdateIsActiveSuccess(response.data.message));
     } catch (error: any) {

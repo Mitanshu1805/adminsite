@@ -377,7 +377,7 @@ export const deleteBusinessUserError = (error: string): BusinessAction => ({
 
 export const businessUpdateIsActive = (business_id: string, is_active: boolean): BusinessAction => ({
     type: BusinessActionTypes.BUSINESS_UPDATE_ISACTIVE,
-    payload: { is_active, business_id },
+    payload: { business_id, is_active },
 });
 
 export const businessUpdateIsActiveSuccess = (message: string): BusinessAction => ({
@@ -390,9 +390,9 @@ export const businessUpdateIsActiveError = (error: string): BusinessAction => ({
     payload: { error },
 });
 
-export const outletUpdateIsActive = (is_active: boolean, outlet_id: string): BusinessAction => ({
+export const outletUpdateIsActive = (outlet_id: string, is_active: boolean): BusinessAction => ({
     type: BusinessActionTypes.OUTLET_UPDATE_ISACTIVE,
-    payload: { is_active, outlet_id },
+    payload: { outlet_id, is_active },
 });
 
 export const outletUpdateIsActiveSuccess = (message: string): BusinessAction => ({

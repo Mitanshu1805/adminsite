@@ -9,6 +9,7 @@ import {
     updateOutlet,
     deleteBusinessUser,
     updateBusinessUser,
+    outletUpdateIsActive,
 } from '../../../redux/business/actions';
 import { useRedux } from '../../../hooks';
 import { RootState } from '../../../redux/store';
@@ -19,6 +20,7 @@ import RegisterOutletModal from './RegisterNewOutlet';
 import RegisterBusinessUserModal from './RegisterNewBusinessUser';
 import { categoryItemList } from '../../../helpers/api/auth';
 import { FaHamburger } from 'react-icons/fa';
+import ToggleSwitch from '../MenuManagement/ToggleSwitch';
 
 interface Outlet {
     outlet_id: string;
@@ -80,6 +82,7 @@ const BusinessDetails: React.FC = () => {
     const [showOutletModal, setShowOutletModal] = useState(false);
     const [showBusinessUserModal, setShowBusinessUserModal] = useState(false);
     const [message, setMessage] = useState<string>('');
+    const [toggleStates, setToggleStates] = useState<{ [key: string]: boolean }>({});
     const [isOutletEditing, setIsOutletEditing] = useState<boolean>(false); // Separate state for editing
     const [isBusinessUserEditing, setIsBusinessUserEditing] = useState<boolean>(false);
     const [editedOutlet, setEditedOutlet] = useState<Outlet | null>(null); // Store
@@ -111,7 +114,7 @@ const BusinessDetails: React.FC = () => {
         if (id) {
             // Ensure that 'id' is a string and matches the format of business.business_id
             const business = businesses.find((business: Business) => business.business_id === id);
-            console.log("business res: ", business)
+            console.log('business res: ', business);
 
             if (business) {
                 setSelectedBusiness(business);
@@ -208,6 +211,22 @@ const BusinessDetails: React.FC = () => {
         setIsOutletEditing(true);
         setEditedOutlet({ ...outletToUpdate, business_id: selectedBusiness.business_id });
         setSelectedOutlet({ ...outletToUpdate });
+    };
+
+    const handleOutletUpdateToggle = (outlet_id: string, is_active: boolean) => {
+        console.log('handleOutletUpdateToggle called with:', outlet_id, is_active);
+
+        setToggleStates((prev) => ({
+            ...prev,
+            [outlet_id]: is_active,
+        }));
+
+        dispatch(outletUpdateIsActive(outlet_id, is_active));
+
+        setTimeout(() => {
+            setMessage('');
+            dispatch(businessList());
+        }, 500);
     };
 
     const handleEditBusinessUserClick = (
@@ -508,13 +527,21 @@ const BusinessDetails: React.FC = () => {
                                                 />
                                             </td>
 
-                                            <td>
+                                            {/* <td>
                                                 {isOutletEditing && selectedOutlet?.outlet_id === outlet.outlet_id ? (
                                                     // Show the "Is Active" status as plain text (non-editable)
                                                     <span>{outlet.is_active}</span>
                                                 ) : (
                                                     <Form.Check type="switch" />
                                                 )}
+                                            </td> */}
+                                            <td>
+                                                <ToggleSwitch
+                                                    checked={toggleStates[outlet.outlet_id] ?? outlet.is_active}
+                                                    onChange={(checked) =>
+                                                        handleOutletUpdateToggle(outlet.outlet_id, checked)
+                                                    }
+                                                />
                                             </td>
                                             <td className="d-flex align-items-center">
                                                 {isOutletEditing && selectedOutlet?.outlet_id === outlet.outlet_id ? (
@@ -609,7 +636,7 @@ const BusinessDetails: React.FC = () => {
                                             {/* {console.log('user_id >>>>>>>>>>>', business_users.user_id)} */}
                                             <td>
                                                 {isBusinessUserEditing &&
-                                                    selectedBusinessUser?.user_id === business_users.user_id ? (
+                                                selectedBusinessUser?.user_id === business_users.user_id ? (
                                                     <input
                                                         type="text"
                                                         value={editedBusinessUser?.first_name || ''}
@@ -625,7 +652,7 @@ const BusinessDetails: React.FC = () => {
                                             </td>
                                             <td>
                                                 {isBusinessUserEditing &&
-                                                    selectedBusinessUser?.user_id === business_users.user_id ? (
+                                                selectedBusinessUser?.user_id === business_users.user_id ? (
                                                     <input
                                                         type="text"
                                                         value={editedBusinessUser?.last_name || ''}
@@ -641,7 +668,7 @@ const BusinessDetails: React.FC = () => {
                                             </td>
                                             <td>
                                                 {isBusinessUserEditing &&
-                                                    selectedBusinessUser?.user_id === business_users.user_id ? (
+                                                selectedBusinessUser?.user_id === business_users.user_id ? (
                                                     <input
                                                         type="text"
                                                         value={editedBusinessUser?.email || ''}
@@ -657,7 +684,7 @@ const BusinessDetails: React.FC = () => {
                                             </td>
                                             <td>
                                                 {isBusinessUserEditing &&
-                                                    selectedBusinessUser?.user_id === business_users.user_id ? (
+                                                selectedBusinessUser?.user_id === business_users.user_id ? (
                                                     <input
                                                         type="text"
                                                         value={editedBusinessUser?.phone_number || ''}
@@ -673,7 +700,7 @@ const BusinessDetails: React.FC = () => {
                                             </td>
                                             <td>
                                                 {isBusinessUserEditing &&
-                                                    selectedBusinessUser?.user_id === business_users.user_id ? (
+                                                selectedBusinessUser?.user_id === business_users.user_id ? (
                                                     <input
                                                         type="text"
                                                         value={editedBusinessUser?.address || ''}
@@ -690,7 +717,7 @@ const BusinessDetails: React.FC = () => {
 
                                             <td className="d-flex align-items-center">
                                                 {isBusinessUserEditing &&
-                                                    selectedBusinessUser?.user_id === business_users.user_id ? (
+                                                selectedBusinessUser?.user_id === business_users.user_id ? (
                                                     <>
                                                         <Button
                                                             variant="success"
