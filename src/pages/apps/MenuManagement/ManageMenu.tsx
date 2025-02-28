@@ -77,7 +77,8 @@ const ManageMenu: React.FC = () => {
 
     const handleCategoryClick = (category_id: string) => {
         console.log('Category Clicked:', category_id); // Debugging log
-        setSelectedCategoryId(category_id === selectedCategoryId ? null : category_id);
+        // setSelectedCategoryId(category_id === selectedCategoryId ? null : category_id);
+        setSelectedCategoryId(category_id);
     };
 
     const handleCategoryToggle = (category_id: string, is_active: boolean) => {

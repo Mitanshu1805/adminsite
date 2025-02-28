@@ -75,7 +75,11 @@ const RegisterItemStep2: React.FC<RegisterItemStep2Props> = ({ selectedOutlets, 
 
     const selectAllOutlets = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        setSelectedOutlets(filteredOutlets);
+        if (selectedOutlets.length === filteredOutlets.length) {
+            setSelectedOutlets([]); // Deselect all
+        } else {
+            setSelectedOutlets(filteredOutlets); // Select all
+        }
     };
 
     // return (
@@ -127,41 +131,68 @@ const RegisterItemStep2: React.FC<RegisterItemStep2Props> = ({ selectedOutlets, 
                     Select Outlets
                 </Card.Header>
                 <Card.Body>
-                    <Row className="mb-3">
-                        <Col md={4}>
+                    <Row className="mb-4">
+                        <Col md={6}>
                             <Form.Group>
-                                <Form.Label>Master Outlet</Form.Label>
-                                <Form.Check
-                                    type="checkbox"
-                                    checked={isChecked}
-                                    onChange={() => setIsChecked(true)}
-                                    label="Master"
-                                />
+                                <Form.Label style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
+                                    Master Outlet
+                                </Form.Label>
+                                <div className="d-flex align-items-center">
+                                    <Form.Check
+                                        type="checkbox"
+                                        checked={isChecked}
+                                        onChange={() => setIsChecked(true)}
+                                        id="master-checkbox"
+                                        style={{ transform: 'scale(1.2)', marginRight: '8px' }} // Slightly bigger checkbox & spacing
+                                    />
+                                    <Form.Label
+                                        htmlFor="master-checkbox"
+                                        style={{ fontSize: '1.3rem', marginBottom: '0' }}>
+                                        Master
+                                    </Form.Label>
+                                </div>
                             </Form.Group>
                         </Col>
                     </Row>
 
-                    <Row className="mb-3">
+                    <Row className="mb-4">
                         <Col>
-                            <Form.Label>Outlet Name</Form.Label>
+                            <Form.Label style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Outlet Name</Form.Label>
                             <button onClick={selectAllOutlets} className="btn btn-primary btn-sm ms-2">
-                                Select All
+                                {selectedOutlets.length === filteredOutlets.length ? 'Deselect All' : 'Select All'}
                             </button>
                         </Col>
                     </Row>
 
                     {filteredOutlets.length > 0 ? (
                         <Row>
-                            {filteredOutlets.map((outlet: Outlet) => (
-                                <Col md={4} key={outlet.outlet_id} className="mb-2">
-                                    <Form.Check
-                                        type="checkbox"
-                                        label={outlet.outlet_name}
-                                        checked={selectedOutlets.some((o) => o.outlet_id === outlet.outlet_id)}
-                                        onChange={() => toggleOutletSelection(outlet)}
-                                    />
-                                </Col>
-                            ))}
+                            {filteredOutlets.map((outlet: Outlet) => {
+                                const isChecked = selectedOutlets.some((o) => o.outlet_id === outlet.outlet_id);
+                                return (
+                                    <Col md={12} key={outlet.outlet_id} className="mb-3 shadow-sm">
+                                        <div
+                                            className="d-flex align-items-center p-2"
+                                            style={{ cursor: 'pointer', fontSize: '1.2rem' }}>
+                                            <Form.Check
+                                                type="checkbox"
+                                                checked={isChecked}
+                                                onChange={(e) => {
+                                                    e.stopPropagation(); // Prevent parent div click
+                                                    toggleOutletSelection(outlet);
+                                                }}
+                                                id={`outlet-checkbox-${outlet.outlet_id}`}
+                                                className="me-3"
+                                                style={{ transform: 'scale(1.5)' }}
+                                            />
+                                            <label
+                                                htmlFor={`outlet-checkbox-${outlet.outlet_id}`}
+                                                style={{ cursor: 'pointer' }}>
+                                                {outlet.outlet_name}
+                                            </label>
+                                        </div>
+                                    </Col>
+                                );
+                            })}
                         </Row>
                     ) : (
                         <p className="text-muted text-center">No outlets available for this Category.</p>

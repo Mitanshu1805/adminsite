@@ -53,21 +53,16 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
 
     const handleLooseQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { checked } = e.target;
+
         handleChange({
-            target: { name: 'is_loose', value: checked.toString() },
-        } as any); // Convert boolean to string for input handling
+            target: { name: 'is_loose', value: checked },
+        } as any); // Ensure boolean value is passed
 
         // Reset quantity fields when 'is_loose' is unchecked
         if (!checked) {
-            handleChange({
-                target: { name: 'quantity_type', value: '' },
-            } as any);
-            handleChange({
-                target: { name: 'quantity_params', value: '' },
-            } as any);
-            handleChange({
-                target: { name: 'quantity_value', value: '' },
-            } as any);
+            handleChange({ target: { name: 'quantity_type', value: '' } } as any);
+            handleChange({ target: { name: 'quantity_params', value: '' } } as any);
+            handleChange({ target: { name: 'quantity_value', value: '' } } as any);
         }
     };
 
@@ -328,17 +323,6 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
                         </Col>
                     </Row>
                     <Row>
-                        {/* <Col md={6}>
-                            <Form.Group>
-                                <Form.Label>Price</Form.Label>
-                                <Form.Control
-                                    type="number"
-                                    name="price"
-                                    value={formData.price}
-                                    onChange={handleChange}
-                                    placeholder="Enter Item Price"></Form.Control>
-                            </Form.Group>
-                        </Col> */}
                         <Col md={6}>
                             <Form.Group>
                                 <Form.Label>Item Order Type</Form.Label>

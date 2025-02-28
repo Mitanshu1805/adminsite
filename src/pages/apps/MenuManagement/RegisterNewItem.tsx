@@ -398,6 +398,7 @@ const RegisterNewItem: React.FC = () => {
             selectedOutlets={selectedOutlets}
             business={selectedBusiness}
             handleChange={handleChange}
+            setFormData={setFormData}
         />,
     ]);
 
