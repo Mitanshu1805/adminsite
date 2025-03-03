@@ -10,6 +10,7 @@ import {
     deleteBusinessUser,
     updateBusinessUser,
     outletUpdateIsActive,
+    businessDetails,
 } from '../../../redux/business/actions';
 import { useRedux } from '../../../hooks';
 import { RootState } from '../../../redux/store';
@@ -72,7 +73,7 @@ interface UpdateOutlet {
 
 const BusinessDetails: React.FC = () => {
     // const { id } = useParams<{ id: string }>(); // Extracting 'id' from URL params
-    const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
+    // const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
     const location = useLocation();
     const id = location.state?.business_id;
 
@@ -99,6 +100,7 @@ const BusinessDetails: React.FC = () => {
         console.log('Dispatching actions for business list');
         dispatch(resetBusiness());
         dispatch(businessList());
+        dispatch(businessDetails(id));
     }, [dispatch]);
 
     useEffect(() => {
@@ -107,26 +109,34 @@ const BusinessDetails: React.FC = () => {
         }
     }, [dispatch, languages.length]);
 
-    useEffect(() => {
-        console.log('Business ID from URL:', id); // Log the 'id' variable from useParams
-        console.log('Available businesses:', businesses); // Log the businesses array
+    // useEffect(() => {
+    //     console.log('Business ID from URL:', id); // Log the 'id' variable from useParams
+    //     console.log('Available businesses:', businesses); // Log the businesses array
 
-        if (id) {
-            // Ensure that 'id' is a string and matches the format of business.business_id
-            const business = businesses.find((business: Business) => business.business_id === id);
-            console.log('business res: ', business);
+    //     if (id) {
+    //         // Ensure that 'id' is a string and matches the format of business.business_id
+    //         const business = businesses.find((business: Business) => business.business_id === id);
+    //         console.log('business res: ', business);
 
-            if (business) {
-                setSelectedBusiness(business);
-            } else {
-                console.log('Business not found in the list!');
-            }
-        }
-    }, [id, businesses]);
+    //         if (business) {
+    //             setSelectedBusiness(business);
+    //         } else {
+    //             console.log('Business not found in the list!');
+    //         }
+    //     }
+    // }, [id, businesses]);
 
-    if (!businesses.length) {
-        return <div>Loading business details...</div>;
-    }
+    const selectedBusiness = appSelector((state: RootState) => state.business.businessDetails);
+    console.log('Selected Business True:', JSON.stringify(selectedBusiness, null, 2));
+    console.log('Selected Business:', selectedBusiness);
+    console.log(
+        'Redux State:',
+        appSelector((state) => state.business.businessDetails)
+    );
+
+    // if (!businesses.length) {
+    //     return <div>Loading business details...</div>;
+    // }
 
     if (!selectedBusiness) {
         return <div>Business not found!</div>;
@@ -313,69 +323,52 @@ const BusinessDetails: React.FC = () => {
 
     return (
         <>
-            <Card className="mb-3">
-                <Card.Body>
-                    <div className="d-flex justify-content-between align-items-center mb-3">
-                        {/* Business Logo and Name */}
-                        <div className="d-flex align-items-center">
-                            <img
-                                src={selectedBusiness.business_logo}
-                                alt={`${selectedBusiness.business_name} Logo`}
-                                style={{ width: '80px', height: '80px', borderRadius: '50%', marginRight: '20px' }}
-                            />
-                            <h3 className="header-title">{selectedBusiness.business_name}</h3>
+            {selectedBusiness ? (
+                <Card className="mb-3">
+                    <Card.Body>
+                        <div className="d-flex justify-content-between align-items-center mb-3">
+                            <div className="d-flex align-items-center">
+                                <img
+                                    src={selectedBusiness.business_logo}
+                                    alt={`${selectedBusiness.business_name} Logo`}
+                                    style={{ width: '80px', height: '80px', borderRadius: '50%', marginRight: '20px' }}
+                                />
+                                <h3 className="header-title">{selectedBusiness.business_name}</h3>
+                            </div>
+                            <div>
+                                <Button className="me-2" onClick={() => handleManageMenu(selectedBusiness.business_id)}>
+                                    Manage Menu
+                                </Button>
+                                <Button variant="outline-primary" className="me-2">
+                                    <FaRegEdit size={20} />
+                                </Button>
+                                <Button variant="outline-danger">
+                                    <FaTrash size={20} />
+                                </Button>
+                            </div>
                         </div>
-
-                        {/* Edit and Delete Buttons */}
                         <div>
-                            <Button className="me-2" onClick={() => handleManageMenu(selectedBusiness.business_id)}>
-                                Manage Menu
-                            </Button>
-                            <Button
-                                variant="outline-primary"
-                                className="me-2"
-                                onClick={() => {
-                                    console.log('Edit button clicked');
-                                    // Add your edit logic here
-                                }}>
-                                <FaRegEdit size={20} />
-                            </Button>
-                            <Button
-                                variant="outline-danger"
-                                onClick={() => {
-                                    console.log('Delete button clicked');
-                                    // Add your delete logic here
-                                }}>
-                                <FaTrash size={20} />
-                            </Button>
+                            <p>
+                                <strong>Contact:</strong> {selectedBusiness.business_contact}
+                            </p>
+                            <p>
+                                <strong>Address:</strong> {selectedBusiness.business_address}
+                            </p>
+                            <p>
+                                <strong>Cuisine:</strong> {selectedBusiness.cuisine}
+                            </p>
+                            <p>
+                                <strong>GST Number:</strong> {selectedBusiness.gst_no}
+                            </p>
+                            <p>
+                                <strong>Active Status:</strong> {selectedBusiness.is_active ? 'Active' : 'Inactive'}
+                            </p>
                         </div>
-                    </div>
-
-                    {/* Business Details */}
-                    <div>
-                        <p>
-                            <strong>Contact: </strong>
-                            {selectedBusiness.business_contact}
-                        </p>
-                        <p>
-                            <strong>Address: </strong>
-                            {selectedBusiness.business_address}
-                        </p>
-                        <p>
-                            <strong>Cuisine: </strong>
-                            {selectedBusiness.cuisine}
-                        </p>
-                        <p>
-                            <strong>GST Number: </strong>
-                            {selectedBusiness.gst_no}
-                        </p>
-                        <p>
-                            <strong>Active Status: </strong>
-                            {selectedBusiness.is_active ? 'Active' : 'Inactive'}
-                        </p>
-                    </div>
-                </Card.Body>
-            </Card>
+                    </Card.Body>
+                </Card>
+            ) : (
+                <p>Loading business details...</p>
+            )}
 
             <Card>
                 <Card.Body>

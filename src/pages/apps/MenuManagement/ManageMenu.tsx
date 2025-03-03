@@ -310,3 +310,38 @@ const ManageMenuWithBoundary: React.FC = () => (
 );
 
 export default ManageMenuWithBoundary;
+
+{
+    /* <Row>
+<Col md={6}>
+    <Form.Group>
+        <Form.Label>Item Order Type</Form.Label>
+        <div>
+            {['delivery', 'pick_up', 'dine_in', 'online'].map((type) => (
+                <Form.Check
+                    key={type}
+                    type="checkbox"
+                    label={type.replace('_', ' ').toUpperCase()}
+                    name="available_order_type"
+                    value={type}
+                    checked={formData.available_order_type.includes(type)}
+                    onChange={(e) => {
+                        const { value, checked } = e.target;
+                        const updatedOrderTypes = checked
+                            ? [...formData.available_order_type, value]
+                            : formData.available_order_type.filter((t) => t !== value);
+
+                        handleChange({
+                            target: { name: 'available_order_type', value: updatedOrderTypes },
+                        } as any);
+                    }}
+                />
+            ))}
+        </div>
+        {errors.available_order_type && (
+            <small className="text-danger">{errors.available_order_type}</small>
+        )}
+    </Form.Group>
+</Col>
+</Row> */
+}

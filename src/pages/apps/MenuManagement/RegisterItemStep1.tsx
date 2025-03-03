@@ -326,6 +326,44 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
                         <Col md={6}>
                             <Form.Group>
                                 <Form.Label>Item Order Type</Form.Label>
+                                {['delivery', 'pick_up', 'dine_in', 'online'].map((option) => (
+                                    <Form.Check
+                                        key={option}
+                                        type="checkbox"
+                                        label={option.replace('_', ' ').toUpperCase()}
+                                        name="available_order_type"
+                                        value={option}
+                                        checked={
+                                            Array.isArray(formData.available_order_type) &&
+                                            formData.available_order_type.includes(option)
+                                        }
+                                        onChange={(e) => {
+                                            const { value, checked } = e.target;
+                                            let updatedOrderTypes = checked
+                                                ? [...(formData.available_order_type || []), value] // Add new value if checked
+                                                : (formData.available_order_type || []).filter(
+                                                      (type) => type !== value
+                                                  ); // Remove if unchecked
+
+                                            updatedOrderTypes = updatedOrderTypes.filter((type) => type.trim() !== '');
+
+                                            handleChange({
+                                                target: { name: 'available_order_type', value: updatedOrderTypes },
+                                            } as unknown as React.ChangeEvent<HTMLInputElement>); // Ensure correct type
+                                        }}
+                                    />
+                                ))}
+                            </Form.Group>
+                            {errors.available_order_type && (
+                                <small className="text-danger">{errors.available_order_type}</small>
+                            )}
+                        </Col>
+                    </Row>
+
+                    {/* <Row>
+                        <Col md={6}>
+                            <Form.Group>
+                                <Form.Label>Item Order Type</Form.Label>
                                 <Form.Control
                                     as="select"
                                     name="available_order_type"
@@ -344,7 +382,7 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
                                 )}
                             </Form.Group>
                         </Col>
-                    </Row>
+                    </Row> */}
                 </Card.Body>
             </Card>
         </Container>

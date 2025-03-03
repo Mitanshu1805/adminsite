@@ -160,6 +160,27 @@ const RegisterNewItem: React.FC = () => {
     //     }
     // }, [isEditMode, editItem]);
 
+    // const validateCurrentStep = () => {
+    //     let newErrors: Record<string, string> = {};
+
+    //     if (currentStepIndex === 0) {
+    //         if (!formData.item_name.english.trim()) {
+    //             newErrors.item_name = 'Item name is required.';
+    //         }
+
+    //         if (
+    //             formData.available_order_type.length === 0 ||
+    //             formData.available_order_type.some((type) => !type.trim())
+    //         ) {
+    //             newErrors.available_order_type = 'Order Type is required.';
+    //         }
+
+    //         if (!formData.dietary) newErrors.dietary = 'Dietary Type is required';
+    //     }
+    //     setErrors(newErrors);
+    //     return Object.keys(newErrors).length === 0;
+    // };
+
     const validateCurrentStep = () => {
         let newErrors: Record<string, string> = {};
 
@@ -168,15 +189,13 @@ const RegisterNewItem: React.FC = () => {
                 newErrors.item_name = 'Item name is required.';
             }
 
-            if (
-                formData.available_order_type.length === 0 ||
-                formData.available_order_type.some((type) => !type.trim())
-            ) {
+            if (!Array.isArray(formData.available_order_type) || formData.available_order_type.length === 0) {
                 newErrors.available_order_type = 'Order Type is required.';
             }
 
             if (!formData.dietary) newErrors.dietary = 'Dietary Type is required';
         }
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };

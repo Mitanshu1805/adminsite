@@ -46,11 +46,13 @@ type BusinessState = {
     businesses: Business[];
     error: string | null;
     registrationMessage: string | null;
+    businessDetails: Business | null;
 };
 
 const INITIAL_STATE: BusinessState = {
     loading: false,
     businesses: [],
+    businessDetails: null,
     error: null,
     registrationMessage: null,
 };
@@ -214,6 +216,37 @@ interface OutletUpdateIsActiveErrorPayload {
     error: string;
 }
 
+interface BusinessDetailsPayload {
+    business_id: string;
+}
+
+// interface BusinessDetailsSuccessPayload {
+//     message: string;
+//     data: Business[];
+//     business_id: string;
+//     business_logo: string;
+//     business_name: string;
+//     business_contact: string;
+//     business_address: string;
+//     gst_no: string;
+//     cuisine: string;
+//     outlets: Outlet[];
+//     outlet_id: string;
+//     business_users: BusinessUser[];
+//     user_id: string;
+//     business: Business[];
+// }
+
+interface BusinessDetailsSuccessPayload {
+    message: string;
+    data: { business: Business }; // ✅ Match API response format
+    business: Business;
+}
+
+interface BusinessDetailsErrorPayload {
+    error: string;
+}
+
 type BusinessActions =
     | { type: typeof BusinessActionTypes.BUSINESS_LIST }
     | { type: typeof BusinessActionTypes.BUSINESS_LIST_SUCCESS; payload: BusinessListSuccessPayload }
@@ -256,7 +289,10 @@ type BusinessActions =
     | { type: typeof BusinessActionTypes.BUSINESS_UPDATE_ISACTIVE_ERROR; payload: BusinessUpdateIsActiveErrorPayload }
     | { type: typeof BusinessActionTypes.OUTLET_UPDATE_ISACTIVE; payload: OutletUpdateIsActivePayload }
     | { type: typeof BusinessActionTypes.OUTLET_UPDATE_ISACTIVE_SUCCESS; payload: OutletUpdateIsActiveSuccessPayload }
-    | { type: typeof BusinessActionTypes.OUTLET_UPDATE_ISACTIVE_ERROR; payload: OutletUpdateIsActiveErrorPayload };
+    | { type: typeof BusinessActionTypes.OUTLET_UPDATE_ISACTIVE_ERROR; payload: OutletUpdateIsActiveErrorPayload }
+    | { type: typeof BusinessActionTypes.BUSINESS_DETAILS; payload: BusinessDetailsPayload }
+    | { type: typeof BusinessActionTypes.BUSINESS_DETAILS_SUCCESS; payload: BusinessDetailsSuccessPayload }
+    | { type: typeof BusinessActionTypes.BUSINESS_DETAILS_ERROR; payload: BusinessDetailsErrorPayload };
 
 // Language Reducer
 const languageReducer = (state = INITIAL_LANGUAGE_STATE, action: BusinessActions): LanguageState => {
@@ -666,6 +702,25 @@ const businessReducer = (state = INITIAL_STATE, action: BusinessActions): Busine
             };
 
         case BusinessActionTypes.OUTLET_UPDATE_ISACTIVE_ERROR:
+            return {
+                ...state,
+                loading: false,
+                error: action.payload.error,
+            };
+
+        case BusinessActionTypes.BUSINESS_DETAILS:
+            return { ...state, loading: true };
+
+        case BusinessActionTypes.BUSINESS_DETAILS_SUCCESS:
+            console.log('Payload received in reducer:', action.payload);
+            return {
+                ...state,
+                loading: false,
+                businessDetails: action.payload.business || {},
+                error: null,
+            };
+
+        case BusinessActionTypes.BUSINESS_DETAILS_ERROR:
             return {
                 ...state,
                 loading: false,

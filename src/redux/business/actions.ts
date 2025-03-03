@@ -156,7 +156,10 @@ export type BusinessAction =
           payload: { outlet_id: string; is_active: boolean };
       }
     | { type: typeof BusinessActionTypes.OUTLET_UPDATE_ISACTIVE_SUCCESS; payload: { message: string } }
-    | { type: typeof BusinessActionTypes.OUTLET_UPDATE_ISACTIVE_ERROR; payload: { error: string } };
+    | { type: typeof BusinessActionTypes.OUTLET_UPDATE_ISACTIVE_ERROR; payload: { error: string } }
+    | { type: typeof BusinessActionTypes.BUSINESS_DETAILS; payload: { business_id: string } }
+    | { type: typeof BusinessActionTypes.BUSINESS_DETAILS_SUCCESS; payload: { message: string } }
+    | { type: typeof BusinessActionTypes.BUSINESS_DETAILS_ERROR; payload: { error: string } };
 
 export const businessList = (): BusinessAction => ({
     type: BusinessActionTypes.BUSINESS_LIST,
@@ -402,5 +405,20 @@ export const outletUpdateIsActiveSuccess = (message: string): BusinessAction => 
 
 export const outletUpdateIsActiveError = (error: string): BusinessAction => ({
     type: BusinessActionTypes.OUTLET_UPDATE_ISACTIVE_ERROR,
+    payload: { error },
+});
+
+export const businessDetails = (business_id: string): BusinessAction => ({
+    type: BusinessActionTypes.BUSINESS_DETAILS,
+    payload: { business_id },
+});
+
+export const businessDetailsSuccess = (message: string): BusinessAction => ({
+    type: BusinessActionTypes.BUSINESS_DETAILS_SUCCESS,
+    payload: { message },
+});
+
+export const businessDetailsError = (error: string): BusinessAction => ({
+    type: BusinessActionTypes.BUSINESS_DETAILS_ERROR,
     payload: { error },
 });

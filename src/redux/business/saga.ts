@@ -13,6 +13,7 @@ import {
     deleteBusinessUser,
     businessUpdateIsActive,
     outletUpdateIsActive,
+    businessDetails,
 } from '../../helpers/api/auth';
 import {
     businessApiResponseSuccess,
@@ -41,6 +42,8 @@ import {
     businessUpdateIsActiveError,
     outletUpdateIsActiveSuccess,
     outletUpdateIsActiveError,
+    businessDetailsSuccess,
+    businessDetailsError,
 } from './actions';
 import { BusinessActionTypes } from './constants';
 import { SagaIterator } from '@redux-saga/core';
@@ -269,6 +272,23 @@ function* outletUpdateIsActiveSaga(action: any): SagaIterator {
     }
 }
 
+function* businessDetailsSaga(action: any): SagaIterator {
+    try {
+        const response = yield call(businessDetails, action.payload);
+        console.log('API Response:', response);
+        console.log('API Data:', response.data);
+        console.log('Business Data:', response.data.data.business);
+
+        yield put(businessDetailsSuccess(response.data.data.business));
+        console.log('Dispatched Success Action:', {
+            message: response.data.message,
+            business: response.data.data.business,
+        });
+    } catch (error: any) {
+        yield put(businessDetailsError(error.message || 'Error Occurred'));
+    }
+}
+
 // Watcher Sagas
 function* watchBusinessList() {
     yield takeEvery(BusinessActionTypes.BUSINESS_LIST, businessListSaga);
@@ -322,6 +342,10 @@ export function* watchOutletUpdateIsActive() {
     yield takeEvery(BusinessActionTypes.OUTLET_UPDATE_ISACTIVE, outletUpdateIsActiveSaga);
 }
 
+export function* watchBusinessDetails() {
+    yield takeEvery(BusinessActionTypes.BUSINESS_DETAILS, businessDetailsSaga);
+}
+
 // Root Saga
 function* businessSaga() {
     yield all([
@@ -338,6 +362,7 @@ function* businessSaga() {
         fork(watchDeleteBusinessUser),
         fork(watchBusinessUpdateIsActive),
         fork(watchOutletUpdateIsActive),
+        fork(watchBusinessDetails),
     ]);
 }
 

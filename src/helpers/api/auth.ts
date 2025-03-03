@@ -174,6 +174,11 @@ function categoryUpdateIsActive(data: any) {
     return api.update(`${baseUrl}`, data);
 }
 
+function businessDetails(data: any) {
+    const baseUrl = '/business/details';
+    return api.create(`${baseUrl}`, data);
+}
+
 export {
     login,
     logout,
@@ -205,6 +210,7 @@ export {
     categoryUpdate,
     categoryItemList,
     categoryUpdateIsActive,
+    businessDetails,
 };
 
 // import { APICore } from './apiCore';
