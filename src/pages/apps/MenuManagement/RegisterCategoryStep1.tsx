@@ -74,8 +74,41 @@ const RegisterCategoryStep1: React.FC<RegisterCategoryOneProps> = ({
                         </Col>
                     </Row>
 
+                    {/* <Row className="mb-3">
+                        <Col md={12}>
+                            <Form.Group>
+                                <Form.Label>Item Name</Form.Label>
+                                <div className="d-flex gap-3">
+                                    <Form.Control
+                                        type="text"
+                                        name="category_name.english"
+                                        required
+                                        value={formData.category_name.english}
+                                        onChange={handleChange}
+                                        placeholder="English"
+                                    />
+                                    <Form.Control
+                                        type="text"
+                                        name="category_name.hindi"
+                                        value={formData.category_name.hindi}
+                                        onChange={handleChange}
+                                        placeholder="हिन्दी"
+                                    />
+                                    <Form.Control
+                                        type="text"
+                                        name="category_name.gujarati"
+                                        value={formData.category_name.gujarati}
+                                        onChange={handleChange}
+                                        placeholder="ગુજરાતી"
+                                    />
+                                </div>
+                                {errors.category_name && <small className="text-danger">{errors.category_name}</small>}
+                            </Form.Group>
+                        </Col>
+                    </Row> */}
+
                     <Row className="mb-3">
-                        <Col md={12} className="text-center">
+                        <Col md={4}>
                             <Form.Group>
                                 <Form.Label>Item Name (English)</Form.Label>
                                 <Form.Control
@@ -89,7 +122,7 @@ const RegisterCategoryStep1: React.FC<RegisterCategoryOneProps> = ({
                                 {errors.category_name && <small className="text-danger">{errors.category_name}</small>}
                             </Form.Group>
                         </Col>
-                        <Col>
+                        <Col md={4}>
                             <Form.Group>
                                 <Form.Label>Item Name (Hindi)</Form.Label>
                                 <Form.Control
@@ -101,7 +134,7 @@ const RegisterCategoryStep1: React.FC<RegisterCategoryOneProps> = ({
                                 />
                             </Form.Group>
                         </Col>
-                        <Col>
+                        <Col md={4}>
                             <Form.Group>
                                 <Form.Label>Item Name (Gujarati)</Form.Label>
                                 <Form.Control

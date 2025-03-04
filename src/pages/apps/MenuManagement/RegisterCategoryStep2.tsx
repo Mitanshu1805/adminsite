@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import { useRedux } from '../../../hooks';
+import { Form, Button, Container } from 'react-bootstrap';
+import { Card, Row, Col, Alert } from 'react-bootstrap';
 import { RootState } from '../../../redux/store';
 import { businessList } from '../../../redux/business/actions';
 
@@ -87,47 +89,86 @@ const RegisterCategoryStep2: React.FC<RegisterCategoryTwoProps> = ({
     };
 
     return (
-        <div className="step2-container">
-            <div className="header">
-                <h3 className="title">Outlet Name</h3>
-                <button onClick={selectAllOutlets} className="active-all-btn">
-                    {business && business.outlets.length > 0 && selectedOutlets.length === business.outlets.length
-                        ? 'Deselect All'
-                        : 'Select All'}
-                </button>
-            </div>
-            {loading ? (
-                <p className="loading-text">Loading...</p>
-            ) : business ? (
-                business.outlets.length > 0 ? (
-                    <div className="outlet-list">
-                        {business.outlets.map((outlet: Outlet) => (
-                            <div
-                                key={outlet.outlet_id}
-                                className={`outlet-item ${
-                                    selectedOutlets.includes(outlet.outlet_id) ? 'selected' : ''
-                                }`}
-                                onClick={() => toggleOutletSelection(outlet)}>
-                                <input
-                                    type="checkbox"
-                                    checked={selectedOutlets.includes(outlet.outlet_id)}
-                                    readOnly
-                                    className="checkbox"
-                                />
-                                <span className="outlet-name">{outlet.outlet_name}</span>
-                                <span className={`status ${outlet.is_active ? 'active' : 'inactive'}`}>
-                                    {outlet.is_active}
-                                </span>
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <p className="no-outlets">No outlets available for this business.</p>
-                )
-            ) : (
-                <p className="no-outlets">Business not found.</p>
-            )}
-        </div>
+        <Container className="register-item-container mt-4">
+            <Card className="shadow-sm">
+                <Card.Header as="h2" className="text-center">
+                    Select Outlets
+                </Card.Header>
+                <Card.Body>
+                    {/* <Row className="mb-4 d-flex align-items-center">
+                        <Col>
+                            <Form.Label style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Outlet Name</Form.Label>
+                            <Button onClick={selectAllOutlets} className="btn btn-primary btn-sm ms-2">
+                                {business &&
+                                business.outlets.length > 0 &&
+                                selectedOutlets.length === business.outlets.length
+                                    ? 'Deselect All'
+                                    : 'Select All'}
+                            </Button>
+                        </Col>
+                    </Row> */}
+
+                    <Row className="mb-4 d-flex align-items-center">
+                        <Col md="auto">
+                            <Form.Label style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Outlet Name</Form.Label>
+                        </Col>
+                        <Col md="auto">
+                            <Button onClick={selectAllOutlets} className="btn btn-primary btn-sm ms-3">
+                                {business &&
+                                business.outlets.length > 0 &&
+                                selectedOutlets.length === business.outlets.length
+                                    ? 'Deselect All'
+                                    : 'Select All'}
+                            </Button>
+                        </Col>
+                    </Row>
+
+                    {loading ? (
+                        <p className="text-muted text-center">Loading...</p>
+                    ) : business ? (
+                        business.outlets.length > 0 ? (
+                            <Row>
+                                {business.outlets.map((outlet: Outlet) => {
+                                    const isChecked = selectedOutlets.includes(outlet.outlet_id);
+                                    return (
+                                        <Col md={12} key={outlet.outlet_id} className="mb-3 shadow-sm">
+                                            <div
+                                                className="d-flex align-items-center p-2"
+                                                style={{ cursor: 'pointer', fontSize: '1.2rem' }}
+                                                onClick={() => toggleOutletSelection(outlet)}>
+                                                <Form.Check
+                                                    type="checkbox"
+                                                    checked={isChecked}
+                                                    readOnly
+                                                    id={`outlet-checkbox-${outlet.outlet_id}`}
+                                                    className="me-3"
+                                                    style={{ transform: 'scale(1.5)' }}
+                                                />
+                                                <label
+                                                    htmlFor={`outlet-checkbox-${outlet.outlet_id}`}
+                                                    style={{ cursor: 'pointer' }}>
+                                                    {outlet.outlet_name}
+                                                </label>
+                                                <span
+                                                    className={`ms-auto status ${
+                                                        outlet.is_active ? 'text-success' : 'text-danger'
+                                                    }`}>
+                                                    {/* {outlet.is_active ? 'Active' : 'Inactive'} */}
+                                                </span>
+                                            </div>
+                                        </Col>
+                                    );
+                                })}
+                            </Row>
+                        ) : (
+                            <p className="text-muted text-center">No outlets available for this business.</p>
+                        )
+                    ) : (
+                        <p className="text-muted text-center">Business not found.</p>
+                    )}
+                </Card.Body>
+            </Card>
+        </Container>
     );
 };
 

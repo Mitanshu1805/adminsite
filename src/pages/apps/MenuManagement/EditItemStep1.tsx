@@ -152,44 +152,55 @@ const EditItemStep1: React.FC<EditItemStep1Props> = ({
                             </Form.Group>
                         </Col>
                     </Row>
+
                     <Row className="mb-3">
-                        <Col md={12} className="text-center">
+                        <Col md={4}>
                             <Form.Group>
                                 <Form.Label>Item Name (English)</Form.Label>
                                 <Form.Control
                                     type="text"
                                     name="english"
-                                    required
                                     value={editItem?.item_names.english || ''}
                                     onChange={handleInputChange}
+                                    required
                                 />
                             </Form.Group>
                         </Col>
-                        <Col md={12} className="text-center">
+                        <Col md={4}>
                             <Form.Group>
                                 <Form.Label>Item Name (Hindi)</Form.Label>
                                 <Form.Control
                                     type="text"
                                     name="hindi"
-                                    // required
                                     value={editItem?.item_names.hindi}
                                     onChange={handleInputChange}
                                 />
                             </Form.Group>
                         </Col>
-                        <Col md={12} className="text-center">
+                        <Col md={4}>
                             <Form.Group>
                                 <Form.Label>Item Name (Gujarati)</Form.Label>
                                 <Form.Control
                                     type="text"
                                     name="gujarati"
-                                    required
                                     value={editItem?.item_names.gujarati}
                                     onChange={handleInputChange}
                                 />
                             </Form.Group>
                         </Col>
                     </Row>
+
+                    {/* <Row className="mb-3">
+                        <Col md={6}>
+                            <Form.Check
+                                type="checkbox"
+                                label="Loose Quantity"
+                                name="is_loose"
+                                checked={formData.is_loose}
+                                onChange={handleChange}
+                            />
+                        </Col>
+                    </Row> */}
                     <Row className="mb-3">
                         <Col md={6}>
                             <Form.Label>Online Display Name</Form.Label>
@@ -209,69 +220,86 @@ const EditItemStep1: React.FC<EditItemStep1Props> = ({
                                 onChange={handleInputChange}
                             />
                         </Col>
+                    </Row>
+
+                    {/* {formData.is_loose && (
+                        <Row className="mb-3">
+                            <Col md={6}>
+                                <Form.Label>Quantity Type</Form.Label>
+                                <Form.Control
+                                    as="select"
+                                    name="quantity_type"
+                                    value={formData.quantity_type}
+                                    onChange={handleChange}>
+                                    <option value="">Select Quantity Type</option>
+                                    <option value="piece">Piece</option>
+                                    <option value="weight">Weight</option>
+                                    <option value="volume">Volume</option>
+                                </Form.Control>
+                            </Col>
+                            {formData.quantity_type && (
+                                <Col md={6}>
+                                    <Form.Label>Quantity Value</Form.Label>
+                                    <Row>
+                                        <Col md={7}>
+                                            <Form.Control
+                                                type="number"
+                                                name="quantity_value"
+                                                value={formData.quantity_value}
+                                                onChange={handleChange}
+                                            />
+                                        </Col>
+                                        {formData.quantity_type !== 'piece' && (
+                                            <Col md={5}>
+                                                <Form.Select
+                                                    name="quantity_unit"
+                                                    value={formData.quantity_unit}
+                                                    onChange={handleChange}>
+                                                    <option value="">Select Unit</option>
+                                                    {formData.quantity_type === 'weight' ? (
+                                                        <>
+                                                            <option value="gm">gm</option>
+                                                            <option value="kg">kg</option>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <option value="ml">ml</option>
+                                                            <option value="lt">lt</option>
+                                                        </>
+                                                    )}
+                                                </Form.Select>
+                                            </Col>
+                                        )}
+                                    </Row>
+                                </Col>
+                            )}
+                        </Row>
+                    )} */}
+
+                    <Row className="mb-3">
                         <Col md={6}>
-                            <Form.Label>Item Price</Form.Label>
+                            <Form.Label>Dietary Type</Form.Label>
                             <Form.Control
-                                type="number"
-                                name="price"
-                                value={editItem?.price}
-                                onChange={handleInputChange}
-                            />
-                        </Col>
-                        <Col md={6}>
-                            <Form.Label>Dietary</Form.Label>
-                            <Form.Select
+                                as="select"
                                 name="dietary"
                                 value={editItem?.dietary}
-                                // onChange={(e) => setEditItem({ ...editItem, dietary: e.target.value })}
                                 onChange={handleInputChange}>
                                 <option value="">Select Dietary Type</option>
                                 <option value="veg">Veg</option>
-                                <option value="non-veg">Nonveg</option>
-                            </Form.Select>
+                                <option value="non-veg">Non-Veg</option>
+                            </Form.Control>
                         </Col>
-                    </Row>
-                    <Row>
                         <Col md={6}>
-                            <Form.Group>
-                                <Form.Label>Item Order Type</Form.Label>
-                                <Form.Control
-                                    as="select"
-                                    name="available_order_type"
-                                    multiple
-                                    value={editItem?.available_order_type || []}
-                                    // onChange={(e) => {
-                                    //     const target = e.target as unknown as HTMLSelectElement;
-                                    //     const selectedOptions = Array.from(
-                                    //         target.selectedOptions,
-                                    //         (option) => option.value
-                                    //     );
-                                    //     setEditItem({ ...editItem, available_order_type: selectedOptions });
-                                    // }}
-                                    onChange={handleInputChange}
-                                    required>
-                                    <option value="delivery">Delivery</option>
-                                    <option value="pick_up">Pick-up</option>
-                                    <option value="dine_in">Dine-in</option>
-                                    <option value="online">Online</option>
-                                </Form.Control>
-                            </Form.Group>
-                        </Col>
-
-                        <Col md={6}>
-                            <Form.Group>
-                                <Form.Label>Item GST Type</Form.Label>
-                                <Form.Control
-                                    as="select"
-                                    name="gst_type"
-                                    value={editItem?.gst_type || ''}
-                                    // onChange={(e) => setEditItem({ ...editItem, gst_type: e.target.value })}
-                                    // required
-                                    onChange={handleInputChange}>
-                                    <option value="goods">Goods</option>
-                                    <option value="services">Services</option>
-                                </Form.Control>
-                            </Form.Group>
+                            <Form.Label>GST Type</Form.Label>
+                            <Form.Control
+                                as="select"
+                                name="gst_type"
+                                value={editItem?.gst_type}
+                                onChange={handleInputChange}>
+                                <option value="">Select GST Type</option>
+                                <option value="goods">Goods</option>
+                                <option value="services">Services</option>
+                            </Form.Control>
                         </Col>
                     </Row>
                 </Card.Body>

@@ -117,7 +117,7 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
                     </Row>
 
                     <Row className="mb-3">
-                        <Col md={12} className="text-center">
+                        <Col md={4}>
                             <Form.Group>
                                 <Form.Label>Item Name (English)</Form.Label>
                                 <Form.Control

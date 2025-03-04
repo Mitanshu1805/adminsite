@@ -73,7 +73,7 @@ interface UpdateOutlet {
 
 const BusinessDetails: React.FC = () => {
     // const { id } = useParams<{ id: string }>(); // Extracting 'id' from URL params
-    // const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
+    const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
     const location = useLocation();
     const id = location.state?.business_id;
 
@@ -109,30 +109,30 @@ const BusinessDetails: React.FC = () => {
         }
     }, [dispatch, languages.length]);
 
-    // useEffect(() => {
-    //     console.log('Business ID from URL:', id); // Log the 'id' variable from useParams
-    //     console.log('Available businesses:', businesses); // Log the businesses array
+    useEffect(() => {
+        console.log('Business ID from URL:', id); // Log the 'id' variable from useParams
+        console.log('Available businesses:', businesses); // Log the businesses array
 
-    //     if (id) {
-    //         // Ensure that 'id' is a string and matches the format of business.business_id
-    //         const business = businesses.find((business: Business) => business.business_id === id);
-    //         console.log('business res: ', business);
+        if (id) {
+            // Ensure that 'id' is a string and matches the format of business.business_id
+            const business = businesses.find((business: Business) => business.business_id === id);
+            console.log('business res: ', business);
 
-    //         if (business) {
-    //             setSelectedBusiness(business);
-    //         } else {
-    //             console.log('Business not found in the list!');
-    //         }
-    //     }
-    // }, [id, businesses]);
+            if (business) {
+                setSelectedBusiness(business);
+            } else {
+                console.log('Business not found in the list!');
+            }
+        }
+    }, [id, businesses]);
 
-    const selectedBusiness = appSelector((state: RootState) => state.business.businessDetails);
-    console.log('Selected Business True:', JSON.stringify(selectedBusiness, null, 2));
-    console.log('Selected Business:', selectedBusiness);
-    console.log(
-        'Redux State:',
-        appSelector((state) => state.business.businessDetails)
-    );
+    // const selectedBusiness = appSelector((state: RootState) => state.business.businessDetails);
+    // console.log('Selected Business True:', JSON.stringify(selectedBusiness, null, 2));
+    // console.log('Selected Business:', selectedBusiness);
+    // console.log(
+    //     'Redux State:',
+    //     appSelector((state) => state.business.businessDetails)
+    // );
 
     // if (!businesses.length) {
     //     return <div>Loading business details...</div>;

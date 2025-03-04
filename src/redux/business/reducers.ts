@@ -46,13 +46,13 @@ type BusinessState = {
     businesses: Business[];
     error: string | null;
     registrationMessage: string | null;
-    businessDetails: Business | null;
+    businessDetails: Business[];
 };
 
 const INITIAL_STATE: BusinessState = {
     loading: false,
     businesses: [],
-    businessDetails: null,
+    businessDetails: [],
     error: null,
     registrationMessage: null,
 };
@@ -237,10 +237,18 @@ interface BusinessDetailsPayload {
 //     business: Business[];
 // }
 
+interface BusinessDetails {
+    business_id: string;
+}
+
 interface BusinessDetailsSuccessPayload {
+    // message: string;
+    // data: { business: Business }; // ✅ Match API response format
+    // business: Business;
+    // data: Business;
+    businessDetails: BusinessDetails[];
     message: string;
-    data: { business: Business }; // ✅ Match API response format
-    business: Business;
+    // message: string;
 }
 
 interface BusinessDetailsErrorPayload {
@@ -716,7 +724,8 @@ const businessReducer = (state = INITIAL_STATE, action: BusinessActions): Busine
             return {
                 ...state,
                 loading: false,
-                businessDetails: action.payload.business || {},
+                // businessDetails: action.payload.businessDetails || [],
+                // message: action.payload.message,
                 error: null,
             };
 

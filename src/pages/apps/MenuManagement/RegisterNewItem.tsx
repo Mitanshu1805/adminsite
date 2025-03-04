@@ -442,6 +442,13 @@ const RegisterNewItem: React.FC = () => {
                                 variant="primary"
                                 onClick={(e) => {
                                     if (!validateCurrentStep()) return;
+
+                                    if (formData.is_loose && !formData.quantity_type) {
+                                        handleChange({
+                                            target: { name: 'is_loose', value: false },
+                                        } as any);
+                                    }
+
                                     if (isLastStep) {
                                         handleSubmit(e);
                                     } else {

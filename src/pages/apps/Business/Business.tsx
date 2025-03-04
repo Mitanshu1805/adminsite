@@ -58,6 +58,7 @@ const BusinessDetails = () => {
     const [message, setMessage] = useState<string>('');
     const { dispatch, appSelector } = useRedux();
     const businesses = appSelector((state: RootState) => state.business.businesses);
+    console.log('yes BUSINESSES : ', businesses);
     const navigate = useNavigate();
     const [editedBusinessLogoFile, setEditedBusinessLogoFile] = useState<File | null>(null); // State for storing the selected logo file
     const [toggleStates, setToggleStates] = useState<{ [key: string]: boolean }>({});
