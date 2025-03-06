@@ -99,6 +99,14 @@ const RegisterNewItem: React.FC = () => {
     const [successMsg, setSuccess] = useState<string>('');
 
     useEffect(() => {
+        console.log('Before update:', formData);
+        if (formData.is_loose && !formData.quantity_type) {
+            setFormData((prevState) => ({ ...prevState, is_loose: false }));
+        }
+        console.log('After update:', formData);
+    }, [formData.quantity_type]);
+
+    useEffect(() => {
         if (business_id && selectedCategoryId) {
             setFormData((prevData) => ({
                 ...prevData,
@@ -182,6 +190,8 @@ const RegisterNewItem: React.FC = () => {
     // };
 
     const validateCurrentStep = () => {
+        console.log('Available Order TYPE VALUE:', formData.available_order_type);
+
         let newErrors: Record<string, string> = {};
 
         if (currentStepIndex === 0) {
@@ -189,12 +199,18 @@ const RegisterNewItem: React.FC = () => {
                 newErrors.item_name = 'Item name is required.';
             }
 
-            if (!Array.isArray(formData.available_order_type) || formData.available_order_type.length === 0) {
+            if (
+                !Array.isArray(formData.available_order_type) ||
+                formData.available_order_type.filter(Boolean).length === 0
+            ) {
+                console.log('Available Order TYPE ERROR: Required field is missing!');
                 newErrors.available_order_type = 'Order Type is required.';
             }
 
             if (!formData.dietary) newErrors.dietary = 'Dietary Type is required';
         }
+
+        console.log('Available Order TYPE ERROR: ', errors);
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -443,11 +459,18 @@ const RegisterNewItem: React.FC = () => {
                                 onClick={(e) => {
                                     if (!validateCurrentStep()) return;
 
-                                    if (formData.is_loose && !formData.quantity_type) {
-                                        handleChange({
-                                            target: { name: 'is_loose', value: false },
-                                        } as any);
-                                    }
+                                    // if (formData.is_loose && !formData.quantity_type) {
+                                    //     setFormData((prevState) => ({
+                                    //         ...prevState,
+                                    //         is_loose: false,
+                                    //     }));
+                                    // }
+                                    // if (formData.quantity_type && !formData.quantity_value) {
+                                    //     setFormData((prevState) => ({
+                                    //         ...prevState,
+                                    //         is_loose: false,
+                                    //     }));
+                                    // }
 
                                     if (isLastStep) {
                                         handleSubmit(e);

@@ -119,7 +119,9 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
                     <Row className="mb-3">
                         <Col md={4}>
                             <Form.Group>
-                                <Form.Label>Item Name (English)</Form.Label>
+                                <Form.Label>
+                                    Item Name (English) <span className="text-danger">*</span>
+                                </Form.Label>
                                 <Form.Control
                                     type="text"
                                     name="item_name.english"
@@ -325,7 +327,9 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
                     <Row>
                         <Col md={6}>
                             <Form.Group>
-                                <Form.Label>Item Order Type</Form.Label>
+                                <Form.Label>
+                                    Item Order Type <span className="text-danger">*</span>
+                                </Form.Label>
                                 {['delivery', 'pick_up', 'dine_in', 'online'].map((option) => (
                                     <Form.Check
                                         key={option}
@@ -340,16 +344,21 @@ const RegisterItemStep1: React.FC<RegisterItemOneProps> = ({
                                         onChange={(e) => {
                                             const { value, checked } = e.target;
                                             let updatedOrderTypes = checked
-                                                ? [...(formData.available_order_type || []), value] // Add new value if checked
+                                                ? [
+                                                      ...(formData.available_order_type || []).filter(
+                                                          (type) => type.trim() !== ''
+                                                      ),
+                                                      value,
+                                                  ] // Remove empty values before adding
                                                 : (formData.available_order_type || []).filter(
-                                                      (type) => type !== value
-                                                  ); // Remove if unchecked
+                                                      (type) => type !== value && type.trim() !== ''
+                                                  ); // Ensure empty values are removed
 
-                                            updatedOrderTypes = updatedOrderTypes.filter((type) => type.trim() !== '');
+                                            console.log('Updated Order Types (Cleaned):', updatedOrderTypes); // Debugging
 
                                             handleChange({
                                                 target: { name: 'available_order_type', value: updatedOrderTypes },
-                                            } as unknown as React.ChangeEvent<HTMLInputElement>); // Ensure correct type
+                                            } as unknown as React.ChangeEvent<HTMLInputElement>);
                                         }}
                                     />
                                 ))}

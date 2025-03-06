@@ -90,7 +90,7 @@ const EditItemStep1: React.FC<EditItemStep1Props> = ({
     //     });
     // };
     return (
-        <Container className="edit-item-page">
+        <Container className="register-item-container">
             <Card className="shadow-sm">
                 <Card.Header as="h2" className="text-center">
                     Edit Item

@@ -90,7 +90,7 @@ const EditCategoryStep1: React.FC<EditCategoryStep1Props> = ({
     // };
 
     return (
-        <Container className="edit-item-page">
+        <Container className="register-item-container">
             <Card className="shadow-sm">
                 <Card.Header as="h2" className="text-center">
                     Edit Category
@@ -138,7 +138,7 @@ const EditCategoryStep1: React.FC<EditCategoryStep1Props> = ({
                     </Row>
 
                     <Row className="mb-3">
-                        <Col md={12}>
+                        <Col md={4}>
                             <Form.Group>
                                 <Form.Label>Item Name (English)</Form.Label>
                                 <Form.Control
@@ -150,7 +150,7 @@ const EditCategoryStep1: React.FC<EditCategoryStep1Props> = ({
                                 />
                             </Form.Group>
                         </Col>
-                        <Col md={12}>
+                        <Col md={4}>
                             <Form.Group>
                                 <Form.Label>Item Name (Hindi)</Form.Label>
                                 <Form.Control
@@ -162,7 +162,7 @@ const EditCategoryStep1: React.FC<EditCategoryStep1Props> = ({
                                 />
                             </Form.Group>
                         </Col>
-                        <Col md={12}>
+                        <Col md={4}>
                             <Form.Group>
                                 <Form.Label>Item Name (Gujarati)</Form.Label>
                                 <Form.Control
