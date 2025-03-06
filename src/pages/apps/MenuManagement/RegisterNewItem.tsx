@@ -99,14 +99,6 @@ const RegisterNewItem: React.FC = () => {
     const [successMsg, setSuccess] = useState<string>('');
 
     useEffect(() => {
-        console.log('Before update:', formData);
-        if (formData.is_loose && !formData.quantity_type) {
-            setFormData((prevState) => ({ ...prevState, is_loose: false }));
-        }
-        console.log('After update:', formData);
-    }, [formData.quantity_type]);
-
-    useEffect(() => {
         if (business_id && selectedCategoryId) {
             setFormData((prevData) => ({
                 ...prevData,
@@ -459,18 +451,18 @@ const RegisterNewItem: React.FC = () => {
                                 onClick={(e) => {
                                     if (!validateCurrentStep()) return;
 
-                                    // if (formData.is_loose && !formData.quantity_type) {
-                                    //     setFormData((prevState) => ({
-                                    //         ...prevState,
-                                    //         is_loose: false,
-                                    //     }));
-                                    // }
-                                    // if (formData.quantity_type && !formData.quantity_value) {
-                                    //     setFormData((prevState) => ({
-                                    //         ...prevState,
-                                    //         is_loose: false,
-                                    //     }));
-                                    // }
+                                    if (formData.is_loose && !formData.quantity_type) {
+                                        setFormData((prevState) => ({
+                                            ...prevState,
+                                            is_loose: false,
+                                        }));
+                                    }
+                                    if (formData.quantity_type && !formData.quantity_value) {
+                                        setFormData((prevState) => ({
+                                            ...prevState,
+                                            is_loose: false,
+                                        }));
+                                    }
 
                                     if (isLastStep) {
                                         handleSubmit(e);

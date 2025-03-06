@@ -1,4 +1,5 @@
 import React from 'react';
+import { Card, Row, Col, Form, Container, Button } from 'react-bootstrap';
 
 interface Outlet {
     outlet_id: string;
@@ -36,7 +37,7 @@ interface CategoryItem {
     quantity_params: string;
     quantity_value: number;
     outlets: Outlet[];
-    outlet_prices: { outlet_id: string; price: number }[]; // This should default to an empty array if undefined
+    outlet_prices: { outlet_id: string; price: number }[];
 }
 
 interface EditItemStep3Props {
@@ -58,25 +59,18 @@ const EditItemStep3: React.FC<EditItemStep3Props> = ({
         return <p>Loading...</p>;
     }
 
-    // Ensure outlet_prices is never undefined
     const outletPrices = editItem.outlet_prices ?? [];
 
     const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>, outletId: string) => {
         const newPrice = parseFloat(e.target.value);
-
         if (newPrice < 0 || isNaN(newPrice)) {
-            return; // Ignore invalid or negative values
+            return;
         }
-
         setEditItem((prev) => {
             if (!prev) return prev;
-
             const updatedPrices = (prev.outlet_prices ?? []).map((priceEntry) =>
                 priceEntry.outlet_id === outletId ? { ...priceEntry, price: newPrice } : priceEntry
             );
-
-            console.log('Updated prices:', updatedPrices); // Debugging the state update
-
             return {
                 ...prev,
                 outlet_prices: updatedPrices,
@@ -85,29 +79,90 @@ const EditItemStep3: React.FC<EditItemStep3Props> = ({
     };
 
     return (
-        <div className="step3-container">
-            <h2 className="title">Outlet List</h2>
-            {selectedOutlets.length > 0 ? (
-                selectedOutlets.map((outlet: OutletPrice) => {
-                    const price = outletPrices.find((priceEntry) => priceEntry.outlet_id === outlet.outlet_id)?.price;
+        <Container className="register-item-container">
+            <Card className="shadow-sm">
+                <Card.Header as="h2" className="text-center">
+                    Outlet List
+                </Card.Header>
+                <Card.Body>
+                    <Row className="mb-3">
+                        <Col md={6}>
+                            <Form.Group>
+                                <Form.Label>Master Price</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    name="price"
+                                    value={editItem.price}
+                                    onChange={(e) =>
+                                        setEditItem((prev) =>
+                                            prev ? { ...prev, price: parseFloat(e.target.value) || 0 } : prev
+                                        )
+                                    }
+                                    placeholder="Enter Master Price"
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col md={6} className="d-flex align-items-end">
+                            <Button
+                                variant="primary"
+                                onClick={() =>
+                                    setEditItem((prev) => {
+                                        if (!prev) return prev;
+                                        const updatedPrices = prev.outlets.map((outlet) => ({
+                                            outlet_id: outlet.outlet_id,
+                                            price: prev.price,
+                                        }));
+                                        return {
+                                            ...prev,
+                                            outlet_prices: updatedPrices,
+                                        };
+                                    })
+                                }>
+                                Apply All
+                            </Button>
+                        </Col>
+                    </Row>
 
-                    return (
-                        <div key={outlet.outlet_id} className="outlet-card">
-                            <h3 className="outlet-name">{outlet.outlet_name}</h3>
-                            <input
-                                type="number"
-                                value={price}
-                                onChange={(e) => handlePriceChange(e, outlet.outlet_id)}
-                                placeholder="Enter Item Price"
-                                className="price-input"
-                            />
-                        </div>
-                    );
-                })
-            ) : (
-                <p className="no-outlets">No outlets selected.</p>
-            )}
-        </div>
+                    {selectedOutlets.length > 0 ? (
+                        selectedOutlets.map((outlet) => {
+                            const price = outletPrices.find(
+                                (priceEntry) => priceEntry.outlet_id === outlet.outlet_id
+                            )?.price;
+
+                            return (
+                                <Card key={outlet.outlet_id} className="mb-3 shadow-sm">
+                                    <Card.Body>
+                                        <Row>
+                                            <Col md={6}>
+                                                <h3 className="mb-2">{outlet.outlet_name}</h3>
+                                            </Col>
+                                            <Col md={6}>
+                                                <Form.Group>
+                                                    <Form.Control
+                                                        type="number"
+                                                        value={price || ''}
+                                                        onChange={(e) =>
+                                                            handlePriceChange(
+                                                                e as React.ChangeEvent<HTMLInputElement>,
+                                                                outlet.outlet_id
+                                                            )
+                                                        }
+                                                        placeholder="Enter Outlet Price"
+                                                        className="price-input"
+                                                    />
+                                                </Form.Group>
+                                            </Col>
+                                        </Row>
+                                    </Card.Body>
+                                </Card>
+                            );
+                        })
+                    ) : (
+                        <p className="text-center text-muted">No outlets selected.</p>
+                    )}
+                </Card.Body>
+            </Card>
+        </Container>
     );
 };
 

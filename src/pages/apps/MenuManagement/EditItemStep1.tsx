@@ -221,6 +221,85 @@ const EditItemStep1: React.FC<EditItemStep1Props> = ({
                             />
                         </Col>
                     </Row>
+                    <Row className="mb-3">
+                        <Col md={6}>
+                            <Form.Group>
+                                <Form.Check
+                                    type="checkbox"
+                                    label="Loose Quantity"
+                                    name="is_loose"
+                                    checked={editItem.is_loose}
+                                    onChange={(e) =>
+                                        setEditItem({
+                                            ...editItem!,
+                                            is_loose: e.target.checked,
+                                            quantity_type: e.target.checked ? editItem.quantity_type : '', // Reset quantity type if unchecked
+                                            quantity_value: e.target.checked ? editItem.quantity_value : 0, // Reset value if unchecked
+                                            quantity_params: e.target.checked ? editItem.quantity_params : '', // Reset params if unchecked
+                                        })
+                                    }
+                                />
+                            </Form.Group>
+                        </Col>
+                    </Row>
+
+                    {/* If Loose Quantity is checked, show Quantity Type and Quantity Details */}
+                    {editItem.is_loose && (
+                        <Row className="mb-3">
+                            <Col md={6}>
+                                <Form.Label>Quantity Type</Form.Label>
+                                <Form.Select
+                                    name="quantity_type"
+                                    value={editItem.quantity_type}
+                                    onChange={handleInputChange}>
+                                    <option value="">Select Quantity Type</option>
+                                    <option value="piece">Piece</option>
+                                    <option value="weight">Weight</option>
+                                    <option value="volume">Volume</option>
+                                </Form.Select>
+                            </Col>
+
+                            {/* Show Quantity Value Input */}
+                            {editItem.quantity_type && (
+                                <Col md={6}>
+                                    <Form.Label>Quantity Value</Form.Label>
+                                    <Row>
+                                        <Col md={7}>
+                                            <Form.Control
+                                                type="number"
+                                                name="quantity_value"
+                                                value={editItem.quantity_value}
+                                                onChange={handleInputChange}
+                                                min="0"
+                                            />
+                                        </Col>
+                                        {/* Show Unit Selector for Weight & Volume */}
+                                        {editItem.quantity_type !== 'piece' && (
+                                            <Col md={5}>
+                                                <Form.Select
+                                                    name="quantity_params"
+                                                    value={editItem.quantity_params}
+                                                    onChange={handleInputChange}>
+                                                    <option value="">Select Unit</option>
+                                                    {editItem.quantity_type === 'weight' ? (
+                                                        <>
+                                                            <option value="gm">gm</option>
+                                                            <option value="kg">kg</option>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <option value="ml">ml</option>
+                                                            <option value="lt">lt</option>
+                                                        </>
+                                                    )}
+                                                </Form.Select>
+                                            </Col>
+                                        )}
+                                    </Row>
+                                </Col>
+                            )}
+                        </Row>
+                    )}
 
                     {/* {formData.is_loose && (
                         <Row className="mb-3">

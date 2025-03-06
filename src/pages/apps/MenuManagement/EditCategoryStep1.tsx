@@ -41,9 +41,25 @@ const EditCategoryStep1: React.FC<EditCategoryStep1Props> = ({
 
     useEffect(() => {
         if (editCategory) {
-            console.log('Updated category:', editCategory);
+            if (editCategory.logo_image instanceof File) {
+                setLogoPreview(URL.createObjectURL(editCategory.logo_image));
+            } else if (typeof editCategory.logo_image === 'string') {
+                setLogoPreview(editCategory.logo_image); // For previously saved image URL
+            }
+
+            if (editCategory.swiggy_image instanceof File) {
+                setSwiggyPreview(URL.createObjectURL(editCategory.swiggy_image));
+            } else if (typeof editCategory.swiggy_image === 'string') {
+                setSwiggyPreview(editCategory.swiggy_image);
+            }
+
+            if (editCategory.banner_image instanceof File) {
+                setBannerPreview(URL.createObjectURL(editCategory.banner_image));
+            } else if (typeof editCategory.banner_image === 'string') {
+                setBannerPreview(editCategory.banner_image);
+            }
         }
-    }, [editCategory]); // ✅ Always called in the same order, but runs conditionally inside
+    }, [editCategory]); // Runs whenever editCategory changes
 
     if (!editCategory) return <p>Loading...</p>;
 
@@ -109,6 +125,20 @@ const EditCategoryStep1: React.FC<EditCategoryStep1Props> = ({
                                         handleFileChange(e, 'logo_image')
                                     }
                                 />
+                                {logoPreview && (
+                                    <img
+                                        src={logoPreview}
+                                        alt="Logo Preview"
+                                        style={{
+                                            width: '100px',
+                                            height: '100px',
+                                            objectFit: 'cover',
+                                            borderRadius: '5px',
+                                        }}
+                                        className="img-thumbnail mt-2"
+                                        width="100"
+                                    />
+                                )}
                             </Form.Group>
                         </Col>
                         <Col md={4}>
@@ -121,6 +151,20 @@ const EditCategoryStep1: React.FC<EditCategoryStep1Props> = ({
                                         handleFileChange(e, 'swiggy_image')
                                     }
                                 />
+                                {swiggyPreview && (
+                                    <img
+                                        src={swiggyPreview}
+                                        alt="Swiggy Preview"
+                                        style={{
+                                            width: '100px',
+                                            height: '100px',
+                                            objectFit: 'cover',
+                                            borderRadius: '5px',
+                                        }}
+                                        className="img-thumbnail mt-2"
+                                        width="100"
+                                    />
+                                )}
                             </Form.Group>
                         </Col>
                         <Col md={4}>
@@ -133,6 +177,20 @@ const EditCategoryStep1: React.FC<EditCategoryStep1Props> = ({
                                         handleFileChange(e, 'banner_image')
                                     }
                                 />
+                                {bannerPreview && (
+                                    <img
+                                        src={bannerPreview}
+                                        alt="Banner Preview"
+                                        style={{
+                                            width: '100px',
+                                            height: '100px',
+                                            objectFit: 'cover',
+                                            borderRadius: '5px',
+                                        }}
+                                        className="img-thumbnail mt-2"
+                                        width="100"
+                                    />
+                                )}
                             </Form.Group>
                         </Col>
                     </Row>

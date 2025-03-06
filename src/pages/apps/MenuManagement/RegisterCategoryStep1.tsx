@@ -48,7 +48,9 @@ const RegisterCategoryStep1: React.FC<RegisterCategoryOneProps> = ({
                         {/* Menu Image */}
                         <Col md={4}>
                             <Form.Group>
-                                <Form.Label>Menu Image</Form.Label>
+                                <Form.Label>
+                                    Menu Image <span className="text-danger">*</span>
+                                </Form.Label>
                                 <Form.Control type="file" name="logo_image" onChange={handleFileChange} />
                                 {logoPreview && <img src={logoPreview} alt="Menu Preview" width="100" />}
                             </Form.Group>
@@ -110,7 +112,9 @@ const RegisterCategoryStep1: React.FC<RegisterCategoryOneProps> = ({
                     <Row className="mb-3">
                         <Col md={4}>
                             <Form.Group>
-                                <Form.Label>Item Name (English)</Form.Label>
+                                <Form.Label>
+                                    Item Name (English) <span className="text-danger">*</span>
+                                </Form.Label>
                                 <Form.Control
                                     type="text"
                                     name="category_name.english"
