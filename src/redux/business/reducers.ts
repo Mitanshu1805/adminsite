@@ -246,7 +246,7 @@ interface BusinessDetailsSuccessPayload {
     // data: { business: Business }; // ✅ Match API response format
     // business: Business;
     // data: Business;
-    businessDetails: BusinessDetails[];
+    businessDetails: Business[];
     message: string;
     // message: string;
 }
@@ -720,11 +720,11 @@ const businessReducer = (state = INITIAL_STATE, action: BusinessActions): Busine
             return { ...state, loading: true };
 
         case BusinessActionTypes.BUSINESS_DETAILS_SUCCESS:
-            console.log('Payload received in reducer:', action.payload);
+            console.log('Payload received in reducer:', action.payload.businessDetails);
             return {
                 ...state,
                 loading: false,
-                // businessDetails: action.payload.businessDetails || [],
+                businessDetails: action.payload.businessDetails || [],
                 // message: action.payload.message,
                 error: null,
             };

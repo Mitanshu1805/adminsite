@@ -7,6 +7,7 @@ import { RootState } from '../../../redux/store';
 import { businessList } from '../../../redux/business/actions';
 import { categoryItemList } from '../../../redux/menuManagementCategory/actions';
 import './ManageMenu'; // Importing CSS
+import MasterOutletComponent from '../../../components/MasterOutletComponent';
 
 interface Outlet {
     outlet_id: string;
@@ -131,29 +132,7 @@ const RegisterItemStep2: React.FC<RegisterItemStep2Props> = ({ selectedOutlets, 
                     Select Outlets
                 </Card.Header>
                 <Card.Body>
-                    <Row className="mb-4">
-                        <Col md={6}>
-                            <Form.Group>
-                                <Form.Label style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
-                                    Master Outlet
-                                </Form.Label>
-                                <div className="d-flex align-items-center">
-                                    <Form.Check
-                                        type="checkbox"
-                                        checked={isChecked}
-                                        onChange={() => setIsChecked(true)}
-                                        id="master-checkbox"
-                                        style={{ transform: 'scale(1.2)', marginRight: '8px' }} // Slightly bigger checkbox & spacing
-                                    />
-                                    <Form.Label
-                                        htmlFor="master-checkbox"
-                                        style={{ fontSize: '1.3rem', marginBottom: '0' }}>
-                                        Master
-                                    </Form.Label>
-                                </div>
-                            </Form.Group>
-                        </Col>
-                    </Row>
+                    <MasterOutletComponent />
 
                     <Row className="mb-4">
                         <Col>

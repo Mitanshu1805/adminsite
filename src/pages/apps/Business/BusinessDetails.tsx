@@ -73,12 +73,12 @@ interface UpdateOutlet {
 
 const BusinessDetails: React.FC = () => {
     // const { id } = useParams<{ id: string }>(); // Extracting 'id' from URL params
-    const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
+    // const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
     const location = useLocation();
     const id = location.state?.business_id;
 
     const { dispatch, appSelector } = useRedux();
-    const businesses = appSelector((state: RootState) => state.business.businesses || []);
+    // const businesses = appSelector((state: RootState) => state.business.businesses || []);
     const navigate = useNavigate();
     const [showOutletModal, setShowOutletModal] = useState(false);
     const [showBusinessUserModal, setShowBusinessUserModal] = useState(false);
@@ -99,40 +99,40 @@ const BusinessDetails: React.FC = () => {
     useEffect(() => {
         console.log('Dispatching actions for business list');
         dispatch(resetBusiness());
-        dispatch(businessList());
+        // dispatch(businessList());
         dispatch(businessDetails(id));
     }, [dispatch]);
 
-    useEffect(() => {
-        if (!languages.length) {
-            dispatch(languageList());
-        }
-    }, [dispatch, languages.length]);
+    // useEffect(() => {
+    //     if (!languages.length) {
+    //         dispatch(languageList());
+    //     }
+    // }, [dispatch, languages.length]);
 
-    useEffect(() => {
-        console.log('Business ID from URL:', id); // Log the 'id' variable from useParams
-        console.log('Available businesses:', businesses); // Log the businesses array
+    // useEffect(() => {
+    //     console.log('Business ID from URL:', id); // Log the 'id' variable from useParams
+    //     console.log('Available businesses:', businesses); // Log the businesses array
 
-        if (id) {
-            // Ensure that 'id' is a string and matches the format of business.business_id
-            const business = businesses.find((business: Business) => business.business_id === id);
-            console.log('business res: ', business);
+    //     if (id) {
+    //         // Ensure that 'id' is a string and matches the format of business.business_id
+    //         const business = businesses.find((business: Business) => business.business_id === id);
+    //         console.log('business res: ', business);
 
-            if (business) {
-                setSelectedBusiness(business);
-            } else {
-                console.log('Business not found in the list!');
-            }
-        }
-    }, [id, businesses]);
+    //         if (business) {
+    //             setSelectedBusiness(business);
+    //         } else {
+    //             console.log('Business not found in the list!');
+    //         }
+    //     }
+    // }, [id, businesses]);
 
-    // const selectedBusiness = appSelector((state: RootState) => state.business.businessDetails);
-    // console.log('Selected Business True:', JSON.stringify(selectedBusiness, null, 2));
-    // console.log('Selected Business:', selectedBusiness);
-    // console.log(
-    //     'Redux State:',
-    //     appSelector((state) => state.business.businessDetails)
-    // );
+    const selectedBusiness = appSelector((state: RootState) => state.business.businessDetails || { outlets: [] });
+
+    console.log('Selected Business:', selectedBusiness);
+    console.log(
+        'Redux State:',
+        appSelector((state) => state.business.businessDetails)
+    );
 
     // if (!businesses.length) {
     //     return <div>Loading business details...</div>;
@@ -397,7 +397,7 @@ const BusinessDetails: React.FC = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {selectedBusiness.outlets.length > 0 ? (
+                                {selectedBusiness?.outlets?.length > 0 ? (
                                     selectedBusiness.outlets.map((outlet: Outlet) => (
                                         <tr key={outlet.outlet_id}>
                                             <td>

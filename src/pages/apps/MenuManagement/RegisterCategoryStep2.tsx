@@ -5,6 +5,7 @@ import { Form, Button, Container } from 'react-bootstrap';
 import { Card, Row, Col, Alert } from 'react-bootstrap';
 import { RootState } from '../../../redux/store';
 import { businessList } from '../../../redux/business/actions';
+import MasterOutletComponent from '../../../components/MasterOutletComponent';
 
 interface Outlet {
     outlet_id: string;
@@ -107,6 +108,7 @@ const RegisterCategoryStep2: React.FC<RegisterCategoryTwoProps> = ({
                             </Button>
                         </Col>
                     </Row> */}
+                    <MasterOutletComponent />
 
                     <Row className="mb-4 d-flex align-items-center">
                         <Col md="auto">
