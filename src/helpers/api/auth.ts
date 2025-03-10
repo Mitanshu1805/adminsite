@@ -179,6 +179,46 @@ function businessDetails(data: any) {
     return api.create(`${baseUrl}`, data);
 }
 
+function recipeIngredientAdd(data: any) {
+    const baseUrl = '/ingredient/add';
+    return api.create(`${baseUrl}`, data);
+}
+
+function recipeIngredientList(data: any) {
+    const baseUrl = '/ingredient/list';
+    return api.create(`${baseUrl}`, data);
+}
+
+function recipeIngredientUpdateStatus(data: any) {
+    const baseUrl = '/ingredient/update/status';
+    return api.update(`${baseUrl}`, data);
+}
+
+function recipeIngredientDelete(data: any) {
+    const baseUrl = '/ingredient/delete';
+    return api.delete(`${baseUrl}`, data);
+}
+
+function recipeAdd(data: any) {
+    const baseUrl = '/recipe/add';
+    return api.create(`${baseUrl}`, data);
+}
+
+function recipeList(data: any) {
+    const baseUrl = '/recipe/list';
+    return api.create(`${baseUrl}`, data);
+}
+
+function recipeUpdate(data: any) {
+    const baseUrl = '/recipe/update';
+    return api.update(`${baseUrl}`, data);
+}
+
+function recipeDelete(data: any) {
+    const baseUrl = '/recipe/delete';
+    return api.delete(`${baseUrl}`, data);
+}
+
 export {
     login,
     logout,
@@ -211,6 +251,14 @@ export {
     categoryItemList,
     categoryUpdateIsActive,
     businessDetails,
+    recipeIngredientAdd,
+    recipeIngredientDelete,
+    recipeIngredientList,
+    recipeIngredientUpdateStatus,
+    recipeAdd,
+    recipeDelete,
+    recipeUpdate,
+    recipeList,
 };
 
 // import { APICore } from './apiCore';

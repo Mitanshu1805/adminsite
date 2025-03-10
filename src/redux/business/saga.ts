@@ -277,6 +277,7 @@ function* businessDetailsSaga(action: any): SagaIterator {
         const response = yield call(businessDetails, action.payload);
         console.log('API Response:', response);
         console.log('API Data:', response.data);
+        console.log('Action PAYLOAD: ', action.payload);
         console.log('Business Data:', response.data.data.business);
 
         yield put(businessDetailsSuccess(response.data.data.business));

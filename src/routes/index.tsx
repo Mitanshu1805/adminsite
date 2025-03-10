@@ -36,6 +36,7 @@ const BusinessList = React.lazy(() => import('../pages/apps/Business/Business'))
 const BusinessDetails = React.lazy(() => import('../pages/apps/Business/BusinessDetails'));
 const BusinessRegister = React.lazy(() => import('../pages/apps/Business/BusinessRegister'));
 const ManageMenu = React.lazy(() => import('../pages/apps/MenuManagement/ManageMenu'));
+const Recipe = React.lazy(() => import('../pages/apps/RecipeManagement/Recipe'));
 const EditItem = React.lazy(() => import('../pages/apps/MenuManagement/EditItem'));
 const ItemRegister = React.lazy(() => import('../pages/apps/MenuManagement/RegisterNewItem'));
 const CategoryRegister = React.lazy(() => import('../pages/apps/MenuManagement/RegisterCategory'));
@@ -224,6 +225,10 @@ const AllRoutes = () => {
                         {
                             path: 'manage-menu',
                             element: <LoadComponent component={ManageMenu} />,
+                        },
+                        {
+                            path: 'recipe',
+                            element: <LoadComponent component={Recipe} />,
                         },
                         {
                             path: 'edit-item',
