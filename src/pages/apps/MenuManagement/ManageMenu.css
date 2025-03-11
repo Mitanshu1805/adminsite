@@ -34,6 +34,11 @@
     margin: 0;
 }
 
+.button-group {
+    display: flex;
+    gap: 10px; /* Space between buttons */
+}
+
 .add-item-button {
     background-color: #ff6464;
     color: white;

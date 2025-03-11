@@ -180,22 +180,22 @@ function businessDetails(data: any) {
 }
 
 function recipeIngredientAdd(data: any) {
-    const baseUrl = '/ingredient/add';
+    const baseUrl = '/recipe/ingredient/add';
     return api.create(`${baseUrl}`, data);
 }
 
 function recipeIngredientList(data: any) {
-    const baseUrl = '/ingredient/list';
+    const baseUrl = '/recipe/ingredient/list';
     return api.create(`${baseUrl}`, data);
 }
 
 function recipeIngredientUpdateStatus(data: any) {
-    const baseUrl = '/ingredient/update/status';
+    const baseUrl = '/recipe/ingredient/update/status';
     return api.update(`${baseUrl}`, data);
 }
 
 function recipeIngredientDelete(data: any) {
-    const baseUrl = '/ingredient/delete';
+    const baseUrl = '/recipe/ingredient/delete';
     return api.delete(`${baseUrl}`, data);
 }
 

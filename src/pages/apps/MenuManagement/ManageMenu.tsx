@@ -109,6 +109,11 @@ const ManageMenu: React.FC = () => {
             dispatch(categoryItemList(business_id!));
         }, 100);
     };
+    const handleRecipe = () => {
+        navigate('/apps/recipe', {
+            state: { business_id: business_id },
+        });
+    };
 
     // const handleCategoryRegister = () => {
     //     console.log('Category Register Clicked');
@@ -200,15 +205,20 @@ const ManageMenu: React.FC = () => {
         <div className="manage-menu-container">
             <div className="header">
                 <h2>Item List</h2>
-                <button
-                    className="add-item-button"
-                    onClick={() =>
-                        navigate(`/apps/item-register`, {
-                            state: { business_id: business_id, category_id: selectedCategoryId },
-                        })
-                    }>
-                    + Add Item
-                </button>
+                <div className="button-group">
+                    <button
+                        className="add-item-button"
+                        onClick={() =>
+                            navigate(`/apps/item-register`, {
+                                state: { business_id: business_id, category_id: selectedCategoryId },
+                            })
+                        }>
+                        + Add Item
+                    </button>
+                    <button className="add-item-button" onClick={handleRecipe}>
+                        Recipe
+                    </button>
+                </div>
             </div>
 
             <div className="category-tabs">

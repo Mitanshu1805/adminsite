@@ -24,6 +24,9 @@ import { languageReducer } from './business/reducers';
 import MenuManagementCategoryReducer from './menuManagementCategory/reducers';
 import MenuManagementItemReducer from './menuManagementItem/reducers';
 
+import RecipeIngredientsManagementReducer from './recipeIngredientsManagement/reducers';
+import RecipeManagementReducer from './recipeManagement/reducers';
+
 const rootReducer = combineReducers({
     Auth,
     Layout,
@@ -32,6 +35,8 @@ const rootReducer = combineReducers({
     language: languageReducer,
     category: MenuManagementCategoryReducer,
     MenuManagementItemReducer,
+    RecipeIngredientsManagementReducer,
+    RecipeManagementReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

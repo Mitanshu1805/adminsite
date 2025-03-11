@@ -1,8 +1,16 @@
 import { RecipeIngredientsManagementActionTypes } from './constants';
 
+interface Ingredient {
+    id: string;
+    name: string;
+    outlet_id: string;
+    business_id: string;
+    is_active?: boolean;
+}
+
 // Define State Type
 interface State {
-    ingredients: any[]; // Replace `any` with the proper ingredient type
+    ingredients: Ingredient[];
     loading: boolean;
     error: string | null;
 }
@@ -17,13 +25,13 @@ type RecipeIngredientsManagementActions =
     | { type: typeof RecipeIngredientsManagementActionTypes.RECIPE_INGREDIENT_ADD }
     | {
           type: typeof RecipeIngredientsManagementActionTypes.RECIPE_INGREDIENT_ADD_SUCCESS;
-          payload: { ingredient: any };
+          payload: { ingredient: Ingredient };
       }
     | { type: typeof RecipeIngredientsManagementActionTypes.RECIPE_INGREDIENT_ADD_ERROR; payload: { error: string } }
     | { type: typeof RecipeIngredientsManagementActionTypes.RECIPE_INGREDIENT_LIST }
     | {
           type: typeof RecipeIngredientsManagementActionTypes.RECIPE_INGREDIENT_LIST_SUCCESS;
-          payload: { ingredients: any[] };
+          payload: { ingredients: Ingredient[] };
       }
     | { type: typeof RecipeIngredientsManagementActionTypes.RECIPE_INGREDIENT_LIST_ERROR; payload: { error: string } }
     | { type: typeof RecipeIngredientsManagementActionTypes.RECIPE_INGREDIENT_UPDATE_STATUS }

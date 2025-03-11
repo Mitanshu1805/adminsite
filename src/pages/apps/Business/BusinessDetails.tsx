@@ -72,12 +72,13 @@ interface UpdateOutlet {
 }
 
 const BusinessDetails: React.FC = () => {
+    const { dispatch, appSelector } = useRedux();
     // const { id } = useParams<{ id: string }>(); // Extracting 'id' from URL params
-    const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
+    const [selectedBusiness = appSelector((state: RootState) => state.business.businessDetails), setSelectedBusiness] =
+        useState<Business | null>(null);
     const location = useLocation();
     const id = location.state?.business_id;
 
-    const { dispatch, appSelector } = useRedux();
     const businesses = appSelector((state: RootState) => state.business.businesses || []);
     const navigate = useNavigate();
     const [showOutletModal, setShowOutletModal] = useState(false);
@@ -99,8 +100,8 @@ const BusinessDetails: React.FC = () => {
     useEffect(() => {
         console.log('Dispatching actions for business list');
         dispatch(resetBusiness());
-        dispatch(businessList());
-        // dispatch(businessDetails(id));
+        // dispatch(businessList());
+        dispatch(businessDetails(id));
     }, [dispatch]);
 
     useEffect(() => {
@@ -116,6 +117,7 @@ const BusinessDetails: React.FC = () => {
         if (id) {
             // Ensure that 'id' is a string and matches the format of business.business_id
             const business = businesses.find((business: Business) => business.business_id === id);
+
             console.log('business res: ', business);
 
             if (business) {
@@ -126,7 +128,7 @@ const BusinessDetails: React.FC = () => {
         }
     }, [id, businesses]);
 
-    // const selectedBusiness = appSelector((state: RootState) => state.business.businessDetails || { outlets: [] });
+    // const selectedBusiness = appSelector((state: RootState) => state.business.businessDetails);
 
     console.log('Selected Business:', selectedBusiness);
     console.log(
@@ -341,9 +343,9 @@ const BusinessDetails: React.FC = () => {
                             </div>
 
                             <div>
-                                <Button className="me-2" onClick={handleRecipe}>
+                                {/* <Button className="me-2" onClick={handleRecipe}>
                                     Recipe
-                                </Button>
+                                </Button> */}
                                 <Button className="me-2" onClick={() => handleManageMenu(selectedBusiness.business_id)}>
                                     Manage Menu
                                 </Button>

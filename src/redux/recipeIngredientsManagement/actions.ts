@@ -5,7 +5,7 @@ export type RecipeIngredientsManagementAction =
           type: typeof RecipeIngredientsManagementActionTypes.RECIPE_INGREDIENT_ADD;
           payload: {
               name: string;
-              outlet_id: string;
+              business_id: string;
           };
       }
     | {
@@ -19,7 +19,7 @@ export type RecipeIngredientsManagementAction =
     | {
           type: typeof RecipeIngredientsManagementActionTypes.RECIPE_INGREDIENT_LIST;
           payload: {
-              outlet_id: string;
+              business_id: string;
           };
       }
     | {
@@ -60,9 +60,9 @@ export type RecipeIngredientsManagementAction =
           payload: { error: string };
       };
 
-export const recipeIngredientAdd = (name: string, outlet_id: string): RecipeIngredientsManagementAction => ({
+export const recipeIngredientAdd = (name: string, business_id: string): RecipeIngredientsManagementAction => ({
     type: RecipeIngredientsManagementActionTypes.RECIPE_INGREDIENT_ADD,
-    payload: { name, outlet_id },
+    payload: { name, business_id },
 });
 
 export const recipeIngredientAddSuccess = (message: string): RecipeIngredientsManagementAction => ({
@@ -75,9 +75,9 @@ export const recipeIngredientAddError = (error: string): RecipeIngredientsManage
     payload: { error },
 });
 
-export const recipeIngredientList = (outlet_id: string): RecipeIngredientsManagementAction => ({
+export const recipeIngredientList = (business_id: string): RecipeIngredientsManagementAction => ({
     type: RecipeIngredientsManagementActionTypes.RECIPE_INGREDIENT_LIST,
-    payload: { outlet_id },
+    payload: { business_id },
 });
 
 export const recipeIngredientListSuccess = (message: string): RecipeIngredientsManagementAction => ({
