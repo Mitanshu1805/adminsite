@@ -1,5 +1,12 @@
 import { RecipeIngredientsManagementActionTypes } from './constants';
 
+export interface IngredientList {
+    business_id: string;
+    ingredient_id: string;
+    is_active: boolean;
+    name: string;
+}
+
 export type RecipeIngredientsManagementAction =
     | {
           type: typeof RecipeIngredientsManagementActionTypes.RECIPE_INGREDIENT_ADD;
@@ -24,7 +31,7 @@ export type RecipeIngredientsManagementAction =
       }
     | {
           type: typeof RecipeIngredientsManagementActionTypes.RECIPE_INGREDIENT_LIST_SUCCESS;
-          payload: { message: string };
+          payload: { message: string; ingredients: IngredientList };
       }
     | {
           type: typeof RecipeIngredientsManagementActionTypes.RECIPE_INGREDIENT_LIST_ERROR;
@@ -80,9 +87,12 @@ export const recipeIngredientList = (business_id: string): RecipeIngredientsMana
     payload: { business_id },
 });
 
-export const recipeIngredientListSuccess = (message: string): RecipeIngredientsManagementAction => ({
+export const recipeIngredientListSuccess = (
+    ingredients: IngredientList,
+    message: string
+): RecipeIngredientsManagementAction => ({
     type: RecipeIngredientsManagementActionTypes.RECIPE_INGREDIENT_LIST_SUCCESS,
-    payload: { message },
+    payload: { ingredients, message },
 });
 
 export const recipeIngredientListError = (error: string): RecipeIngredientsManagementAction => ({

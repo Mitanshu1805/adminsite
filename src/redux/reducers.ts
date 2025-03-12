@@ -35,7 +35,7 @@ const rootReducer = combineReducers({
     language: languageReducer,
     category: MenuManagementCategoryReducer,
     MenuManagementItemReducer,
-    RecipeIngredientsManagementReducer,
+    ingredient: RecipeIngredientsManagementReducer,
     RecipeManagementReducer,
 });
 
