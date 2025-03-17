@@ -170,6 +170,7 @@
 }
 
 .edit-button,
+.add-recipe-button,
 .delete-button {
     border: none;
     border-radius: 5px;
@@ -178,6 +179,10 @@
     cursor: pointer;
     color: white;
     margin: 2px 6px 2px 8px;
+}
+
+.add-recipe-button {
+    color: #0056b3;
 }
 
 .edit-button {

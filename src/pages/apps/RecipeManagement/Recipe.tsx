@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Card, Table, Button, Modal, Form } from 'react-bootstrap';
 import { useRedux } from '../../../hooks';
-import { recipeIngredientList, recipeIngredientAdd } from '../../../redux/actions';
+import { recipeIngredientList, recipeIngredientAdd, recipeList, recipeAdd } from '../../../redux/actions';
 import { RootState } from '../../../redux/store';
 import { FaRegEdit, FaTrash } from 'react-icons/fa';
 import ToggleSwitch from '../MenuManagement/ToggleSwitch';
+import RegisterNewRecipeModal from './RegisterNewRecipe';
 
 interface IngredientList {
     business_id: string;
@@ -17,43 +18,66 @@ interface IngredientList {
 const Recipe = () => {
     const { dispatch, appSelector } = useRedux();
     const location = useLocation();
-    const [showModal, setShowModal] = useState(false);
-    const [ingredientName, setIngredientName] = useState('');
+    const item_id = location.state?.item_id;
+    const [showRecipeModal, setShowRecipeModal] = useState(false);
     const ingredients = appSelector((state: RootState) => state.ingredient.ingredients || []);
 
     const business_id = location.state?.business_id;
 
+    console.log('business_id', business_id);
+    console.log('item_id', item_id);
+
     useEffect(() => {
         if (business_id) {
+            console.log('Dispatching recipeIngredientList and recipeList');
             dispatch(recipeIngredientList(business_id));
+            console.log('Dispatching recipeList with business_id:', business_id);
+            dispatch(recipeList(business_id));
         }
     }, [dispatch, business_id]);
 
-    const handleAddIngredient = () => {
-        if (ingredientName.trim() && business_id) {
-            dispatch(recipeIngredientAdd(ingredientName, business_id));
-            setShowModal(false);
-            setIngredientName('');
+    const handleAddRecipe = () => {
+        console.log('RECIPE ADD CLICKED');
+        if (!showRecipeModal) {
+            setShowRecipeModal(true);
         }
+    };
+
+    const handleCloseRecipeModal = () => {
+        console.log('CloseRecipeModal');
+        setShowRecipeModal(false);
     };
 
     return (
         <Card>
             <Card.Body>
                 <div className="d-flex justify-content-between align-items-center mb-3">
-                    <h4 className="header-title">Ingredient List</h4>
-                    <Button variant="primary" onClick={() => setShowModal(true)}>
-                        Add New Ingredient
+                    <h4 className="header-title">Recipe List</h4>
+                    <Button variant="primary" onClick={handleAddRecipe}>
+                        Add New Recipe
                     </Button>
+                    <RegisterNewRecipeModal
+                        show={showRecipeModal}
+                        onClose={handleCloseRecipeModal}
+                        business_id={business_id}
+                        item_id={item_id}
+                    />
                 </div>
 
                 <div className="table-responsive">
                     <Table className="mb-0">
                         <thead>
                             <tr>
+                                {/* <th>Preparation Time</th>
+                                <th>Cooking Time</th>
+                                <th>Preparation Type</th>
+                                <th>Instructions</th>
+                                <th>Is Active?</th>
+                                <th>Ingredients</th> */}
+
                                 <th>Name</th>
                                 <th>Is Active?</th>
-                                <th>Action</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -81,34 +105,6 @@ const Recipe = () => {
                     </Table>
                 </div>
             </Card.Body>
-
-            {/* Modal for Adding Ingredient */}
-            <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-                <Modal.Header closeButton>
-                    <Modal.Title>Add New Ingredient</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form>
-                        <Form.Group>
-                            <Form.Label>Ingredient Name</Form.Label>
-                            <Form.Control
-                                type="text"
-                                value={ingredientName}
-                                onChange={(e) => setIngredientName(e.target.value)}
-                                placeholder="Enter ingredient name"
-                            />
-                        </Form.Group>
-                    </Form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowModal(false)}>
-                        Cancel
-                    </Button>
-                    <Button variant="primary" onClick={handleAddIngredient}>
-                        Add Ingredient
-                    </Button>
-                </Modal.Footer>
-            </Modal>
         </Card>
     );
 };

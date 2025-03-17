@@ -36,7 +36,7 @@ const rootReducer = combineReducers({
     category: MenuManagementCategoryReducer,
     MenuManagementItemReducer,
     ingredient: RecipeIngredientsManagementReducer,
-    RecipeManagementReducer,
+    recipe: RecipeManagementReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

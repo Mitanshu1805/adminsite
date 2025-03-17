@@ -5,13 +5,13 @@ import { RecipeManagementActionTypes } from './constants';
 
 type AddRecipe = {
     item_id: string;
-    outlet_id: string;
+    business_id: string;
     preparation_time: number;
     cooking_time: number;
     preparation_type: string;
     instructions: string;
     is_active: boolean;
-    ingredients: [ingredient_id: string, quantity: number, unit: string];
+    ingredients: { ingredient_id: string; quantity: number; unit: string }[]; // ✅ Fixed
 };
 
 type UpdateRecipe = {
@@ -42,7 +42,7 @@ export type RecipeManagementAction =
     | {
           type: typeof RecipeManagementActionTypes.RECIPE_LIST;
           payload: {
-              outlet_id: string;
+              business_id: string;
           };
       }
     | {
@@ -95,10 +95,10 @@ export const recipeAddError = (error: string): RecipeManagementAction => ({
     payload: { error },
 });
 
-export const recipeList = (outlet_id: string): RecipeManagementAction => ({
+export const recipeList = (business_id: string): RecipeManagementAction => ({
     type: RecipeManagementActionTypes.RECIPE_LIST,
     payload: {
-        outlet_id,
+        business_id,
     },
 });
 

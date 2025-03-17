@@ -19,7 +19,7 @@ import { AxiosResponse } from 'axios';
 
 function* recipeAddSaga(action: any): SagaIterator {
     try {
-        const response = yield call(recipeAddSaga, action.payload);
+        const response = yield call(recipeAdd, action.payload);
         yield put(recipeAddSuccess(response.data.message));
     } catch (error: any) {
         yield put(recipeAddError(error.message || 'Error Occured'));
@@ -28,7 +28,7 @@ function* recipeAddSaga(action: any): SagaIterator {
 
 function* recipeDeleteSaga(action: any): SagaIterator {
     try {
-        const response = yield call(recipeDeleteSaga, action.payload);
+        const response = yield call(recipeDelete, action.payload);
         yield put(recipeDeleteSuccess(response.data.message));
     } catch (error: any) {
         yield put(recipeDeleteError(error.message || 'Error Occured'));
@@ -37,7 +37,7 @@ function* recipeDeleteSaga(action: any): SagaIterator {
 
 function* recipeListSaga(action: any): SagaIterator {
     try {
-        const response = yield call(recipeListSaga, action.payload);
+        const response = yield call(recipeList, action.payload);
         yield put(recipeListSuccess(response.data.message));
     } catch (error: any) {
         yield put(recipeListError(error.message || 'Error Occured'));
@@ -46,7 +46,7 @@ function* recipeListSaga(action: any): SagaIterator {
 
 function* recipeUpdateSaga(action: any): SagaIterator {
     try {
-        const response = yield call(recipeUpdateSaga, action.payload);
+        const response = yield call(recipeUpdate, action.payload);
         yield put(recipeUpdateSuccess(response.data.message));
     } catch (error: any) {
         yield put(recipeUpdateError(error.message || 'Error Occured'));

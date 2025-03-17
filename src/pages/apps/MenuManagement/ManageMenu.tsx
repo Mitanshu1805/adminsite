@@ -109,9 +109,9 @@ const ManageMenu: React.FC = () => {
             dispatch(categoryItemList(business_id!));
         }, 100);
     };
-    const handleRecipe = () => {
+    const handleRecipe = (business_id: string, item_id: string) => {
         navigate('/apps/recipe', {
-            state: { business_id: business_id },
+            state: { business_id: business_id, item_id: item_id },
         });
     };
 
@@ -215,9 +215,9 @@ const ManageMenu: React.FC = () => {
                         }>
                         + Add Item
                     </button>
-                    <button className="add-item-button" onClick={handleRecipe}>
+                    {/* <button className="add-item-button" onClick={handleRecipe}>
                         Recipe
-                    </button>
+                    </button> */}
                 </div>
             </div>
 
@@ -284,6 +284,14 @@ const ManageMenu: React.FC = () => {
                                     <h3>{item.item_name}</h3>
                                     <p>Price: {item.price}</p>
                                     <p>Total Amount: 0</p>
+                                </div>
+
+                                <div className="item-actions">
+                                    <button
+                                        className="add-recipe-button"
+                                        onClick={() => handleRecipe(business_id, item.item_id)}>
+                                        + Recipe
+                                    </button>
                                 </div>
                                 <div className="item-actions">
                                     <button
