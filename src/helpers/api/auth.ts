@@ -2,261 +2,281 @@ import { APICore } from './apiCore';
 
 const api = new APICore();
 
-// account
-function login(params: { email: string; password: string }) {
-    const baseUrl = '/superadmin/login';
-    return api.create(`${baseUrl}`, params);
+export function login(params: { email: string; password: string }) {
+    return api.create('/superadmin/login', params);
 }
 
-function logout() {
-    const baseUrl = '/superadmin/logout';
-    return api.create(`${baseUrl}`, {});
+export function logout() {
+    return api.create('/superadmin/logout', {});
 }
 
-function signup(params: { fullname: string; email: string; password: string }) {
-    const baseUrl = '/superadmin/register/';
-    return api.create(`${baseUrl}`, params);
+export function signup(params: { fullname: string; email: string; password: string }) {
+    return api.create('/superadmin/register/', params);
 }
 
-function forgotPassword(params: { email: string }) {
-    const baseUrl = '/superadmin/forget-password/';
-    return api.create(`${baseUrl}`, params);
+export function forgotPassword(params: { email: string }) {
+    return api.create('/superadmin/forget-password/', params);
 }
 
-// function businessList() {
-//     const baseUrl = '/Business/List';
-//     return api.get(`${baseUrl}`, {});
+// import { APICore } from './apiCore';
+
+// const api = new APICore();
+
+// // account
+// function login(params: { email: string; password: string }) {
+//     const baseUrl = '/superadmin/login';
+//     return api.create(`${baseUrl}`, params);
 // }
 
-function businessList() {
-    const baseUrl = '/business/list';
-    return api
-        .get(`${baseUrl}`, {})
-        .then((response) => {
-            console.log('Business List API Response:', response);
-            return response;
-        })
-        .catch((error) => {
-            console.error('Error fetching business list:', error);
-            throw error;
-        });
-}
+// function logout() {
+//     const baseUrl = '/superadmin/logout';
+//     return api.create(`${baseUrl}`, {});
+// }
 
-function businessRegister(data: any) {
-    const baseUrl = '/business/register';
-    return api.create(`${baseUrl}`, data); // Pass the data to the API
-}
+// function signup(params: { fullname: string; email: string; password: string }) {
+//     const baseUrl = '/superadmin/register/';
+//     return api.create(`${baseUrl}`, params);
+// }
 
-function languageList() {
-    const baseUrl = '/language/list'; // Example endpoint for fetching the language list
-    return api
-        .get(`${baseUrl}`, {})
-        .then((response) => {
-            console.log('Language List API Response:', response); // Log for debugging
-            return response; // Return the response
-        })
-        .catch((error) => {
-            console.error('Error fetching language list:', error); // Log the error
-            throw error; // Rethrow the error to be handled by the calling function
-        });
-}
+// function forgotPassword(params: { email: string }) {
+//     const baseUrl = '/superadmin/forget-password/';
+//     return api.create(`${baseUrl}`, params);
+// }
 
-function updateBusinessList(data: any) {
-    const baseUrl = '/business/update';
-    return api.update(baseUrl, data); // API request
-}
+// // function businessList() {
+// //     const baseUrl = '/Business/List';
+// //     return api.get(`${baseUrl}`, {});
+// // }
 
-function deleteBusinessList(data: any) {
-    console.log('deleteBusinessList', data);
-    const baseUrl = '/business/delete';
-    return api.delete(baseUrl, data); // API request
-}
+// function businessList() {
+//     const baseUrl = '/business/list';
+//     return api
+//         .get(`${baseUrl}`, {})
+//         .then((response) => {
+//             console.log('Business List API Response:', response);
+//             return response;
+//         })
+//         .catch((error) => {
+//             console.error('Error fetching business list:', error);
+//             throw error;
+//         });
+// }
 
-function registerOutlet(data: any) {
-    const baseUrl = '/outlet/register';
-    return api.create(`${baseUrl}`, data); // Pass the data to the API
-}
+// function businessRegister(data: any) {
+//     const baseUrl = '/business/register';
+//     return api.create(`${baseUrl}`, data); // Pass the data to the API
+// }
 
-function updateOutlet(data: any) {
-    const baseUrl = '/outlet/update';
-    return api.update(`${baseUrl}`, data); // Pass the data to the API
-}
+// function languageList() {
+//     const baseUrl = '/language/list'; // Example endpoint for fetching the language list
+//     return api
+//         .get(`${baseUrl}`, {})
+//         .then((response) => {
+//             console.log('Language List API Response:', response); // Log for debugging
+//             return response; // Return the response
+//         })
+//         .catch((error) => {
+//             console.error('Error fetching language list:', error); // Log the error
+//             throw error; // Rethrow the error to be handled by the calling function
+//         });
+// }
 
-function deleteOutlet(data: any) {
-    const baseUrl = '/outlet/delete';
-    return api.delete(`${baseUrl}`, data); // Pass the data to the API
-}
+// function updateBusinessList(data: any) {
+//     const baseUrl = '/business/update';
+//     return api.update(baseUrl, data); // API request
+// }
 
-function registerBusinessUser(data: any) {
-    const baseUrl = '/business/user/register';
-    return api.create(`${baseUrl}`, data); // Pass the data to the API
-}
+// function deleteBusinessList(data: any) {
+//     console.log('deleteBusinessList', data);
+//     const baseUrl = '/business/delete';
+//     return api.delete(baseUrl, data); // API request
+// }
 
-function updateBusinessUser(data: any) {
-    const baseUrl = '/business/user/update';
-    return api.update(`${baseUrl}`, data); // Pass the data to the API
-}
+// function registerOutlet(data: any) {
+//     const baseUrl = '/outlet/register';
+//     return api.create(`${baseUrl}`, data); // Pass the data to the API
+// }
 
-function deleteBusinessUser(data: any) {
-    const baseUrl = '/business/user/delete';
-    return api.delete(`${baseUrl}`, data); // Pass the data to the API
-}
+// function updateOutlet(data: any) {
+//     const baseUrl = '/outlet/update';
+//     return api.update(`${baseUrl}`, data); // Pass the data to the API
+// }
 
-function businessUpdateIsActive(data: any) {
-    const baseUrl = '/business/update/isactive';
-    return api.update(`${baseUrl}`, data); // Pass the data to the API
-}
-function outletUpdateIsActive(data: any) {
-    const baseUrl = '/outlet/update/isactive';
-    return api.update(`${baseUrl}`, data); // Pass the data to the API
-}
+// function deleteOutlet(data: any) {
+//     const baseUrl = '/outlet/delete';
+//     return api.delete(`${baseUrl}`, data); // Pass the data to the API
+// }
 
-function updateOutletPrice(data: any) {
-    const baseUrl = '/item/update/outlet/price';
-    return api.update(`${baseUrl}`, data);
-}
+// function registerBusinessUser(data: any) {
+//     const baseUrl = '/business/user/register';
+//     return api.create(`${baseUrl}`, data); // Pass the data to the API
+// }
 
-function registerItem(data: any) {
-    const baseUrl = '/item/register';
-    return api.create(`${baseUrl}`, data);
-}
+// function updateBusinessUser(data: any) {
+//     const baseUrl = '/business/user/update';
+//     return api.update(`${baseUrl}`, data); // Pass the data to the API
+// }
 
-function updateItem(data: any) {
-    const baseUrl = '/item/update';
-    return api.update(`${baseUrl}`, data);
-}
+// function deleteBusinessUser(data: any) {
+//     const baseUrl = '/business/user/delete';
+//     return api.delete(`${baseUrl}`, data); // Pass the data to the API
+// }
 
-function deleteItem(data: any) {
-    const baseUrl = '/item/delete';
-    return api.delete(`${baseUrl}`, data);
-}
+// function businessUpdateIsActive(data: any) {
+//     const baseUrl = '/business/update/isactive';
+//     return api.update(`${baseUrl}`, data); // Pass the data to the API
+// }
+// function outletUpdateIsActive(data: any) {
+//     const baseUrl = '/outlet/update/isactive';
+//     return api.update(`${baseUrl}`, data); // Pass the data to the API
+// }
 
-function itemUpdateIsActive(data: any) {
-    const baseUrl = '/item/update/isactive';
-    return api.update(`${baseUrl}`, data);
-}
+// function updateOutletPrice(data: any) {
+//     const baseUrl = '/item/update/outlet/price';
+//     return api.update(`${baseUrl}`, data);
+// }
 
-function itemUpdateDisable(data: any) {
-    const baseUrl = '/item/update/disable';
-    return api.update(`${baseUrl}`, data);
-}
+// function registerItem(data: any) {
+//     const baseUrl = '/item/register';
+//     return api.create(`${baseUrl}`, data);
+// }
 
-function categoryUpdateDisable(data: any) {
-    const baseUrl = '/category/update/disable';
-    return api.update(`${baseUrl}`, data);
-}
+// function updateItem(data: any) {
+//     const baseUrl = '/item/update';
+//     return api.update(`${baseUrl}`, data);
+// }
 
-function categoryOutletLists(data: any) {
-    const baseUrl = '/category/outlet/lists';
-    return api.create(`${baseUrl}`, data);
-}
-function categoryRegister(data: any) {
-    const baseUrl = '/category/register';
-    return api.create(`${baseUrl}`, data);
-}
-function categoryDelete(data: any) {
-    const baseUrl = '/category/delete';
-    return api.delete(`${baseUrl}`, data);
-}
-function categoryUpdate(data: any) {
-    const baseUrl = '/category/update';
-    return api.update(`${baseUrl}`, data);
-}
-function categoryItemList(data: any) {
-    const baseUrl = '/category/item/list';
-    return api.create(`${baseUrl}`, data);
-}
-function categoryUpdateIsActive(data: any) {
-    const baseUrl = '/category/update/isactive';
-    return api.update(`${baseUrl}`, data);
-}
+// function deleteItem(data: any) {
+//     const baseUrl = '/item/delete';
+//     return api.delete(`${baseUrl}`, data);
+// }
 
-function businessDetails(data: any) {
-    const baseUrl = '/business/details';
-    return api.create(`${baseUrl}`, data);
-}
+// function itemUpdateIsActive(data: any) {
+//     const baseUrl = '/item/update/isactive';
+//     return api.update(`${baseUrl}`, data);
+// }
 
-function recipeIngredientAdd(data: any) {
-    const baseUrl = '/recipe/ingredient/add';
-    return api.create(`${baseUrl}`, data);
-}
+// function itemUpdateDisable(data: any) {
+//     const baseUrl = '/item/update/disable';
+//     return api.update(`${baseUrl}`, data);
+// }
 
-function recipeIngredientList(data: any) {
-    const baseUrl = '/recipe/ingredient/list';
-    return api.create(`${baseUrl}`, data);
-}
+// function categoryUpdateDisable(data: any) {
+//     const baseUrl = '/category/update/disable';
+//     return api.update(`${baseUrl}`, data);
+// }
 
-function recipeIngredientUpdateStatus(data: any) {
-    const baseUrl = '/recipe/ingredient/update/status';
-    return api.update(`${baseUrl}`, data);
-}
+// function categoryOutletLists(data: any) {
+//     const baseUrl = '/category/outlet/lists';
+//     return api.create(`${baseUrl}`, data);
+// }
+// function categoryRegister(data: any) {
+//     const baseUrl = '/category/register';
+//     return api.create(`${baseUrl}`, data);
+// }
+// function categoryDelete(data: any) {
+//     const baseUrl = '/category/delete';
+//     return api.delete(`${baseUrl}`, data);
+// }
+// function categoryUpdate(data: any) {
+//     const baseUrl = '/category/update';
+//     return api.update(`${baseUrl}`, data);
+// }
+// function categoryItemList(data: any) {
+//     const baseUrl = '/category/item/list';
+//     return api.create(`${baseUrl}`, data);
+// }
+// function categoryUpdateIsActive(data: any) {
+//     const baseUrl = '/category/update/isactive';
+//     return api.update(`${baseUrl}`, data);
+// }
 
-function recipeIngredientDelete(data: any) {
-    const baseUrl = '/recipe/ingredient/delete';
-    return api.delete(`${baseUrl}`, data);
-}
+// function businessDetails(data: any) {
+//     const baseUrl = '/business/details';
+//     return api.create(`${baseUrl}`, data);
+// }
 
-function recipeAdd(data: any) {
-    const baseUrl = '/recipe/add';
-    return api.create(`${baseUrl}`, data);
-}
+// function recipeIngredientAdd(data: any) {
+//     const baseUrl = '/recipe/ingredient/add';
+//     return api.create(`${baseUrl}`, data);
+// }
 
-function recipeList(data: any) {
-    const baseUrl = '/recipe/list';
-    return api.create(`${baseUrl}`, data);
-}
+// function recipeIngredientList(data: any) {
+//     const baseUrl = '/recipe/ingredient/list';
+//     return api.create(`${baseUrl}`, data);
+// }
 
-function recipeUpdate(data: any) {
-    const baseUrl = '/recipe/update';
-    return api.update(`${baseUrl}`, data);
-}
+// function recipeIngredientUpdateStatus(data: any) {
+//     const baseUrl = '/recipe/ingredient/update/status';
+//     return api.update(`${baseUrl}`, data);
+// }
 
-function recipeDelete(data: any) {
-    const baseUrl = '/recipe/delete';
-    return api.delete(`${baseUrl}`, data);
-}
+// function recipeIngredientDelete(data: any) {
+//     const baseUrl = '/recipe/ingredient/delete';
+//     return api.delete(`${baseUrl}`, data);
+// }
 
-export {
-    login,
-    logout,
-    signup,
-    forgotPassword,
-    businessList,
-    businessRegister,
-    languageList,
-    updateBusinessList,
-    deleteBusinessList,
-    registerOutlet,
-    updateOutlet,
-    deleteOutlet,
-    registerBusinessUser,
-    updateBusinessUser,
-    deleteBusinessUser,
-    businessUpdateIsActive,
-    outletUpdateIsActive,
-    updateOutletPrice,
-    registerItem,
-    updateItem,
-    deleteItem,
-    itemUpdateIsActive,
-    itemUpdateDisable,
-    categoryUpdateDisable,
-    categoryOutletLists,
-    categoryRegister,
-    categoryDelete,
-    categoryUpdate,
-    categoryItemList,
-    categoryUpdateIsActive,
-    businessDetails,
-    recipeIngredientAdd,
-    recipeIngredientDelete,
-    recipeIngredientList,
-    recipeIngredientUpdateStatus,
-    recipeAdd,
-    recipeDelete,
-    recipeUpdate,
-    recipeList,
-};
+// function recipeAdd(data: any) {
+//     const baseUrl = '/recipe/add';
+//     return api.create(`${baseUrl}`, data);
+// }
+
+// function recipeList(data: any) {
+//     const baseUrl = '/recipe/list';
+//     return api.create(`${baseUrl}`, data);
+// }
+
+// function recipeUpdate(data: any) {
+//     const baseUrl = '/recipe/update';
+//     return api.update(`${baseUrl}`, data);
+// }
+
+// function recipeDelete(data: any) {
+//     const baseUrl = '/recipe/delete';
+//     return api.delete(`${baseUrl}`, data);
+// }
+
+// export {
+//     login,
+//     logout,
+//     signup,
+//     forgotPassword,
+//     businessList,
+//     businessRegister,
+//     languageList,
+//     updateBusinessList,
+//     deleteBusinessList,
+//     registerOutlet,
+//     updateOutlet,
+//     deleteOutlet,
+//     registerBusinessUser,
+//     updateBusinessUser,
+//     deleteBusinessUser,
+//     businessUpdateIsActive,
+//     outletUpdateIsActive,
+//     updateOutletPrice,
+//     registerItem,
+//     updateItem,
+//     deleteItem,
+//     itemUpdateIsActive,
+//     itemUpdateDisable,
+//     categoryUpdateDisable,
+//     categoryOutletLists,
+//     categoryRegister,
+//     categoryDelete,
+//     categoryUpdate,
+//     categoryItemList,
+//     categoryUpdateIsActive,
+//     businessDetails,
+//     recipeIngredientAdd,
+//     recipeIngredientDelete,
+//     recipeIngredientList,
+//     recipeIngredientUpdateStatus,
+//     recipeAdd,
+//     recipeDelete,
+//     recipeUpdate,
+//     recipeList,
+// };
 
 // import { APICore } from './apiCore';
 

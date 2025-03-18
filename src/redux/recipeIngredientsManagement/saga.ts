@@ -5,7 +5,7 @@ import {
     recipeIngredientDelete,
     recipeIngredientList,
     recipeIngredientUpdateStatus,
-} from '../../helpers/api/auth';
+} from '../../helpers/api';
 
 import {
     recipeIngredientAddSuccess,

@@ -1,6 +1,6 @@
 import { all, fork, put, call, takeEvery } from 'redux-saga/effects';
 
-import { recipeAdd, recipeList, recipeDelete, recipeUpdate } from '../../helpers/api/auth';
+import { recipeAdd, recipeList, recipeDelete, recipeUpdate } from '../../helpers/api';
 
 import {
     recipeAddSuccess,

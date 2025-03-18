@@ -14,7 +14,7 @@ import {
     businessUpdateIsActive,
     outletUpdateIsActive,
     businessDetails,
-} from '../../helpers/api/auth';
+} from '../../helpers/api';
 import {
     businessApiResponseSuccess,
     businessApiResponseError,

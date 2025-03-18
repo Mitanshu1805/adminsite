@@ -6,7 +6,7 @@ import {
     deleteItem,
     itemUpdateIsActive,
     itemUpdateDisable,
-} from '../../helpers/api/auth';
+} from '../../helpers/api';
 
 import {
     updateOutletPriceSuccess,

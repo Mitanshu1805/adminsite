@@ -7,7 +7,7 @@ import {
     categoryUpdate,
     categoryItemList,
     categoryUpdateIsActive,
-} from '../../helpers/api/auth';
+} from '../../helpers/api';
 
 import {
     categoryUpdateDisableSuccess,

@@ -19,7 +19,7 @@ import { FaRegEdit, FaTrash } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import RegisterOutletModal from './RegisterNewOutlet';
 import RegisterBusinessUserModal from './RegisterNewBusinessUser';
-import { categoryItemList } from '../../../helpers/api/auth';
+// import { categoryItemList } from '../../../helpers/api/auth';
 import { FaHamburger } from 'react-icons/fa';
 import ToggleSwitch from '../MenuManagement/ToggleSwitch';
 
