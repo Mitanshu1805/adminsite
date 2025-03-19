@@ -52,7 +52,7 @@ const Recipe = () => {
         <Card>
             <Card.Body>
                 <div className="d-flex justify-content-between align-items-center mb-3">
-                    <h4 className="header-title">Recipe List</h4>
+                    <h4 className="header-title">Ingredient List</h4>
                     <Button variant="primary" onClick={handleAddRecipe}>
                         Add New Recipe
                     </Button>

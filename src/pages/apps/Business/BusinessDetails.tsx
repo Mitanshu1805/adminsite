@@ -22,6 +22,7 @@ import RegisterBusinessUserModal from './RegisterNewBusinessUser';
 // import { categoryItemList } from '../../../helpers/api/auth';
 import { FaHamburger } from 'react-icons/fa';
 import ToggleSwitch from '../MenuManagement/ToggleSwitch';
+import RegisterIngredientModal from '../MenuManagement/RegisterNewIngredient';
 
 interface Outlet {
     outlet_id: string;
@@ -82,6 +83,7 @@ const BusinessDetails: React.FC = () => {
     const businesses = appSelector((state: RootState) => state.business.businesses || []);
     const navigate = useNavigate();
     const [showOutletModal, setShowOutletModal] = useState(false);
+    const [showIngredientModal, setShowIngredientModal] = useState(false);
     const [showBusinessUserModal, setShowBusinessUserModal] = useState(false);
     const [message, setMessage] = useState<string>('');
     const [toggleStates, setToggleStates] = useState<{ [key: string]: boolean }>({});
@@ -152,6 +154,16 @@ const BusinessDetails: React.FC = () => {
 
     const handleRecipe = () => {
         navigate(`/apps/recipe`);
+    };
+    const handleAddIngredient = () => {
+        if (!showIngredientModal) {
+            setShowIngredientModal(true);
+        }
+    };
+
+    const handleCloseIngredientModal = () => {
+        console.log('Closing modal');
+        setShowIngredientModal(false); // Hide the modal when clicked
     };
 
     const handleOutletMenu = (business_id: string, outlet_id: string) => {
@@ -343,18 +355,23 @@ const BusinessDetails: React.FC = () => {
                             </div>
 
                             <div>
-                                {/* <Button className="me-2" onClick={handleRecipe}>
-                                    Recipe
-                                </Button> */}
+                                <Button className="me-2" onClick={handleAddIngredient}>
+                                    + Add Ingredient
+                                </Button>
+                                <RegisterIngredientModal
+                                    show={showIngredientModal}
+                                    onClose={handleCloseIngredientModal}
+                                    business_id={selectedBusiness.business_id}
+                                />
                                 <Button className="me-2" onClick={() => handleManageMenu(selectedBusiness.business_id)}>
                                     Manage Menu
                                 </Button>
-                                <Button variant="outline-primary" className="me-2">
+                                {/* <Button variant="outline-primary" className="me-2">
                                     <FaRegEdit size={20} />
                                 </Button>
                                 <Button variant="outline-danger">
                                     <FaTrash size={20} />
-                                </Button>
+                                </Button> */}
                             </div>
                         </div>
                         <div>
