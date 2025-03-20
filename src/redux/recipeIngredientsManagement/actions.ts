@@ -5,6 +5,7 @@ export interface IngredientList {
     ingredient_id: string;
     is_active: boolean;
     name: string;
+    unit: string;
 }
 
 export type RecipeIngredientsManagementAction =
@@ -12,6 +13,7 @@ export type RecipeIngredientsManagementAction =
           type: typeof RecipeIngredientsManagementActionTypes.RECIPE_INGREDIENT_ADD;
           payload: {
               name: string;
+              unit: string;
               business_id: string;
           };
       }
@@ -67,9 +69,13 @@ export type RecipeIngredientsManagementAction =
           payload: { error: string };
       };
 
-export const recipeIngredientAdd = (name: string, business_id: string): RecipeIngredientsManagementAction => ({
+export const recipeIngredientAdd = (
+    name: string,
+    business_id: string,
+    unit: string
+): RecipeIngredientsManagementAction => ({
     type: RecipeIngredientsManagementActionTypes.RECIPE_INGREDIENT_ADD,
-    payload: { name, business_id },
+    payload: { name, business_id, unit },
 });
 
 export const recipeIngredientAddSuccess = (message: string): RecipeIngredientsManagementAction => ({

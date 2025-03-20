@@ -6,6 +6,7 @@ interface Ingredient {
     outlet_id: string;
     business_id: string;
     is_active?: boolean;
+    unit: string;
 }
 
 // Define State Type

@@ -2,7 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Card, Table, Button, Modal, Form } from 'react-bootstrap';
 import { useRedux } from '../../../hooks';
-import { recipeIngredientList, recipeIngredientAdd, recipeList, recipeAdd } from '../../../redux/actions';
+import {
+    recipeIngredientList,
+    recipeIngredientAdd,
+    recipeIngredientDelete,
+    recipeList,
+    recipeAdd,
+    recipeIngredientUpdateStatus,
+} from '../../../redux/actions';
 import { RootState } from '../../../redux/store';
 import { FaRegEdit, FaTrash } from 'react-icons/fa';
 import ToggleSwitch from '../MenuManagement/ToggleSwitch';
@@ -21,6 +28,8 @@ const Recipe = () => {
     const item_id = location.state?.item_id;
     const [showRecipeModal, setShowRecipeModal] = useState(false);
     const ingredients = appSelector((state: RootState) => state.ingredient.ingredients || []);
+    const [toggleStates, setToggleStates] = useState<{ [key: string]: boolean }>({});
+    const [message, setMessage] = useState<string>('');
 
     const business_id = location.state?.business_id;
 
@@ -35,6 +44,29 @@ const Recipe = () => {
             dispatch(recipeList(business_id));
         }
     }, [dispatch, business_id]);
+
+    const handleDeleteIngredient = (ingredient_id: string) => {
+        const confirmDeleteIngredient = window.confirm('Are you sure you want to delete this Ingredient?');
+        if (confirmDeleteIngredient) {
+            console.log('Ingredient ID: ', ingredient_id);
+            dispatch(recipeIngredientDelete(ingredient_id));
+            setMessage('Ingredient deleted');
+        }
+    };
+
+    const ingredientUpdateToggle = (business_id: string, is_active: boolean) => {
+        setToggleStates((prev) => ({
+            ...prev,
+            [business_id]: is_active,
+        }));
+
+        dispatch(recipeIngredientUpdateStatus(business_id, is_active));
+
+        setTimeout(() => {
+            setMessage('');
+            dispatch(recipeIngredientList(business_id));
+        }, 500);
+    };
 
     const handleAddRecipe = () => {
         console.log('RECIPE ADD CLICKED');
@@ -86,11 +118,19 @@ const Recipe = () => {
                                     <tr key={ingredient.ingredient_id}>
                                         <td>{ingredient.name}</td>
                                         <td>
-                                            <ToggleSwitch checked={ingredient.is_active} />
+                                            {/* <ToggleSwitch checked={ingredient.is_active} /> */}
+                                            <ToggleSwitch
+                                                checked={toggleStates[business_id] ?? ingredient.is_active}
+                                                onChange={(checked) => ingredientUpdateToggle(business_id, checked)}
+                                            />
                                         </td>
                                         <td>
                                             <FaRegEdit size={20} style={{ cursor: 'pointer', marginRight: '10px' }} />
-                                            <FaTrash size={20} style={{ cursor: 'pointer', color: 'red' }} />
+                                            <FaTrash
+                                                size={20}
+                                                style={{ cursor: 'pointer', color: 'red' }}
+                                                onClick={() => handleDeleteIngredient(ingredient.ingredient_id)}
+                                            />
                                         </td>
                                     </tr>
                                 ))
