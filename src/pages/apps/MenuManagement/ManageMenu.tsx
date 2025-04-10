@@ -12,6 +12,7 @@ import './ManageMenu.css';
 import EditCategory from './EditCategory';
 import ToggleSwitch from './ToggleSwitch';
 import { itemUpdateIsActive } from '../../../redux/menuManagementItem/actions';
+import ConfirmDeleteModal from '../../../components/ConfirmDeleteItem';
 
 interface CategoryItem {
     business_id: string;
@@ -47,6 +48,10 @@ const ManageMenu: React.FC = () => {
     const [message, setMessage] = useState<string>('');
     const categories = appSelector((state: RootState) => state.category.categories || []);
     const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+    const [categoryDelete, setCategoryDelete] = useState<string | null>(null);
+    const [showCategoryDeleteModal, setShowCategoryDeleteModal] = useState(false);
+    const [itemDelete, setItemDelete] = useState<string | null>(null);
+    const [showItemDeleteModal, setShowItemDeleteModal] = useState(false);
 
     const navigate = useNavigate();
 
@@ -152,6 +157,20 @@ const ManageMenu: React.FC = () => {
             }, 500);
         }
     };
+    const handleItemDelete = (item_id: string) => {
+        setItemDelete(item_id);
+        setShowItemDeleteModal(true);
+    };
+
+    const confirmItemDelete = () => {
+        if (itemDelete) {
+            dispatch(deleteItem(itemDelete));
+        }
+        setTimeout(() => {
+            dispatch(categoryItemList(business_id));
+        }, 500);
+        setShowItemDeleteModal(false);
+    };
 
     const handleDeleteCategory = (category_id: string) => {
         const confirmDeletecategory = window.confirm('Are you sure you want to delete this Category?');
@@ -163,6 +182,21 @@ const ManageMenu: React.FC = () => {
                 dispatch(categoryItemList(business_id!));
             }, 500);
         }
+    };
+
+    const handleCategoryDelete = (category_id: string) => {
+        setCategoryDelete(category_id);
+        setShowCategoryDeleteModal(true);
+    };
+
+    const confirmCategoryDelete = () => {
+        if (categoryDelete) {
+            dispatch(deleteCategory(categoryDelete));
+        }
+        setTimeout(() => {
+            dispatch(categoryItemList(business_id));
+        }, 500);
+        setShowCategoryDeleteModal(false);
     };
 
     const handleEditItem = (item_id: string, category_id: string) => {
@@ -257,7 +291,14 @@ const ManageMenu: React.FC = () => {
                             <FaTrash
                                 size={20}
                                 style={{ cursor: 'pointer', color: 'red' }}
-                                onClick={() => handleDeleteCategory(category.category_id)}
+                                onClick={() => handleCategoryDelete(category.category_id)}
+                            />
+                            <ConfirmDeleteModal
+                                show={showCategoryDeleteModal}
+                                onClose={() => setShowCategoryDeleteModal(false)}
+                                onConfirm={confirmCategoryDelete}
+                                title="Delete this Category"
+                                message="Are you sure you want to delete this Category? This action cannot be undone."
                             />
                         </div>
                     </div>
@@ -294,17 +335,34 @@ const ManageMenu: React.FC = () => {
                                     </button>
                                 </div>
                                 <div className="item-actions">
-                                    <button
+                                    {/* <button
                                         className="edit-button"
                                         onClick={() => handleEditItem(item.item_id, item.category_id)}>
                                         Edit
-                                    </button>
+                                    </button> */}
+                                    <FaRegEdit
+                                        size={20}
+                                        style={{ cursor: 'pointer', marginRight: '10px' }}
+                                        onClick={() => handleEditItem(item.item_id, item.category_id)}
+                                    />
                                 </div>
 
                                 <div className="item-actions">
-                                    <button className="delete-button" onClick={() => handleDeleteItem(item.item_id)}>
+                                    {/* <button className="delete-button" onClick={() => handleDeleteItem(item.item_id)}>
                                         Delete
-                                    </button>
+                                    </button> */}
+                                    <FaTrash
+                                        size={20}
+                                        style={{ cursor: 'pointer', color: 'red' }}
+                                        onClick={() => handleItemDelete(item.item_id)}
+                                    />
+                                    <ConfirmDeleteModal
+                                        show={showItemDeleteModal}
+                                        onClose={() => setShowItemDeleteModal(false)}
+                                        onConfirm={confirmItemDelete}
+                                        title="Delete this Item"
+                                        message="Are you sure you want to delete this Item? This action cannot be undone."
+                                    />
                                 </div>
                                 <ToggleSwitch
                                     checked={toggleStates[item.item_id] || false}

@@ -43,6 +43,7 @@ export type RecipeManagementAction =
           type: typeof RecipeManagementActionTypes.RECIPE_LIST;
           payload: {
               business_id: string;
+              item_id: string;
           };
       }
     | {
@@ -95,10 +96,11 @@ export const recipeAddError = (error: string): RecipeManagementAction => ({
     payload: { error },
 });
 
-export const recipeList = (business_id: string): RecipeManagementAction => ({
+export const recipeList = (business_id: string, item_id: string): RecipeManagementAction => ({
     type: RecipeManagementActionTypes.RECIPE_LIST,
     payload: {
         business_id,
+        item_id,
     },
 });
 

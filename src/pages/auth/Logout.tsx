@@ -45,6 +45,8 @@ const LogoutIcon = () => {
 /* bottom link */
 const BottomLink = () => {
     const { t } = useTranslation();
+    console.log('Rendering BottomLink...');
+
     return (
         <Row className="mt-3">
             <Col xs={12} className="text-center">
@@ -69,6 +71,7 @@ const Logout = () => {
 
     useEffect(() => {
         dispatch(logoutUser());
+        localStorage.clear();
     }, [dispatch]);
 
     return (

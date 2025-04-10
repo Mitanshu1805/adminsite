@@ -13,6 +13,7 @@ import { RootState } from '../../../redux/store';
 import { setAuthorization, getUserFromLocalStorage } from '../../../helpers/api/apiCore';
 import { FaRegEdit, FaTrash } from 'react-icons/fa';
 import ToggleSwitch from '../MenuManagement/ToggleSwitch';
+import ConfirmDeleteModal from '../../../components/ConfirmDeleteItem';
 
 interface Outlet {
     outlet_id: string;
@@ -64,7 +65,9 @@ const BusinessDetails = () => {
     const [toggleStates, setToggleStates] = useState<{ [key: string]: boolean }>({});
 
     const [isEditing, setIsEditing] = useState<boolean>(false); // Separate state for editing
-    const [editedBusiness, setEditedBusiness] = useState<Business | null>(null); // Store changes here
+    const [editedBusiness, setEditedBusiness] = useState<Business | null>(null);
+    const [businessDelete, setBusinessDelete] = useState<string | null>(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     useEffect(() => {
         if (id) {
@@ -201,6 +204,21 @@ const BusinessDetails = () => {
                 dispatch(businessList());
             });
         }
+    };
+
+    const handleDeleteBusiness = (business_id: string) => {
+        setBusinessDelete(business_id);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDelete = () => {
+        if (businessDelete) {
+            dispatch(deleteBusinessList(businessDelete));
+        }
+        setTimeout(() => {
+            dispatch(businessList());
+        }, 500);
+        setShowDeleteModal(false);
     };
 
     const handleLogoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -391,7 +409,16 @@ const BusinessDetails = () => {
                                                             <FaTrash
                                                                 size={20}
                                                                 style={{ cursor: 'pointer', color: 'red' }}
-                                                                onClick={() => handleDeleteClick(business.business_id)}
+                                                                onClick={() =>
+                                                                    handleDeleteBusiness(business.business_id)
+                                                                }
+                                                            />
+                                                            <ConfirmDeleteModal
+                                                                show={showDeleteModal}
+                                                                onClose={() => setShowDeleteModal(false)}
+                                                                onConfirm={confirmDelete}
+                                                                title="Delete this Business"
+                                                                message="Are you sure you want to delete this Business? This action cannot be undone."
                                                             />
                                                         </td>
                                                     </>

@@ -83,6 +83,8 @@ function* login({ payload: { email, password }, type }: UserData): SagaIterator 
     } catch (error: any) {
         console.error('Login error:', error);
         yield put(authApiResponseError(AuthActionTypes.LOGIN_USER, error));
+        console.log('error>>>>>>>>', error);
+
         api.setLoggedInUser(null);
         setAuthorization(null);
     }

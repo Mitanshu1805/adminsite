@@ -5,6 +5,9 @@ import { useRedux } from '../../../hooks';
 import { RootState } from '../../../redux/store';
 import ToggleSwitch from './ToggleSwitch';
 import './ManageMenu.css';
+import OutletPriceUpdateModal from './OutletPriceUpdateModal';
+import { deleteItem, updateOutletPrice } from '../../../redux/actions';
+import ConfirmDeleteModal from '../../../components/ConfirmDeleteItem';
 
 interface Item {
     item_id: string;
@@ -30,6 +33,11 @@ const OutletMenu: React.FC = () => {
     const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
     const [toggleStates, setToggleStates] = useState<{ [key: string]: boolean }>({});
 
+    const [modalOpen, setModalOpen] = useState(false);
+    const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+    const [price, setPrice] = useState<number | ''>('');
+    const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
     const categories = appSelector((state: RootState) => state.category.categories) || [];
 
     useEffect(() => {
@@ -48,23 +56,29 @@ const OutletMenu: React.FC = () => {
         setSelectedCategoryId(categoryId);
     };
 
-    // const handleCategoryToggle = (categoryId: string, checked: boolean) => {
-    //     setToggleStates((prevState) => ({
-    //         ...prevState,
-    //         [categoryId]: checked,
-    //     }));
-
-    //     if (business_id && outlet_id) {
-    //         dispatch(categoryUpdateIsActive(business_id, outlet_id, categoryId, checked));
-    //     }
-    // };
-
     const handleEditItem = (itemId: string, categoryId: string) => {
         console.log(`Edit item ${itemId} in category ${categoryId}`);
+        setSelectedItemId(itemId);
+        setModalOpen(true);
     };
 
     const handleDeleteItem = (itemId: string) => {
         console.log(`Delete item ${itemId}`);
+        dispatch(deleteItem(itemId));
+    };
+    const handleDeleteClick = (itemId: string) => {
+        setItemToDelete(itemId);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDelete = () => {
+        if (itemToDelete) {
+            dispatch(deleteItem(itemToDelete));
+            setTimeout(() => {
+                dispatch(categoryItemList(business_id, outlet_id));
+            }, 500);
+        }
+        setShowDeleteModal(false);
     };
 
     const handleItemToggle = (itemId: string, checked: boolean) => {
@@ -117,7 +131,7 @@ const OutletMenu: React.FC = () => {
                                     onClick={() => handleEditItem(item.item_id, selectedCategoryId!)}>
                                     Edit
                                 </button>
-                                <button className="delete-button" onClick={() => handleDeleteItem(item.item_id)}>
+                                <button className="delete-button" onClick={() => handleDeleteClick(item.item_id)}>
                                     Delete
                                 </button>
                             </div>
@@ -131,6 +145,40 @@ const OutletMenu: React.FC = () => {
                     <p className="no-items-message">No items available</p>
                 )}
             </div>
+            {modalOpen && selectedItemId && (
+                <OutletPriceUpdateModal
+                    show={modalOpen}
+                    outletId={outlet_id}
+                    itemId={selectedItemId}
+                    price={price}
+                    previousPrice={filteredItems.find((item: any) => item.item_id === selectedItemId)?.price}
+                    onChange={(val) => setPrice(val)}
+                    onClose={() => {
+                        setModalOpen(false);
+                        setPrice('');
+                    }}
+                    onSave={async () => {
+                        if (price !== '') {
+                            // Dispatch the update price action and wait for it to complete
+                            await dispatch(updateOutletPrice(outlet_id, selectedItemId, price));
+
+                            // Close the modal and reset the price after the price update
+                            setModalOpen(false);
+                            setPrice('');
+
+                            // Refresh the category item list
+                            dispatch(categoryItemList(business_id, outlet_id));
+                        }
+                    }}
+                />
+            )}
+            <ConfirmDeleteModal
+                show={showDeleteModal}
+                onClose={() => setShowDeleteModal(false)}
+                onConfirm={confirmDelete}
+                title="Delete this Item"
+                message="Are you sure you want to delete this item? This action cannot be undone."
+            />
         </div>
     );
 };

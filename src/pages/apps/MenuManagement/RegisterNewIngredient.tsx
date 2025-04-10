@@ -11,7 +11,7 @@ interface RegisterIngredientModalProps {
 }
 
 const RegisterIngredientModal: React.FC<RegisterIngredientModalProps> = ({ show, onClose, business_id }) => {
-    const [name, setName] = useState('');
+    const [ingredient_name, setName] = useState('');
     const [unit, setUnit] = useState('');
 
     const dispatch = useDispatch();
@@ -29,7 +29,7 @@ const RegisterIngredientModal: React.FC<RegisterIngredientModalProps> = ({ show,
         //     name: name,
         // };
 
-        dispatch(recipeIngredientAdd(name, business_id, unit));
+        dispatch(recipeIngredientAdd(ingredient_name, business_id, unit));
 
         setName('');
         setUnit('');
@@ -46,7 +46,7 @@ const RegisterIngredientModal: React.FC<RegisterIngredientModalProps> = ({ show,
                 <Form>
                     <Form.Group controlId="name">
                         <Form.Label>Ingredient Name</Form.Label>
-                        <Form.Control type="text" value={name} onChange={(e) => setName(e.target.value)} />
+                        <Form.Control type="text" value={ingredient_name} onChange={(e) => setName(e.target.value)} />
                     </Form.Group>
                     <Form.Group controlId="unit">
                         <Form.Label>Ingredient Unit</Form.Label>

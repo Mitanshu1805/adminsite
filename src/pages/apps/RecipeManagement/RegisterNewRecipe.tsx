@@ -95,7 +95,7 @@ const RegisterNewRecipeModal: React.FC<RegisterNewRecipeModalProps> = ({ show, o
 
         dispatch(recipeAdd(newRecipe));
         setTimeout(() => {
-            dispatch(recipeList(business_id));
+            dispatch(recipeList(business_id, item_id));
             onClose();
         }, 500);
     };

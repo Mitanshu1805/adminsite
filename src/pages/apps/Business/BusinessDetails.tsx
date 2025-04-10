@@ -23,6 +23,7 @@ import RegisterBusinessUserModal from './RegisterNewBusinessUser';
 import { FaHamburger } from 'react-icons/fa';
 import ToggleSwitch from '../MenuManagement/ToggleSwitch';
 import RegisterIngredientModal from '../MenuManagement/RegisterNewIngredient';
+import ConfirmDeleteModal from '../../../components/ConfirmDeleteItem';
 
 interface Outlet {
     outlet_id: string;
@@ -98,6 +99,17 @@ const BusinessDetails: React.FC = () => {
         loading: boolean;
         error: string | null;
     };
+    // const [deleteOutletModal, setDeleteOutletModal] = useState<string | null>(null);
+    const [deleteOutletModal, setDeleteOutletModal] = useState<{ outlet_id: string; business_id: string } | null>(null);
+
+    const [showDeleteOutletModal, setShowDeleteOutletModal] = useState(false);
+
+    const [deleteBusinessUserModal, setDeleteBusinessUserModal] = useState<{
+        user_id: string;
+        business_id: string;
+    } | null>(null);
+
+    const [showDeleteBusinessUserModal, setShowDeleteBusinessUserModal] = useState(false);
 
     useEffect(() => {
         console.log('Dispatching actions for business list');
@@ -183,6 +195,21 @@ const BusinessDetails: React.FC = () => {
         }
     };
 
+    const handleDeleteOutletClick = (outlet_id: string, business_id: string) => {
+        setDeleteOutletModal({ outlet_id, business_id });
+        setShowDeleteOutletModal(true);
+    };
+
+    const confirmOutletDelete = () => {
+        if (deleteOutletModal) {
+            dispatch(deleteOutlet(deleteOutletModal.outlet_id, deleteOutletModal.business_id));
+        }
+        setTimeout(() => {
+            dispatch(businessDetails(id));
+        }, 500);
+        setShowDeleteOutletModal(false);
+    };
+
     const handleDeleteBusinessUser = (user_id: string, business_id: string) => {
         const confirmDeleteBusinessUser = window.confirm('Are you sure you want to delete this Outlet?');
         if (confirmDeleteBusinessUser) {
@@ -195,6 +222,21 @@ const BusinessDetails: React.FC = () => {
             //     dispatch(deleteOutlet(outlet_id, business_id));
             // });
         }
+    };
+
+    const handleDeleteBusinessUserClick = (user_id: string, business_id: string) => {
+        setDeleteBusinessUserModal({ user_id, business_id });
+        setShowDeleteBusinessUserModal(true);
+    };
+
+    const confirmBusinessUserDelete = () => {
+        if (deleteBusinessUserModal) {
+            dispatch(deleteBusinessUser(deleteBusinessUserModal.user_id, deleteBusinessUserModal.business_id));
+        }
+        setTimeout(() => {
+            dispatch(businessDetails(id));
+        }, 500);
+        setShowDeleteBusinessUserModal(false);
     };
 
     const handleRegisterNewOutlet = () => {
@@ -444,15 +486,19 @@ const BusinessDetails: React.FC = () => {
                                             </td>
                                             <td>
                                                 {isOutletEditing && selectedOutlet?.outlet_id === outlet.outlet_id ? (
-                                                    <input
-                                                        type="text"
+                                                    <Form.Select
                                                         value={editedOutlet?.outlet_type || ''}
                                                         onChange={(e) =>
                                                             setEditedOutlet((prev) =>
                                                                 prev ? { ...prev, outlet_type: e.target.value } : null
                                                             )
-                                                        }
-                                                    />
+                                                        }>
+                                                        <option value="">Select Outlet Type</option>
+                                                        <option value="coco">coco</option>
+                                                        <option value="cofo">cofo</option>
+                                                        <option value="foco">foco</option>
+                                                        <option value="fofo">fofo</option>
+                                                    </Form.Select>
                                                 ) : (
                                                     outlet.outlet_type
                                                 )}
@@ -604,11 +650,18 @@ const BusinessDetails: React.FC = () => {
                                                             size={20}
                                                             style={{ cursor: 'pointer', color: 'red' }}
                                                             onClick={() =>
-                                                                handleDeleteOutlet(
+                                                                handleDeleteOutletClick(
                                                                     outlet.outlet_id,
                                                                     selectedBusiness.business_id
                                                                 )
                                                             }
+                                                        />
+                                                        <ConfirmDeleteModal
+                                                            show={showDeleteOutletModal}
+                                                            onClose={() => setShowDeleteOutletModal(false)}
+                                                            onConfirm={confirmOutletDelete}
+                                                            title="Delete this Outlet"
+                                                            message="Are you sure you want to delete this Outlet? This action cannot be undone."
                                                         />
                                                     </>
                                                 )}
@@ -776,11 +829,18 @@ const BusinessDetails: React.FC = () => {
                                                             size={20}
                                                             style={{ cursor: 'pointer', color: 'red' }}
                                                             onClick={() =>
-                                                                handleDeleteBusinessUser(
+                                                                handleDeleteBusinessUserClick(
                                                                     business_users.user_id,
                                                                     selectedBusiness.business_id
                                                                 )
                                                             }
+                                                        />
+                                                        <ConfirmDeleteModal
+                                                            show={showDeleteBusinessUserModal}
+                                                            onClose={() => setShowDeleteBusinessUserModal(false)}
+                                                            onConfirm={confirmBusinessUserDelete}
+                                                            title="Delete this BusinessUser"
+                                                            message="Are you sure you want to delete this BusinessUser? This action cannot be undone."
                                                         />
                                                     </>
                                                 )}

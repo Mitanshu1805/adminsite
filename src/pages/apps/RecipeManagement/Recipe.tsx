@@ -18,7 +18,7 @@ import RegisterNewRecipeModal from './RegisterNewRecipe';
 interface IngredientList {
     business_id: string;
     ingredient_id: string;
-    name: string;
+    ingredient_name: string;
     is_active: boolean;
 }
 
@@ -28,6 +28,8 @@ const Recipe = () => {
     const item_id = location.state?.item_id;
     const [showRecipeModal, setShowRecipeModal] = useState(false);
     const ingredients = appSelector((state: RootState) => state.ingredient.ingredients || []);
+    console.log('ingredients>>>>>', ingredients);
+
     const [toggleStates, setToggleStates] = useState<{ [key: string]: boolean }>({});
     const [message, setMessage] = useState<string>('');
 
@@ -41,7 +43,7 @@ const Recipe = () => {
             console.log('Dispatching recipeIngredientList and recipeList');
             dispatch(recipeIngredientList(business_id));
             console.log('Dispatching recipeList with business_id:', business_id);
-            dispatch(recipeList(business_id));
+            dispatch(recipeList(business_id, item_id));
         }
     }, [dispatch, business_id]);
 
@@ -116,7 +118,7 @@ const Recipe = () => {
                             {ingredients.length > 0 ? (
                                 ingredients.map((ingredient: IngredientList) => (
                                     <tr key={ingredient.ingredient_id}>
-                                        <td>{ingredient.name}</td>
+                                        <td>{ingredient.ingredient_name}</td>
                                         <td>
                                             {/* <ToggleSwitch checked={ingredient.is_active} /> */}
                                             <ToggleSwitch
