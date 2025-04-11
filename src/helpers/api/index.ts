@@ -40,3 +40,4 @@ export * from './outlet';
 export * from './item';
 export * from './category';
 export * from './recipe';
+export * from './subAndPlans';

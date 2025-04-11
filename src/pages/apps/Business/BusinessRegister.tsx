@@ -219,6 +219,45 @@ const RegisterBusiness: React.FC = () => {
         setFormSubmitted(false);
     };
 
+    const handleCancel = () => {
+        // Clear form data
+        setFormData({
+            business_name: '',
+            business_logo: null,
+            business_contact: '',
+            business_address: '',
+            gst_no: '',
+            cuisine: '',
+            currency: '',
+            business_users: [
+                {
+                    first_name: '',
+                    last_name: '',
+                    email: '',
+                    phone_number: '',
+                    address: '',
+                },
+            ],
+            outlets: [
+                {
+                    outlet_name: '',
+                    outlet_type: '',
+                    is_primary_outlet: false,
+                    outlet_address: '',
+                    outlet_gst_no: '',
+                    language_id: '',
+                },
+            ],
+        });
+
+        // Clear preview and localStorage
+        setLogoPreview(null);
+        localStorage.removeItem('registerBusinessFormData');
+        setErrors({});
+        setError('');
+        setSuccess('');
+    };
+
     const { steps, currentStepIndex, step, isFirstStep, isLastStep, back, next } = useMultistepForm([
         <BusinessInfoForm
             formData={formData}
@@ -269,6 +308,9 @@ const RegisterBusiness: React.FC = () => {
                                     Back
                                 </Button>
                             )}
+                            <Button variant="danger" type="button" onClick={handleCancel} className="px-4 py-2">
+                                Cancel
+                            </Button>
                             <Button
                                 variant="primary"
                                 onClick={(e) => {

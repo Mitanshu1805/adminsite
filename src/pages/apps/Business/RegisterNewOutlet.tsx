@@ -20,6 +20,12 @@ const RegisterOutletModal: React.FC<RegisterOutletModalProps> = ({ show, onClose
     const [currency, setCurrency] = useState('INR');
     const [isPrimaryOutlet, setIsPrimaryOutlet] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const [outletNameError, setOutletNameError] = useState('');
+    const [outletTypeError, setOutletTypeError] = useState('');
+    const [outletAddressError, setOutletAddressError] = useState('');
+    const [outletGstNumberError, setOutletGstNumberError] = useState('');
+    const [languageIdError, setLanguageIdError] = useState('');
+    const [currencyError, setCurrencyError] = useState('');
 
     const { languages } = useSelector((state: RootState) => state.language) as {
         languages: { id: string; name: string }[];
@@ -49,10 +55,54 @@ const RegisterOutletModal: React.FC<RegisterOutletModalProps> = ({ show, onClose
             setCurrency('INR');
             setIsPrimaryOutlet(false);
             setErrorMessage('');
+            setOutletNameError('');
+            setOutletTypeError('');
+            setOutletAddressError('');
+            setOutletGstNumberError('');
+            setLanguageIdError('');
+            setCurrencyError('');
         }
     }, [show]);
 
     const handleSubmit = () => {
+        let valid = true;
+
+        if (!outletName.trim()) {
+            setOutletNameError('Outlet Name is Required');
+            valid = false;
+        } else {
+            setOutletNameError('');
+        }
+        if (!outletType.trim()) {
+            setOutletTypeError('Outlet Type is Required');
+            valid = false;
+        } else {
+            setOutletTypeError('');
+        }
+        if (!outletAddress.trim()) {
+            setOutletAddressError('Outlet Address is Required');
+            valid = false;
+        } else {
+            setOutletAddressError('');
+        }
+        if (!gstNo.trim()) {
+            setOutletGstNumberError('Outlet GstNumber is Required');
+            valid = false;
+        } else {
+            setOutletGstNumberError('');
+        }
+        if (!languageId.trim()) {
+            setLanguageIdError('LanguageId is Required');
+            valid = false;
+        } else {
+            setLanguageIdError('');
+        }
+        if (!currency.trim()) {
+            setCurrencyError('Currency is Required');
+            valid = false;
+        } else {
+            setCurrencyError('');
+        }
         if (!languageId) {
             setErrorMessage('Please select a language.');
             return;
@@ -93,18 +143,25 @@ const RegisterOutletModal: React.FC<RegisterOutletModalProps> = ({ show, onClose
             </Modal.Header>
             <Modal.Body>
                 <Form>
-                    <Form.Group controlId="outletName">
+                    <Form.Group controlId="outletName" className="mb-3">
                         <Form.Label>Outlet Name</Form.Label>
-                        <Form.Control type="text" value={outletName} onChange={(e) => setOutletName(e.target.value)} />
+                        <Form.Control
+                            type="text"
+                            value={outletName}
+                            onChange={(e) => setOutletName(e.target.value)}
+                            isInvalid={!!outletNameError}
+                        />
+                        <Form.Control.Feedback type="invalid">{outletNameError}</Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group controlId="outletType">
+                    <Form.Group controlId="outletType" className="mb-3">
                         <Form.Label>Outlet Type</Form.Label>
                         <Form.Control
                             as="select"
                             name="outlet_type"
                             value={outletType}
                             onChange={(e) => setOutletType(e.target.value)}
-                            required>
+                            required
+                            isInvalid={!!outletTypeError}>
                             <option value="">Select Outlet Type</option>
                             {outletTypes.map((type, idx) => (
                                 <option key={idx} value={type}>
@@ -112,25 +169,40 @@ const RegisterOutletModal: React.FC<RegisterOutletModalProps> = ({ show, onClose
                                 </option>
                             ))}
                         </Form.Control>
+                        <Form.Control.Feedback type="invalid">{outletTypeError}</Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group controlId="outletAddress">
+                    <Form.Group controlId="outletAddress" className="mb-3">
                         <Form.Label>Address</Form.Label>
                         <Form.Control
                             type="text"
                             value={outletAddress}
                             onChange={(e) => setOutletAddress(e.target.value)}
+                            isInvalid={!!outletAddressError}
                         />
+                        <Form.Control.Feedback type="invalid">{outletAddressError}</Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group controlId="gstNo">
+                    <Form.Group controlId="gstNo" className="mb-3">
                         <Form.Label>GST Number</Form.Label>
-                        <Form.Control type="text" value={gstNo} onChange={(e) => setGstNo(e.target.value)} />
+                        <Form.Control
+                            type="text"
+                            value={gstNo}
+                            onChange={(e) => setGstNo(e.target.value)}
+                            isInvalid={!!outletGstNumberError}
+                        />
+                        <Form.Control.Feedback type="invalid">{outletGstNumberError}</Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group controlId="currency">
+                    <Form.Group controlId="currency" className="mb-3">
                         <Form.Label>Currency</Form.Label>
-                        <Form.Control type="text" value={currency} onChange={(e) => setCurrency(e.target.value)} />
+                        <Form.Control
+                            type="text"
+                            value={currency}
+                            onChange={(e) => setCurrency(e.target.value)}
+                            isInvalid={!!currencyError}
+                        />
+                        <Form.Control.Feedback type="invalid">{currencyError}</Form.Control.Feedback>
                     </Form.Group>
 
-                    <Form.Group controlId="isPrimaryOutlet">
+                    <Form.Group controlId="isPrimaryOutlet" className="mb-3">
                         <Form.Check
                             type="checkbox"
                             label="Set as primary outlet"
@@ -139,13 +211,14 @@ const RegisterOutletModal: React.FC<RegisterOutletModalProps> = ({ show, onClose
                         />
                     </Form.Group>
 
-                    <Form.Group controlId="languageId">
+                    <Form.Group controlId="languageId" className="mb-3">
                         <Form.Label>Language</Form.Label>
                         <Form.Control
                             as="select"
                             value={languageId}
                             onChange={(e) => setLanguageId(e.target.value)}
-                            required>
+                            required
+                            isInvalid={!!languageIdError}>
                             <option value="">Select Language</option>
                             {languages.map((language) => (
                                 <option key={language.id} value={language.id}>
@@ -153,6 +226,7 @@ const RegisterOutletModal: React.FC<RegisterOutletModalProps> = ({ show, onClose
                                 </option>
                             ))}
                         </Form.Control>
+                        <Form.Control.Feedback type="invalid">{languageIdError}</Form.Control.Feedback>
                     </Form.Group>
                 </Form>
             </Modal.Body>

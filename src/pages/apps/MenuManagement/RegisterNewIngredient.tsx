@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import { RootState } from '../../../redux/store';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { recipeIngredientAdd } from '../../../redux/actions';
 
 interface RegisterIngredientModalProps {
@@ -13,6 +12,8 @@ interface RegisterIngredientModalProps {
 const RegisterIngredientModal: React.FC<RegisterIngredientModalProps> = ({ show, onClose, business_id }) => {
     const [ingredient_name, setName] = useState('');
     const [unit, setUnit] = useState('');
+    const [ingredientNameError, setIngredientNameError] = useState('');
+    const [unitError, setUnitError] = useState('');
 
     const dispatch = useDispatch();
 
@@ -20,46 +21,79 @@ const RegisterIngredientModal: React.FC<RegisterIngredientModalProps> = ({ show,
         if (!show) {
             setName('');
             setUnit('');
+            setIngredientNameError('');
+            setUnitError('');
         }
     }, [show]);
 
     const handleSubmit = () => {
-        // const newIngredient = {
-        //     business_id: business_id,
-        //     name: name,
-        // };
+        let valid = true;
+
+        if (!ingredient_name.trim()) {
+            setIngredientNameError('Ingredient name is required.');
+            valid = false;
+        } else {
+            setIngredientNameError('');
+        }
+
+        if (!unit.trim()) {
+            setUnitError('Unit is required.');
+            valid = false;
+        } else {
+            setUnitError('');
+        }
+
+        if (!valid) return;
 
         dispatch(recipeIngredientAdd(ingredient_name, business_id, unit));
 
         setName('');
         setUnit('');
-
         onClose();
     };
 
     return (
-        <Modal show={show} onHide={onClose}>
+        <Modal show={show} onHide={onClose} centered>
             <Modal.Header closeButton>
                 <Modal.Title>Register New Ingredient</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form>
-                    <Form.Group controlId="name">
-                        <Form.Label>Ingredient Name</Form.Label>
-                        <Form.Control type="text" value={ingredient_name} onChange={(e) => setName(e.target.value)} />
+                    <Form.Group controlId="ingredientName" className="mb-3">
+                        <Form.Label>
+                            Ingredient Name <span className="text-danger">*</span>
+                        </Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="e.g., Tomato, Cheese"
+                            value={ingredient_name}
+                            onChange={(e) => setName(e.target.value)}
+                            isInvalid={!!ingredientNameError}
+                        />
+                        <Form.Control.Feedback type="invalid">{ingredientNameError}</Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group controlId="unit">
-                        <Form.Label>Ingredient Unit</Form.Label>
-                        <Form.Control type="text" value={unit} onChange={(e) => setUnit(e.target.value)} />
+
+                    <Form.Group controlId="ingredientUnit" className="mb-3">
+                        <Form.Label>
+                            Unit <span className="text-danger">*</span>
+                        </Form.Label>
+                        <Form.Select value={unit} onChange={(e) => setUnit(e.target.value)} isInvalid={!!unitError}>
+                            <option value="">-- Select Unit --</option>
+                            <option value="gm">gm</option>
+                            <option value="kg">kg</option>
+                            <option value="ml">ml</option>
+                            <option value="l">l</option>
+                        </Form.Select>
+                        <Form.Control.Feedback type="invalid">{unitError}</Form.Control.Feedback>
                     </Form.Group>
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={onClose}>
-                    Close
+                <Button variant="outline-secondary" onClick={onClose}>
+                    Cancel
                 </Button>
                 <Button variant="primary" onClick={handleSubmit}>
-                    Register Ingredient
+                    Add Ingredient
                 </Button>
             </Modal.Footer>
         </Modal>

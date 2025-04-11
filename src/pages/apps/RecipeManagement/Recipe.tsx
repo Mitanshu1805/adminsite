@@ -27,7 +27,7 @@ const Recipe = () => {
     const location = useLocation();
     const item_id = location.state?.item_id;
     const [showRecipeModal, setShowRecipeModal] = useState(false);
-    const ingredients = appSelector((state: RootState) => state.ingredient.ingredients || []);
+    const ingredients = appSelector((state: RootState) => state.ingredient?.ingredients || []);
     console.log('ingredients>>>>>', ingredients);
 
     const [toggleStates, setToggleStates] = useState<{ [key: string]: boolean }>({});
@@ -56,13 +56,13 @@ const Recipe = () => {
         }
     };
 
-    const ingredientUpdateToggle = (business_id: string, is_active: boolean) => {
+    const ingredientUpdateToggle = (ingredient_id: string, is_active: boolean) => {
         setToggleStates((prev) => ({
             ...prev,
-            [business_id]: is_active,
+            [ingredient_id]: is_active,
         }));
 
-        dispatch(recipeIngredientUpdateStatus(business_id, is_active));
+        dispatch(recipeIngredientUpdateStatus(ingredient_id, is_active));
 
         setTimeout(() => {
             setMessage('');
@@ -122,8 +122,10 @@ const Recipe = () => {
                                         <td>
                                             {/* <ToggleSwitch checked={ingredient.is_active} /> */}
                                             <ToggleSwitch
-                                                checked={toggleStates[business_id] ?? ingredient.is_active}
-                                                onChange={(checked) => ingredientUpdateToggle(business_id, checked)}
+                                                checked={toggleStates[ingredient.ingredient_id] ?? ingredient.is_active}
+                                                onChange={(checked) =>
+                                                    ingredientUpdateToggle(ingredient.ingredient_id, checked)
+                                                }
                                             />
                                         </td>
                                         <td>

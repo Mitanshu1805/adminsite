@@ -16,6 +16,11 @@ const RegisterBusinessUserModal: React.FC<RegisterBusinessUserModalProps> = ({ s
     const [email, setEmail] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [address, setAddress] = useState('');
+    const [firstNameError, setFirstNameError] = useState('');
+    const [lastNameError, setLastNameError] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [phoneNumberError, setPhoneNumberError] = useState('');
+    const [addressError, setAddressError] = useState('');
 
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -29,10 +34,49 @@ const RegisterBusinessUserModal: React.FC<RegisterBusinessUserModalProps> = ({ s
             setEmail('');
             setPhoneNumber('');
             setAddress('');
+            setFirstNameError('');
+            setLastNameError('');
+            setEmailError('');
+            setPhoneNumberError('');
+            setAddressError('');
         }
     }, [show]);
 
     const handleSubmit = () => {
+        let valid = true;
+
+        if (!firstName.trim()) {
+            setFirstNameError('First Name is Required');
+            valid = false;
+        } else {
+            setFirstNameError('');
+        }
+        if (!lastName.trim()) {
+            setLastNameError('Last Name is Required');
+            valid = false;
+        } else {
+            setLastNameError('');
+        }
+        if (!email.trim()) {
+            setEmailError('Email is Required');
+            valid = false;
+        } else {
+            setEmailError('');
+        }
+        if (!phoneNumber.trim()) {
+            setPhoneNumberError('Phone Number is Required');
+            valid = false;
+        } else {
+            setPhoneNumberError('');
+        }
+        if (!address.trim()) {
+            setAddressError('Address is Required');
+            valid = false;
+        } else {
+            setAddressError('');
+        }
+
+        if (!valid) return;
         const newBusinessUser = {
             business_id: businessId,
             first_name: firstName,
@@ -63,29 +107,55 @@ const RegisterBusinessUserModal: React.FC<RegisterBusinessUserModalProps> = ({ s
             </Modal.Header>
             <Modal.Body>
                 <Form>
-                    <Form.Group controlId="firstName">
+                    <Form.Group controlId="firstName" className="mb-3">
                         <Form.Label>First Name</Form.Label>
-                        <Form.Control type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+                        <Form.Control
+                            type="text"
+                            value={firstName}
+                            onChange={(e) => setFirstName(e.target.value)}
+                            isInvalid={!!firstNameError}
+                        />
+                        <Form.Control.Feedback type="invalid">{firstNameError}</Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group controlId="lastName">
+                    <Form.Group controlId="lastName" className="mb-3">
                         <Form.Label>Last Name</Form.Label>
-                        <Form.Control type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+                        <Form.Control
+                            type="text"
+                            value={lastName}
+                            onChange={(e) => setLastName(e.target.value)}
+                            isInvalid={!!lastNameError}
+                        />
+                        <Form.Control.Feedback type="invalid">{lastNameError}</Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group controlId="email">
+                    <Form.Group controlId="email" className="mb-3">
                         <Form.Label>Email</Form.Label>
-                        <Form.Control type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
+                        <Form.Control
+                            type="text"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            isInvalid={!!emailError}
+                        />
+                        <Form.Control.Feedback type="invalid">{emailError}</Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group controlId="phoneNumber">
+                    <Form.Group controlId="phoneNumber" className="mb-3">
                         <Form.Label>Phone Number</Form.Label>
                         <Form.Control
                             type="text"
                             value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}
+                            isInvalid={!!phoneNumberError}
                         />
+                        <Form.Control.Feedback type="invalid">{phoneNumberError}</Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group controlId="address">
+                    <Form.Group controlId="address" className="mb-3">
                         <Form.Label>Address</Form.Label>
-                        <Form.Control type="text" value={address} onChange={(e) => setAddress(e.target.value)} />
+                        <Form.Control
+                            type="text"
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)}
+                            isInvalid={!!addressError}
+                        />
+                        <Form.Control.Feedback type="invalid">{addressError}</Form.Control.Feedback>
                     </Form.Group>
                 </Form>
             </Modal.Body>
