@@ -47,7 +47,12 @@ const BusinessOutletsForm: React.FC<BusinessOutletsFormProps> = ({
     const outletTypes = ['coco', 'cofo', 'fofo', 'foco'];
 
     const [outlets, setOutlets] = useState<Outlet[]>(formData.outlets);
-    const [validationErrors, setValidationErrors] = useState<Outlet[]>([]);
+    const [outletNameError, setOutletNameError] = useState('')
+    const [outletTypeError, setOutletTypeError] = useState('')
+    const [outletAddressError, setOutletAddressError] = useState('')
+    const [outletGstNummberError, setOutletGstNummberError] = useState('')
+    const [outletLanguageError, setOutletLanguageError] = useState('')
+    // const [validationErrors, setValidationErrors] = useState<Outlet[]>([]);
 
     useEffect(() => {
         // Fetch languages if not already loaded
@@ -86,26 +91,6 @@ const BusinessOutletsForm: React.FC<BusinessOutletsFormProps> = ({
         onOutletsChange(updatedOutlets);
     };
 
-    const validateOutlet = (outlet: Outlet) => {
-        const errors: any = {};
-
-        // Validate outlet_name
-        if (!outlet.outlet_name) errors.outlet_name = 'Outlet name is required';
-
-        // Validate outlet_type
-        if (!outlet.outlet_type) errors.outlet_type = 'Outlet type is required';
-
-        // Validate outlet_address
-        if (!outlet.outlet_address) errors.outlet_address = 'Outlet address is required';
-
-        // Validate outlet_gst_no
-        if (!outlet.outlet_gst_no) errors.outlet_gst_no = 'Outlet GST number is required';
-
-        // Validate language_id
-        if (!outlet.language_id) errors.language_id = 'Language is required';
-
-        return errors;
-    };
 
     const handleInputChange = (
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
@@ -122,21 +107,61 @@ const BusinessOutletsForm: React.FC<BusinessOutletsFormProps> = ({
 
         setOutlets(updatedOutlets);
         onOutletsChange(updatedOutlets);
-        setValidationErrors([]);
     };
 
     const handleFormSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const errors = outlets.map(validateOutlet);
-        const hasErrors = errors.some((error) => Object.keys(error).length > 0);
+        let valid = true;
 
-        if (hasErrors) {
-            setValidationErrors(errors);
-            return;
+        for (let i = 0; i < outlets.length; i++) {
+            const outlet = outlets[i];
+
+            if (!outlet.outlet_name.trim()) {
+                setOutletNameError("Outlet Name is Required");
+                valid = false;
+
+            } else {
+                setOutletNameError('');
+            }
+
+            if (!outlet.outlet_type.trim()) {
+                setOutletTypeError("Outlet Type is Required");
+                valid = false;
+
+            } else {
+                setOutletTypeError('');
+            }
+
+            if (!outlet.outlet_address.trim()) {
+                setOutletAddressError("Outlet Address is Required");
+                valid = false;
+
+            } else {
+                setOutletAddressError('');
+            }
+
+            if (!outlet.outlet_gst_no.trim()) {
+                setOutletGstNummberError("GST Number is Required");
+                valid = false;
+
+            } else {
+                setOutletGstNummberError('');
+            }
+
+            if (!outlet.language_id.trim()) {
+                setOutletLanguageError("Language is Required");
+                valid = false;
+
+            } else {
+                setOutletLanguageError('');
+            }
         }
+
+        if (!valid) return;
 
         handleSubmit(e);
     };
+
 
     return (
         <Container className="register-business-container">
@@ -157,11 +182,11 @@ const BusinessOutletsForm: React.FC<BusinessOutletsFormProps> = ({
                                             value={outlet.outlet_name}
                                             onChange={(e) => handleInputChange(e, index)}
                                             required
+                                            isInvalid={!!outletNameError}
                                             placeholder="Enter outlet name"
                                         />
-                                        {validationErrors[index]?.outlet_name && (
-                                            <Alert variant="danger">{validationErrors[index]?.outlet_name}</Alert>
-                                        )}
+                                        <Form.Control.Feedback type="invalid">{outletNameError}</Form.Control.Feedback>
+
                                     </Col>
                                     <Col>
                                         <Form.Group controlId={`outlet-type-${index}`}>
@@ -171,7 +196,8 @@ const BusinessOutletsForm: React.FC<BusinessOutletsFormProps> = ({
                                                 name="outlet_type"
                                                 value={outlet.outlet_type}
                                                 onChange={(e) => handleInputChange(e, index)}
-                                                required>
+                                                required
+                                                isInvalid={!!outletTypeError}>
                                                 <option value="">Select Outlet Type</option>
                                                 {outletTypes.map((type, idx) => (
                                                     <option key={idx} value={type}>
@@ -179,9 +205,7 @@ const BusinessOutletsForm: React.FC<BusinessOutletsFormProps> = ({
                                                     </option>
                                                 ))}
                                             </Form.Control>
-                                            {validationErrors[index]?.outlet_type && (
-                                                <Alert variant="danger">{validationErrors[index]?.outlet_type}</Alert>
-                                            )}
+                                            <Form.Control.Feedback type="invalid">{outletTypeError}</Form.Control.Feedback>
                                         </Form.Group>
                                     </Col>
                                 </Row>
@@ -194,6 +218,7 @@ const BusinessOutletsForm: React.FC<BusinessOutletsFormProps> = ({
                                             name="is_primary_outlet"
                                             checked={outlet.is_primary_outlet}
                                             onChange={(e) => handleInputChange(e, index)}
+
                                         />
                                     </Col>
                                     <Col>
@@ -204,11 +229,10 @@ const BusinessOutletsForm: React.FC<BusinessOutletsFormProps> = ({
                                             value={outlet.outlet_address}
                                             onChange={(e) => handleInputChange(e, index)}
                                             required
+                                            isInvalid={!!outletAddressError}
                                             placeholder="Enter outlet address"
                                         />
-                                        {validationErrors[index]?.outlet_address && (
-                                            <Alert variant="danger">{validationErrors[index]?.outlet_address}</Alert>
-                                        )}
+                                        <Form.Control.Feedback type="invalid">{outletAddressError}</Form.Control.Feedback>
                                     </Col>
                                 </Row>
                                 <Row className="mb-3">
@@ -220,11 +244,14 @@ const BusinessOutletsForm: React.FC<BusinessOutletsFormProps> = ({
                                             value={outlet.outlet_gst_no}
                                             onChange={(e) => handleInputChange(e, index)}
                                             required
+                                            isInvalid={!!outletGstNummberError}
                                             placeholder="Enter GST number"
                                         />
-                                        {validationErrors[index]?.outlet_gst_no && (
+                                        <Form.Control.Feedback type="invalid">{outletGstNummberError}</Form.Control.Feedback>
+                                        {/* {validationErrors[index]?.outlet_gst_no && (
                                             <Alert variant="danger">{validationErrors[index]?.outlet_gst_no}</Alert>
-                                        )}
+                                        )} */}
+
                                     </Col>
                                     <Col>
                                         <Form.Label>Language</Form.Label>
@@ -233,7 +260,8 @@ const BusinessOutletsForm: React.FC<BusinessOutletsFormProps> = ({
                                             name="language_id"
                                             value={outlet.language_id}
                                             onChange={(e) => handleInputChange(e, index)}
-                                            required>
+                                            required
+                                            isInvalid={!!outletLanguageError}>
                                             <option value="">Select Language</option>
                                             {loading ? (
                                                 <option disabled>Loading languages...</option>
@@ -247,9 +275,10 @@ const BusinessOutletsForm: React.FC<BusinessOutletsFormProps> = ({
                                                 ))
                                             )}
                                         </Form.Control>
-                                        {validationErrors[index]?.language_id && (
+                                        <Form.Control.Feedback type="invalid">{outletLanguageError}</Form.Control.Feedback>
+                                        {/* {validationErrors[index]?.language_id && (
                                             <Alert variant="danger">{validationErrors[index]?.language_id}</Alert>
-                                        )}
+                                        )} */}
                                     </Col>
                                 </Row>
                                 <Row className="mb-3">

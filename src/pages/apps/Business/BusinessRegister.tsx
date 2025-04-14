@@ -6,6 +6,7 @@ import { useMultistepForm } from '../../../hooks/useMultistepForm';
 import BusinessInfoForm from './BusinessInfoForm';
 import BusinessOutletsForm from './BusinessOutletsForm';
 import BusinessUsersForm from './BusinessUsersForm';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 // Define the payload type for the registerBusiness action
 interface RegisterBusinessPayload {
@@ -22,6 +23,7 @@ interface RegisterBusinessPayload {
 
 const RegisterBusiness: React.FC = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate()
     const { error, success } = useSelector((state: any) => state.business);
 
     const [formData, setFormData] = useState({
@@ -256,6 +258,8 @@ const RegisterBusiness: React.FC = () => {
         setErrors({});
         setError('');
         setSuccess('');
+
+        navigate(-1)
     };
 
     const { steps, currentStepIndex, step, isFirstStep, isLastStep, back, next } = useMultistepForm([
@@ -287,7 +291,7 @@ const RegisterBusiness: React.FC = () => {
             handleFileChange={handleFileChange}
             handleSubmit={handleSubmit}
             onUsersChange={handleUserChange}
-            // errors={errors}
+        // errors={errors}
         />,
     ]);
 
