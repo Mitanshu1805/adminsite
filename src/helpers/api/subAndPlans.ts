@@ -7,9 +7,9 @@ export function subPlanList(data: any) {
 }
 
 export function subPlanAdd(data: any) {
-    return api.get('/subscription/plan/create');
+    return api.create('/subscription/plan/create', data);
 }
 
 export function subPlanDelete(data: any) {
-    return api.get('/subscription/plan/delete');
+    return api.delete('/subscription/plan/delete', data);
 }

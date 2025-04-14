@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import ErrorBoundary from '../../../components/ErrorBoundary';
 import { categoryItemList, categoryUpdateIsActive } from '../../../redux/menuManagementCategory/actions';
+import { businessList } from '../../../redux/actions';
 import { deleteItem, updateItem } from '../../../redux/menuManagementItem/actions';
 import { deleteCategory } from '../../../redux/menuManagementCategory/actions';
 import RegisterCategory from './RegisterCategory';
@@ -36,7 +37,9 @@ interface CategoryItem {
 const ManageMenu: React.FC = () => {
     // const { business_id } = useParams<{ business_id: string }>();
     const location = useLocation();
+    console.log('LOCATION>>>>>>', location);
     const business_id = location.state?.business_id;
+    // const business_id = localStorage.getItem('business_id') || '';
 
     const { dispatch, appSelector } = useRedux();
     // const [showCategoryRegistrationModal, setShowCategoryRegistrationModal] = useState(false);
@@ -56,10 +59,11 @@ const ManageMenu: React.FC = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (business_id) {
-            dispatch(categoryItemList(business_id));
-        }
-    }, [dispatch, business_id]);
+        dispatch(businessList());
+        // if (business_id) {
+        dispatch(categoryItemList(business_id));
+        // }
+    }, [dispatch]);
 
     useEffect(() => {
         if (categories.length > 0 && !selectedCategoryId) {

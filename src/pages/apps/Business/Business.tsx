@@ -171,16 +171,31 @@ const BusinessDetails = () => {
 
             console.log('Dispatching update with payload:', payload);
 
+            if (
+                editedBusiness.cuisine &&
+                editedBusiness.business_name &&
+                editedBusiness.business_contact &&
+                editedBusiness.business_logo &&
+                editedBusiness.business_address &&
+                editedBusiness.gst_no
+            ) {
+                console.log('no cuisine');
+                dispatch(updateBusinessList(payload));
+                setMessage('Business details updated successfully.');
+                setTimeout(() => {
+                    setMessage('');
+                    dispatch(businessList());
+                }, 500);
+                setSelectedBusiness(editedBusiness);
+            } else {
+                alert('All the fields should contain valid data');
+            }
+
             // Dispatch the appropriate payload
-            dispatch(updateBusinessList(payload));
+            // dispatch(updateBusinessList(payload));
 
             setIsEditing(false); // Exit editing mode
-            setMessage('Business details updated successfully.');
-            setTimeout(() => {
-                setMessage('');
-                dispatch(businessList());
-            }, 500);
-            setSelectedBusiness(editedBusiness); // Update selected business
+            // Update selected business
         }
     };
 

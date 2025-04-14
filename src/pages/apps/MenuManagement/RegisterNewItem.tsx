@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { Button, Alert, Container, Card } from 'react-bootstrap';
@@ -88,6 +88,7 @@ const RegisterNewItem: React.FC = () => {
     // const { business_id, selectedCategoryId, item_id } =
     //     useParams<{ business_id: string; selectedCategoryId: string; item_id: string }>();
     const location = useLocation();
+    console.log('Location>>>>>>', location);
     const business_id = location.state?.business_id;
     const selectedCategoryId = location.state?.category_id;
     const item_id = location.state?.item_id;
@@ -97,6 +98,13 @@ const RegisterNewItem: React.FC = () => {
     // const [editItem, setEditItem] = useState<CategoryItem | null>(null);
     const [errorMsg, setError] = useState<string>('');
     const [successMsg, setSuccess] = useState<string>('');
+    const isMounted = useRef(true);
+
+    useEffect(() => {
+        return () => {
+            isMounted.current = false;
+        };
+    }, []);
 
     useEffect(() => {
         if (business_id && selectedCategoryId) {
@@ -366,35 +374,38 @@ const RegisterNewItem: React.FC = () => {
                 await dispatch(registerItem(formDataToSend));
                 console.log('API request dispatched!');
             }
-
-            setSuccess('Item registered successfully!');
-            navigate(`/apps/manage-menu`);
-            setError('');
-            setFormData({
-                item_name: { hindi: '', english: '', gujarati: '' },
-                online_display_name: '',
-                price: '',
-                description: '',
-                dietary: '',
-                available_order_type: [''],
-                gst_type: '',
-                category_id: '',
-                business_id: '',
-                logo_image: null,
-                swiggy_image: null,
-                banner_image: null,
-                outlet_prices: [{ outlet_id: '', price: 0 }],
-                is_loose: false,
-                quantity_type: 'none',
-                quantity_params: 'none',
-                quantity_value: '',
-            });
-            setLogoPreview(null);
-            setSwiggyPreview(null);
-            setBannerPreview(null);
+            if (isMounted.current) {
+                setSuccess('Item registered successfully!');
+                navigate(`/apps/manage-menu`);
+                setError('');
+                setFormData({
+                    item_name: { hindi: '', english: '', gujarati: '' },
+                    online_display_name: '',
+                    price: '',
+                    description: '',
+                    dietary: '',
+                    available_order_type: [''],
+                    gst_type: '',
+                    category_id: '',
+                    business_id: '',
+                    logo_image: null,
+                    swiggy_image: null,
+                    banner_image: null,
+                    outlet_prices: [{ outlet_id: '', price: 0 }],
+                    is_loose: false,
+                    quantity_type: 'none',
+                    quantity_params: 'none',
+                    quantity_value: '',
+                });
+                setLogoPreview(null);
+                setSwiggyPreview(null);
+                setBannerPreview(null);
+            }
         } catch (err) {
-            setError('Error registering item, please try again.');
-            setSuccess('');
+            if (isMounted.current) {
+                setError('Error registering item, please try again.');
+                setSuccess('');
+            }
         }
     };
 

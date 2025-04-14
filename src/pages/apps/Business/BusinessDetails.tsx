@@ -78,10 +78,19 @@ const BusinessDetails: React.FC = () => {
     // const { id } = useParams<{ id: string }>(); // Extracting 'id' from URL params
     const [selectedBusiness = appSelector((state: RootState) => state.business.businessDetails), setSelectedBusiness] =
         useState<Business | null>(null);
+
     const location = useLocation();
+    console.log('location>>>', location);
+
     const id = location.state?.business_id;
+    localStorage.setItem('business_id', id);
+    console.log('business_id from localStorage', localStorage.getItem('business_id'));
 
     const businesses = appSelector((state: RootState) => state.business.businesses || []);
+    console.log('businesses>>>>>>>', businesses);
+    const businessesState = appSelector((state: RootState) => state || []);
+    console.log('businessesState>>>>>>>', businessesState);
+
     const navigate = useNavigate();
     const [showOutletModal, setShowOutletModal] = useState(false);
     const [showIngredientModal, setShowIngredientModal] = useState(false);
@@ -114,7 +123,7 @@ const BusinessDetails: React.FC = () => {
     useEffect(() => {
         console.log('Dispatching actions for business list');
         dispatch(resetBusiness());
-        // dispatch(businessList());
+        dispatch(businessList());
         dispatch(businessDetails(id));
     }, [dispatch]);
 

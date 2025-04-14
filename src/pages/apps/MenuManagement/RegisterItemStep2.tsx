@@ -32,6 +32,7 @@ interface RegisterItemStep2Props {
 
 const RegisterItemStep2: React.FC<RegisterItemStep2Props> = ({ selectedOutlets, setSelectedOutlets }) => {
     const location = useLocation();
+    console.log('location>>>>>>', location);
     const business_id = location.state?.business_id;
     const category_id = location.state?.category_id;
     const { dispatch, appSelector } = useRedux();
@@ -43,7 +44,10 @@ const RegisterItemStep2: React.FC<RegisterItemStep2Props> = ({ selectedOutlets, 
 
     // Find the business and category from the Redux state
     const business = businesses.find((biz: Business) => biz.business_id === business_id);
+    console.log('business>>>>>>', business);
+
     const category = categories.find((cat: Category) => cat.category_id === category_id);
+    console.log('category>>>>>>', category);
 
     useEffect(() => {
         if (!business) {
