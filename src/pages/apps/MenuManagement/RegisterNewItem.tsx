@@ -376,7 +376,7 @@ const RegisterNewItem: React.FC = () => {
             }
             if (isMounted.current) {
                 setSuccess('Item registered successfully!');
-                navigate(`/apps/manage-menu`);
+                navigate(`/apps/manage-menu`, { state: { business_id: business_id } });
                 setError('');
                 setFormData({
                     item_name: { hindi: '', english: '', gujarati: '' },

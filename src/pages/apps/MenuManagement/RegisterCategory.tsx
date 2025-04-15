@@ -30,19 +30,34 @@ interface Outlet {
 
 const RegisterCategory: React.FC<RegisterCategoryProps> = ({ show, onClose }) => {
     const dispatch = useDispatch();
-    // const { business_id } = useSelector((state: RootState) => state.business); // Assuming you get business_id from Redux store
-    // const { business_id } = useParams<{ business_id: string }>();
     const location = useLocation();
     const business_id = location.state?.business_id;
 
     const outlets: Outlet[] = useSelector((state: RootState) => state.outlet?.outlets ?? []);
 
-    // Extract outlet IDs related to the business
+    const emptyItemsData = {
+        item_name: { hindi: '', english: '', gujarati: '' },
+        online_display_name: '',
+        price: '80',
+        description: '',
+        dietary: 'veg',
+        available_order_type: [''],
+        gst_type: 'none',
+        category_id: '',
+        business_id: '',
+        logo_image: null as File | null,
+        swiggy_image: null as File | null,
+        banner_image: null as File | null,
+        outlet_prices: [{ outlet_id: '', price: 0 }],
+        is_loose: false,
+        quantity_type: 'none' as 'none' | 'piece' | 'weight' | 'volume',
+        quantity_params: 'none' as 'none' | 'gm' | 'kg' | 'ml' | 'lt',
+        quantity_value: 'none',
+    };
     const outletIds = outlets
         .filter((outlet: Outlet) => outlet.business_id === business_id)
         .map((outlet: Outlet) => outlet.outlet_id);
-
-    const [formData, setFormData] = useState({
+    const categoryEmptyData = {
         category_name: { hindi: '', english: '', gujarati: '' },
         business_id: business_id || '', // Update with business_id
         outlet_id: outletIds,
@@ -51,7 +66,10 @@ const RegisterCategory: React.FC<RegisterCategoryProps> = ({ show, onClose }) =>
         banner_image: null as File | null,
         is_active: false,
         selectedOutlets: [],
-    });
+        items: [emptyItemsData],
+    };
+
+    const [formData, setFormData] = useState([categoryEmptyData]);
 
     const [logoPreview, setLogoPreview] = useState<string | null>(null);
     const [swiggyPreview, setSwiggyPreview] = useState<string | null>(null);
@@ -62,6 +80,17 @@ const RegisterCategory: React.FC<RegisterCategoryProps> = ({ show, onClose }) =>
     const [selectedOutlets, setSelectedOutlets] = useState<string[]>([]);
     const [successMsg, setSuccess] = useState<string>('');
 
+    const addCategory = () => {
+        setFormData((prevState) => [...prevState, categoryEmptyData]);
+    };
+
+    const addItem = (selectedIndex: number) => {
+        setFormData((prevState) =>
+            prevState.map((item, index) =>
+                selectedIndex === index ? { ...item, items: [...item.items, emptyItemsData] } : item
+            )
+        );
+    };
     // useEffect(() => {
     //     setFormData((prevFormData) => ({
     //         ...prevFormData,
@@ -70,58 +99,94 @@ const RegisterCategory: React.FC<RegisterCategoryProps> = ({ show, onClose }) =>
     // }, [outletIds]);
 
     // Handle input changes
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    // const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    //     const { name, value } = e.target;
+    //     setFormData({
+    //         ...formData,
+    //         category_name: {
+    //             ...formData.category_name,
+    //             [name]: value,
+    //         },
+    //     });
+    // };
+
+    // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const { name, value, type, multiple } = e.target;
+
+    //     setFormData((prevState) => {
+    //         // Check if the field is inside `category_name`
+    //         if (name.startsWith('category_name.')) {
+    //             const field = name.split('.')[1]; // Extract the field (e.g., 'hindi', 'english', or 'gujarati')
+    //             return {
+    //                 ...prevState,
+    //                 category_name: {
+    //                     ...prevState.category_name,
+    //                     [field]: value, // Update only the specific field
+    //                 },
+    //             };
+    //         }
+
+    //         // Handle normal fields (non-nested)
+    //         return {
+    //             ...prevState,
+    //             [name]: value,
+    //         };
+    //     });
+    // };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            category_name: {
-                ...formData.category_name,
-                [name]: value,
-            },
-        });
-    };
+        const field = name.split('.')[1]; // because name is like "category_name.hindi"
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value, type, multiple } = e.target;
-
-        setFormData((prevState) => {
-            // Check if the field is inside `category_name`
-            if (name.startsWith('category_name.')) {
-                const field = name.split('.')[1]; // Extract the field (e.g., 'hindi', 'english', or 'gujarati')
-                return {
-                    ...prevState,
-                    category_name: {
-                        ...prevState.category_name,
-                        [field]: value, // Update only the specific field
-                    },
-                };
-            }
-
-            // Handle normal fields (non-nested)
-            return {
-                ...prevState,
-                [name]: value,
-            };
-        });
+        setFormData((prevFormData) =>
+            prevFormData.map((data, i) =>
+                i === index
+                    ? {
+                          ...data,
+                          category_name: {
+                              ...data.category_name,
+                              [field]: value,
+                          },
+                      }
+                    : data
+            )
+        );
     };
 
     // Handle file changes
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const file = e.target.files?.[0];
+    //     const { name } = e.target;
+
+    //     if (file) {
+    //         // Update the preview
+    //         const previewUrl = URL.createObjectURL(file);
+    //         if (name === 'logo_image') setLogoPreview(previewUrl);
+    //         if (name === 'swiggy_image') setSwiggyPreview(previewUrl);
+    //         if (name === 'banner_image') setBannerPreview(previewUrl);
+
+    //         setFormData((prevData) => ({
+    //             ...prevData,
+    //             [name]: file,
+    //         }));
+    //     }
+    // };
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const file = e.target.files?.[0];
         const { name } = e.target;
 
-        if (file) {
-            // Update the preview
-            const previewUrl = URL.createObjectURL(file);
-            if (name === 'logo_image') setLogoPreview(previewUrl);
-            if (name === 'swiggy_image') setSwiggyPreview(previewUrl);
-            if (name === 'banner_image') setBannerPreview(previewUrl);
+        if (!file) return;
 
-            setFormData((prevData) => ({
-                ...prevData,
-                [name]: file,
-            }));
-        }
+        setFormData((prevFormData) =>
+            prevFormData.map((data, i) =>
+                i === index
+                    ? {
+                          ...data,
+                          [name]: file, // name will be 'logo_image' or 'swiggy_image' etc.
+                      }
+                    : data
+            )
+        );
     };
 
     const validateCurrentStep = () => {
@@ -164,7 +229,9 @@ const RegisterCategory: React.FC<RegisterCategoryProps> = ({ show, onClose }) =>
             setSuccess('Category registration successful');
             setTimeout(() => {
                 // setMessage('');
-                navigate(`/apps/manage-menu`);
+                // navigate(`/apps/manage-menu`, { state: { business_id: business_id } });
+                navigate(-1);
+
                 dispatch(categoryItemList(business_id));
             }, 2000);
             // navigate(`/apps/manage-menu`);
